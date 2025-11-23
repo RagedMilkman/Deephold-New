@@ -17,6 +17,7 @@ public class TopDownMotor : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float sidewaysSpeedMultiplier = 0.75f;
     [SerializeField, Range(0f, 1f)] float backwardSpeedMultiplier = 0.6f;
     [SerializeField, Range(0f, 1f)] float activeStanceSpeedMultiplier = 0.65f;
+    [SerializeField] float gravity = -25f;
 
     [Header("Mouse Aim")]
     [SerializeField] float aimRayMaxDistance = 1000f;
@@ -57,6 +58,7 @@ public class TopDownMotor : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float headLookWeight = 1f;
 
     Vector3 moveVel;
+    float verticalVelocity;
     float initialRootYaw;
     Stance currentStance;
     MovementType currentMovementType = MovementType.Standing;
@@ -173,7 +175,19 @@ public class TopDownMotor : MonoBehaviour
         }
 
         moveVel = Vector3.Lerp(moveVel, targetVel, acceleration * dt);
-        if (controller) controller.Move(moveVel * dt);
+
+        if (controller)
+        {
+            if (controller.isGrounded && verticalVelocity < 0f)
+            {
+                verticalVelocity = -2f; // small downward force to keep grounding
+            }
+
+            verticalVelocity += gravity * dt;
+
+            Vector3 combinedVelocity = new Vector3(moveVel.x, verticalVelocity, moveVel.z);
+            controller.Move(combinedVelocity * dt);
+        }
 
         if (lockRootYaw) LockRootYaw();
 
