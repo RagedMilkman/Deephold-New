@@ -64,10 +64,14 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\NetworkBootstrapper.cs" />
     <Compile Include="Assets\FishNet\Upgrading\UpgradeFromMirrorMenu.cs" />
+    <Compile Include="Assets\Scripts\Player\Interaction\TopDownMovementInteraction.cs" />
     <Compile Include="Assets\FishNet\Upgrading\MirrorUpgrade.cs" />
+    <Compile Include="Assets\Scripts\Player\YawReplicator.cs" />
     <Compile Include="Assets\Scripts\NetworkPlayerSpawner.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerCameraOrbit.cs" />
     <Compile Include="Assets\Scripts\NetworkPlayerController.cs" />
+    <Compile Include="Assets\Scripts\Player\TopDownMotor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\FishNet\LICENSE.txt" />
