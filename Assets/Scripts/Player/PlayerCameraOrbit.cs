@@ -1,3 +1,4 @@
+using FishNet.Object;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -28,6 +29,7 @@ public class PlayerCameraOrbit : MonoBehaviour
     float yaw;
     float pitch;
     float distance;
+    NetworkObject networkObject;
     Vector3 focusPosition;
     Vector3 focusVelocity;
     Vector3 lastCursorFocus;
@@ -39,6 +41,8 @@ public class PlayerCameraOrbit : MonoBehaviour
 
     void Awake()
     {
+        networkObject = GetComponentInParent<NetworkObject>();
+
         if (!target && transform.parent)
         {
             target = transform.parent;
@@ -55,6 +59,12 @@ public class PlayerCameraOrbit : MonoBehaviour
         }
 
         orbitCamera = GetComponent<Camera>();
+        if (networkObject && !networkObject.IsOwner && orbitCamera)
+        {
+            orbitCamera.enabled = false;
+            enabled = false;
+            return;
+        }
 
         focusPosition = ComputePlayerFocus();
         lastCursorFocus = focusPosition;

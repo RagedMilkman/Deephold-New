@@ -1,40 +1,67 @@
+using FishNet.Object;
+using RootMotion.FinalIK;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class TopDownMovementInteraction : PlayerInteraction
+/// <summary>
+/// Owner-only top down movement and aiming controller.
+/// Drives local FinalIK aiming and sends yaw to other clients via <see cref="YawReplicator"/>.
+/// </summary>
+public class TopDownMovementInteraction : NetworkBehaviour
 {
-    [SerializeField] TopDownMotor motor;
-    [SerializeField] YawReplicator yawSync;
+    [Header("References")]
+    [SerializeField] private TopDownMotor _motor;
+    [SerializeField] private YawReplicator _yawReplicator;
+    [SerializeField] private Camera _ownerCamera;
+    [SerializeField] private AimIK _aimIK;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-        if (!motor) motor = GetComponentInChildren<TopDownMotor>();
-        if (!yawSync) yawSync = GetComponentInChildren<YawReplicator>();
-
-        // interaction gating
-        requireOwner = true;   // local-only control
-        requireAlive = true;   // disabled when dead
-        allowOnServer = false;  // no server ticking
+        if (!_motor) _motor = GetComponentInChildren<TopDownMotor>();
+        if (!_yawReplicator) _yawReplicator = GetComponentInChildren<YawReplicator>();
+        if (!_ownerCamera) _ownerCamera = GetComponentInChildren<Camera>(true);
+        if (!_aimIK) _aimIK = GetComponentInChildren<AimIK>();
     }
 
-    protected override void OnInteractionSpawned(bool asServer)
+    public override void OnStartClient()
     {
-        if (isOwner && motor)
+        base.OnStartClient();
+        enabled = IsOwner;
+
+        if (!IsOwner)
         {
-            // resolve the owner camera once
-            var cam = GetComponentInChildren<Camera>(true);
-            if (!cam) cam = Camera.main;
-            motor.SetCamera(cam);
+            DisableLocalOnlyComponents();
+            return;
         }
+
+        if (!_ownerCamera) _ownerCamera = Camera.main;
+        if (_motor && _ownerCamera)
+            _motor.SetCamera(_ownerCamera);
+
+        if (_motor && _aimIK)
+            _motor.SetAimSolver(_aimIK);
     }
 
-    protected override void OnActiveUpdate()
+    private void DisableLocalOnlyComponents()
     {
-        if (motor == null) return;
+        if (_ownerCamera)
+        {
+            _ownerCamera.enabled = false;
+            var listener = _ownerCamera.GetComponent<AudioListener>();
+            if (listener) listener.enabled = false;
+        }
 
-        // --- WASD world-relative movement ---
-        var kb = Keyboard.current;
+        if (_aimIK)
+            _aimIK.enabled = false;
+    }
+
+    private void Update()
+    {
+        if (!IsOwner || _motor == null)
+            return;
+
+        // WASD world-relative movement
+        Keyboard kb = Keyboard.current;
         Vector2 input = Vector2.zero;
         bool wantsSprint = false;
 
@@ -45,25 +72,20 @@ public class TopDownMovementInteraction : PlayerInteraction
             wantsSprint = kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed;
         }
 
-        // --- Update stance based on secondary mouse button ---
-        var mouse = Mouse.current;
+        // Update stance based on secondary mouse button
+        Mouse mouse = Mouse.current;
         bool activeStance = mouse != null && mouse.rightButton.isPressed;
-        motor.SetActiveStance(activeStance);
+        _motor.SetActiveStance(activeStance);
 
-        motor.TickMove(input, wantsSprint, Time.deltaTime);
+        _motor.TickMove(input, wantsSprint, Time.deltaTime);
 
-        // --- Mouse-aim sets facing (and replicates yaw) ---
+        // Mouse-aim sets facing (and replicates yaw)
         if (mouse != null &&
-            motor.TryGetAimTargets(mouse.position.ReadValue(), out var cursorTarget, out var playerTarget) &&
-            motor.TryComputeYawFromPoint(cursorTarget, out var yaw))
+            _motor.TryGetAimTargets(mouse.position.ReadValue(), out var cursorTarget, out var playerTarget) &&
+            _motor.TryComputeYawFromPoint(cursorTarget, out var yaw))
         {
-            motor.ApplyYaw(yaw, playerTarget);  // local visual
-            yawSync?.OwnerSetYaw(yaw);      // replicate to others
+            _motor.ApplyYaw(yaw, playerTarget);  // local visual
+            _yawReplicator?.SubmitYaw(yaw);      // replicate to others
         }
-    }
-
-    protected override void OnInactiveUpdate()
-    {
-        // Optional: zero local move-only effects if you keep any
     }
 }
