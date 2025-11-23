@@ -65,7 +65,9 @@
     <Compile Include="Assets\Scripts\NetworkBootstrapper.cs" />
     <Compile Include="Assets\FishNet\Upgrading\UpgradeFromMirrorMenu.cs" />
     <Compile Include="Assets\FishNet\Upgrading\MirrorUpgrade.cs" />
+    <Compile Include="Assets\Scripts\NetworkPlayerSpawner.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\Scripts\NetworkPlayerController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\FishNet\LICENSE.txt" />
