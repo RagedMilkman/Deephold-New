@@ -146,7 +146,7 @@ public class PlayerCameraOrbit : MonoBehaviour
             float scroll = mouse.scroll.ReadValue().y;
             if (Mathf.Abs(scroll) > Mathf.Epsilon)
             {
-                distance -= scroll * zoomSpeed * 0.01f;
+                distance -= scroll * zoomSpeed;
                 distance = Mathf.Clamp(distance, minDistance, maxDistance);
             }
 
