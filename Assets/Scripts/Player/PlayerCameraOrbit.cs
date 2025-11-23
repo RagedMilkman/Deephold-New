@@ -59,12 +59,6 @@ public class PlayerCameraOrbit : MonoBehaviour
         }
 
         orbitCamera = GetComponent<Camera>();
-        if (networkObject && !networkObject.IsOwner && orbitCamera)
-        {
-            orbitCamera.enabled = false;
-            enabled = false;
-            return;
-        }
 
         focusPosition = ComputePlayerFocus();
         lastCursorFocus = focusPosition;
@@ -113,6 +107,11 @@ public class PlayerCameraOrbit : MonoBehaviour
 
     void LateUpdate()
     {
+        if (networkObject && !networkObject.IsOwner)
+        {
+            return;
+        }
+
         if (!target)
         {
             return;
