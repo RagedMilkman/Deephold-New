@@ -9,7 +9,8 @@ using UnityEngine;
 public sealed class NetworkPlayerSpawner : MonoBehaviour
 {
     [SerializeField] private NetworkManager _networkManager;
-    [SerializeField] private FishNet.Object.NetworkObject _playerPrefab;
+    [SerializeField] private FishNet.Object.NetworkObject _ownerPlayerPrefab;
+    [SerializeField] private FishNet.Object.NetworkObject _ghostPlayerPrefab;
 
     private void Awake()
     {
@@ -34,13 +35,19 @@ public sealed class NetworkPlayerSpawner : MonoBehaviour
         if (args.ConnectionState != RemoteConnectionState.Started)
             return;
 
-        if (_playerPrefab == null)
+        if (_ownerPlayerPrefab == null || _ghostPlayerPrefab == null)
         {
-            Debug.LogWarning("Player prefab is not assigned on NetworkPlayerSpawner.");
+            Debug.LogWarning("Player prefabs are not assigned on NetworkPlayerSpawner.");
             return;
         }
 
-        FishNet.Object.NetworkObject playerInstance = Instantiate(_playerPrefab);
-        _networkManager.ServerManager.Spawn(playerInstance.gameObject, connection);
+        FishNet.Object.NetworkObject ownerInstance = Instantiate(_ownerPlayerPrefab);
+        _networkManager.ServerManager.Spawn(ownerInstance.gameObject, connection);
+
+        FishNet.Object.NetworkObject ghostInstance = Instantiate(_ghostPlayerPrefab);
+        _networkManager.ServerManager.Spawn(ghostInstance.gameObject, null);
+
+        // Hide the ghost from the owning client while still showing it to all other observers.
+        ghostInstance.RemoveObserver(connection);
     }
 }
