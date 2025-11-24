@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
@@ -12,6 +13,7 @@ public class GhostMotor : NetworkBehaviour
 
     private Vector3 _replicatedPosition;
     private Quaternion _replicatedRotation;
+    private NetworkConnection _excludedConnection;
 
     private void Awake()
     {
@@ -25,6 +27,19 @@ public class GhostMotor : NetworkBehaviour
 
         _replicatedPosition = _target.position;
         _replicatedRotation = _target.rotation;
+    }
+
+    public override bool OnCheckObserver(NetworkConnection connection)
+    {
+        return connection != _excludedConnection;
+    }
+
+    public override void OnRebuildObservers(HashSet<NetworkConnection> newObservers, bool initialize)
+    {
+        base.OnRebuildObservers(newObservers, initialize);
+
+        if (_excludedConnection != null)
+            newObservers.Remove(_excludedConnection);
     }
 
     private void Update()
@@ -50,13 +65,10 @@ public class GhostMotor : NetworkBehaviour
         if (connection == null)
             return;
 
-        TargetDisableForConnection(connection);
-    }
+        _excludedConnection = connection;
 
-    [TargetRpc]
-    private void TargetDisableForConnection(NetworkConnection connection)
-    {
-        gameObject.SetActive(false);
+        if (IsSpawned)
+            RebuildObservers(true);
     }
 
     [ServerRpc]

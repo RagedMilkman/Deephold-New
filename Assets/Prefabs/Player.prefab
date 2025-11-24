@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7562141122493713027}
   - component: {fileID: 2758224920450142785}
   - component: {fileID: 6390988891232470549}
+  - component: {fileID: 4212338670520547300}
   - component: {fileID: 6492137779550549413}
   m_Layer: 0
   m_Name: Player
@@ -36,6 +37,19 @@ Transform:
   - {fileID: 6052028176687838296}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4212338670520547300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414821280921427797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15b537c46919440c9a149fe5a55c8587, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _target: {fileID: 1414821280921427797}
 --- !u!114 &6492137779550549413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,6 +103,7 @@ MonoBehaviour:
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
   - {fileID: 2758224920450142785}
+  - {fileID: 4212338670520547300}
   - {fileID: 6492137779550549413}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
