@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FishNet.Broadcast;
 using UnityEngine;
 
 /// <summary>
@@ -13,6 +14,18 @@ public struct BoneSnapshot
     public Vector3[] Up;
 
     public int BoneCount => Positions?.Length ?? 0;
+}
+
+/// <summary>
+/// Broadcast payload for transporting compressed bone data over FishNet custom messaging.
+/// </summary>
+public struct BoneSnapshotMessage : IBroadcast
+{
+    public uint ObjectId;
+    public double Timestamp;
+    public Vector3[] Positions;
+    public Vector3[] Forward;
+    public Vector3[] Up;
 }
 
 /// <summary>

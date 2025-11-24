@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using FishNet.Broadcast;
+using FishNet.Connection;
+using FishNet.Managing;
 using FishNet.Object;
 using FishNet.Transporting;
 using UnityEngine;
@@ -11,17 +14,46 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     [SerializeField] private Transform _rigRoot;
     [SerializeField, Tooltip("How many snapshots to send per second from the owner.")]
     private float _sendRate = 30f;
-    private const byte SnapshotSequenceChannel = 1;
-
     private readonly List<Transform> _bones = new();
     private float _sendTimer;
     private GhostFollower _ghostFollower;
     private readonly Queue<BoneSnapshot> _pendingSnapshots = new();
+    private CustomMessagingManager _messagingManager;
 
     private void Awake()
     {
         if (!_rigRoot) _rigRoot = transform;
         BoneSnapshotUtility.CollectBones(_rigRoot, _bones);
+    }
+
+    public override void OnStartNetwork()
+    {
+        base.OnStartNetwork();
+        _messagingManager = NetworkManager?.CustomMessagingManager;
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        _messagingManager?.RegisterBroadcast<BoneSnapshotMessage>(OnServerReceivedSnapshot);
+    }
+
+    public override void OnStopServer()
+    {
+        _messagingManager?.UnregisterBroadcast<BoneSnapshotMessage>(OnServerReceivedSnapshot);
+        base.OnStopServer();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        _messagingManager?.RegisterBroadcast<BoneSnapshotMessage>(OnClientReceivedSnapshot);
+    }
+
+    public override void OnStopClient()
+    {
+        _messagingManager?.UnregisterBroadcast<BoneSnapshotMessage>(OnClientReceivedSnapshot);
+        base.OnStopClient();
     }
 
     public void SetGhostFollower(GhostFollower follower)
@@ -40,6 +72,11 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         if (!IsOwner)
             return;
 
+        if (_messagingManager == null)
+            _messagingManager = NetworkManager?.CustomMessagingManager;
+        if (_messagingManager == null)
+            return;
+
         _sendTimer += Time.deltaTime;
         float sendInterval = (_sendRate <= 0f) ? 0f : 1f / _sendRate;
         if (_sendTimer < sendInterval)
@@ -47,7 +84,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
         _sendTimer = 0f;
         var snapshot = BuildSnapshot();
-        SendSnapshotServer(snapshot.Timestamp, snapshot.Positions, snapshot.Forward, snapshot.Up);
+        SendSnapshot(snapshot);
     }
 
     private BoneSnapshot BuildSnapshot()
@@ -72,24 +109,45 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         };
     }
 
-    [ServerRpc(Channel = Channel.Unreliable, SequenceChannel = SnapshotSequenceChannel)]
-    private void SendSnapshotServer(double timestamp, Vector3[] positions, Vector3[] forward, Vector3[] up)
+    private void SendSnapshot(BoneSnapshot snapshot)
     {
-        BroadcastSnapshot(timestamp, positions, forward, up);
+        var message = new BoneSnapshotMessage
+        {
+            ObjectId = NetworkObject != null ? NetworkObject.ObjectId : 0,
+            Timestamp = snapshot.Timestamp,
+            Positions = snapshot.Positions,
+            Forward = snapshot.Forward,
+            Up = snapshot.Up
+        };
+
+        _messagingManager.Broadcast(message, Channel.UnreliableSequenced);
     }
 
-    [ObserversRpc(Channel = Channel.Unreliable, SequenceChannel = SnapshotSequenceChannel)]
-    private void BroadcastSnapshot(double timestamp, Vector3[] positions, Vector3[] forward, Vector3[] up)
+    private void OnServerReceivedSnapshot(NetworkConnection sender, BoneSnapshotMessage message)
     {
-        if (IsOwner)
+        if (!IsServer || NetworkObject == null)
+            return;
+
+        if (sender != Owner || message.ObjectId != NetworkObject.ObjectId)
+            return;
+
+        _messagingManager.Broadcast(message, Channel.UnreliableSequenced);
+    }
+
+    private void OnClientReceivedSnapshot(BoneSnapshotMessage message)
+    {
+        if (IsOwner || NetworkObject == null)
+            return;
+
+        if (message.ObjectId != NetworkObject.ObjectId)
             return;
 
         var snapshot = new BoneSnapshot
         {
-            Timestamp = timestamp,
-            Positions = positions,
-            Forward = forward,
-            Up = up
+            Timestamp = message.Timestamp,
+            Positions = message.Positions,
+            Forward = message.Forward,
+            Up = message.Up
         };
 
         if (_ghostFollower != null)
