@@ -22,10 +22,7 @@ public class GhostMotor : NetworkBehaviour
         base.OnStartClient();
 
         if (IsOwner)
-        {
-            gameObject.SetActive(false);
-            return;
-        }
+            HideLocalGhostVisuals();
 
         _replicatedPosition = _target.position;
         _replicatedRotation = _target.rotation;
@@ -61,5 +58,15 @@ public class GhostMotor : NetworkBehaviour
 
         _replicatedPosition = position;
         _replicatedRotation = rotation;
+    }
+
+    /// <summary>
+    /// Prevent the local owner from seeing its own ghost while still allowing
+    /// transform replication to run.
+    /// </summary>
+    private void HideLocalGhostVisuals()
+    {
+        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true))
+            renderer.enabled = false;
     }
 }
