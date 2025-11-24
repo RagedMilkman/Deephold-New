@@ -23,7 +23,19 @@ public class GhostFollower : MonoBehaviour
         if (_target == null)
             return;
 
-        transform.position = _target.position;
-        transform.rotation = _target.rotation;
+        SyncTransforms(_target, transform);
+    }
+
+    private void SyncTransforms(Transform source, Transform destination)
+    {
+        destination.SetPositionAndRotation(source.position, source.rotation);
+        destination.localScale = source.localScale;
+
+        foreach (Transform sourceChild in source)
+        {
+            Transform destinationChild = destination.Find(sourceChild.name);
+            if (destinationChild != null)
+                SyncTransforms(sourceChild, destinationChild);
+        }
     }
 }
