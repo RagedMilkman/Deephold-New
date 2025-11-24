@@ -30,7 +30,6 @@ public class GhostMotor : NetworkBehaviour
         if (_ownerConnection != null)
         {
             _ghostsByConnection[_ownerConnection] = this;
-            NetworkObject.RemoveObserver(_ownerConnection);
         }
 
         _replicatedPosition = _target.position;
@@ -64,6 +63,11 @@ public class GhostMotor : NetworkBehaviour
                 Vector3.Lerp(_target.position, _replicatedPosition, Time.deltaTime * _lerpRate),
                 Quaternion.Slerp(_target.rotation, _replicatedRotation, Time.deltaTime * _lerpRate));
         }
+    }
+
+    public override bool OnCheckObserver(NetworkConnection connection)
+    {
+        return connection != _ownerConnection;
     }
 
     [Server]
