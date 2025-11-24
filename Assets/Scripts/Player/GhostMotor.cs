@@ -27,7 +27,7 @@ public class GhostMotor : NetworkBehaviour
     {
         base.OnStartClient();
 
-        NetworkManager networkManager = InstanceFinder.NetworkManager;
+        NetworkManager networkManager = base.NetworkManager;
         NetworkConnection localConnection = networkManager != null ? networkManager.ClientManager.Connection : null;
         if (localConnection != null && localConnection.ClientId == _excludedClientId)
         {
