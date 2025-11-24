@@ -173,6 +173,7 @@ public class TopDownMotor : MonoBehaviour
         }
 
         moveVel = Vector3.Lerp(moveVel, targetVel, acceleration * dt);
+
         if (controller) controller.Move(moveVel * dt);
 
         if (lockRootYaw) LockRootYaw();
