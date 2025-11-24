@@ -70,6 +70,7 @@
     <Compile Include="Assets\Scripts\Player\YawReplicator.cs" />
     <Compile Include="Assets\Scripts\NetworkPlayerSpawner.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\Scripts\Player\OwnerOnlyVisibility.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerCameraOrbit.cs" />
     <Compile Include="Assets\Scripts\NetworkPlayerController.cs" />
     <Compile Include="Assets\Scripts\Player\TopDownMotor.cs" />
@@ -1177,6 +1178,10 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.Flow">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="ParrelSync">
+      <HintPath>Library\ScriptAssemblies\ParrelSync.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
