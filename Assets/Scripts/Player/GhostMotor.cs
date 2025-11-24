@@ -65,11 +65,6 @@ public class GhostMotor : NetworkBehaviour
         }
     }
 
-    public override bool OnCheckObserver(NetworkConnection connection)
-    {
-        return connection != _ownerConnection;
-    }
-
     [Server]
     private void ReceiveOwnerTransform(Vector3 position, Quaternion rotation)
     {
