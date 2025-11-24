@@ -14,6 +14,7 @@ public class TopDownMovementInteraction : NetworkBehaviour
     [SerializeField] private YawReplicator _yawReplicator;
     [SerializeField] private Camera _ownerCamera;
     [SerializeField] private AimIK _aimIK;
+    [SerializeField] private BoneSnapshotReplicator _boneSnapshotReplicator;
     [SerializeField] private GameObject _ghostPrefab;
 
     private GameObject _ghostInstance;
@@ -25,6 +26,7 @@ public class TopDownMovementInteraction : NetworkBehaviour
         if (!_yawReplicator) _yawReplicator = GetComponentInChildren<YawReplicator>();
         if (!_ownerCamera) _ownerCamera = GetComponentInChildren<Camera>(true);
         if (!_aimIK) _aimIK = GetComponentInChildren<AimIK>();
+        if (!_boneSnapshotReplicator) _boneSnapshotReplicator = GetComponentInChildren<BoneSnapshotReplicator>();
     }
 
     public override void OnStartClient()
@@ -123,8 +125,8 @@ public class TopDownMovementInteraction : NetworkBehaviour
 
         _ghostInstance = Instantiate(_ghostPrefab);
         _ghostFollower = _ghostInstance.GetComponent<GhostFollower>();
-        if (_ghostFollower != null)
-            _ghostFollower.Target = transform;
+        if (_ghostFollower != null && _boneSnapshotReplicator != null)
+            _boneSnapshotReplicator.SetGhostFollower(_ghostFollower);
     }
 
     private void DespawnGhost()
@@ -134,5 +136,7 @@ public class TopDownMovementInteraction : NetworkBehaviour
 
         _ghostInstance = null;
         _ghostFollower = null;
+        if (_boneSnapshotReplicator != null)
+            _boneSnapshotReplicator.SetGhostFollower(null);
     }
 }
