@@ -5,7 +5,13 @@ using UnityEngine;
 /// </summary>
 public class GhostFollower : MonoBehaviour
 {
-    private Transform _target;
+    [SerializeField] private Transform _target;
+
+    public Transform Target
+    {
+        get => _target;
+        set => _target = value;
+    }
 
     public void SetTarget(Transform target)
     {

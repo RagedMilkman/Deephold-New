@@ -123,7 +123,8 @@ public class TopDownMovementInteraction : NetworkBehaviour
 
         _ghostInstance = Instantiate(_ghostPrefab);
         _ghostFollower = _ghostInstance.GetComponent<GhostFollower>();
-        _ghostFollower?.SetTarget(transform);
+        if (_ghostFollower != null)
+            _ghostFollower.Target = transform;
     }
 
     private void DespawnGhost()
