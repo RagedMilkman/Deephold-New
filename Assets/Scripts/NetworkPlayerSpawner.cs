@@ -46,11 +46,6 @@ public sealed class NetworkPlayerSpawner : MonoBehaviour
 
         FishNet.Object.NetworkObject ghostInstance = Instantiate(_ghostPlayerPrefab);
 
-        // Prevent the owning client from observing the ghost while keeping it visible to others.
-        GhostMotor ghostMotor = ghostInstance.GetComponent<GhostMotor>();
-        if (ghostMotor != null)
-            ghostMotor.ExcludeConnection(connection);
-
         _networkManager.ServerManager.Spawn(ghostInstance.gameObject, null);
     }
 }

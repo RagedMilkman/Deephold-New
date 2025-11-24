@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
 
@@ -13,8 +11,6 @@ public class GhostMotor : NetworkBehaviour
 
     private Vector3 _replicatedPosition;
     private Quaternion _replicatedRotation;
-    private NetworkConnection _excludedConnection;
-
     private void Awake()
     {
         if (!_target)
@@ -25,21 +21,14 @@ public class GhostMotor : NetworkBehaviour
     {
         base.OnStartClient();
 
+        if (IsOwner)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         _replicatedPosition = _target.position;
         _replicatedRotation = _target.rotation;
-    }
-
-    public override bool OnCheckObserver(NetworkConnection connection)
-    {
-        return connection != _excludedConnection;
-    }
-
-    public override void OnRebuildObservers(HashSet<NetworkConnection> newObservers, bool initialize)
-    {
-        base.OnRebuildObservers(newObservers, initialize);
-
-        if (_excludedConnection != null)
-            newObservers.Remove(_excludedConnection);
     }
 
     private void Update()
@@ -54,21 +43,6 @@ public class GhostMotor : NetworkBehaviour
                 Vector3.Lerp(_target.position, _replicatedPosition, Time.deltaTime * _lerpRate),
                 Quaternion.Slerp(_target.rotation, _replicatedRotation, Time.deltaTime * _lerpRate));
         }
-    }
-
-    /// <summary>
-    /// Prevents a specific connection from observing this ghost instance.
-    /// </summary>
-    [Server]
-    public void ExcludeConnection(NetworkConnection connection)
-    {
-        if (connection == null)
-            return;
-
-        _excludedConnection = connection;
-
-        if (IsSpawned)
-            RebuildObservers(true);
     }
 
     [ServerRpc]

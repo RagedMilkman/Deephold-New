@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
 
@@ -20,17 +18,6 @@ public sealed class OwnerOnlyVisibility : NetworkBehaviour
     {
         base.OnStartClient();
         SetActiveState();
-    }
-
-    public override bool OnCheckObserver(NetworkConnection connection)
-    {
-        return connection == Owner;
-    }
-
-    public override void OnRebuildObservers(HashSet<NetworkConnection> newObservers, bool initialize)
-    {
-        if (Owner != null)
-            newObservers.Add(Owner);
     }
 
     private void SetActiveState()
