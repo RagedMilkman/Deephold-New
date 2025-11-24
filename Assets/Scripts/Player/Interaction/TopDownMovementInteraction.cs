@@ -94,5 +94,13 @@ public class TopDownMovementInteraction : NetworkBehaviour
             _motor.ApplyYaw(yaw, playerTarget);  // local visual
             _yawReplicator?.SubmitYaw(yaw);      // replicate to others
         }
+
+        SubmitGhostTransform(transform.position, transform.rotation);
+    }
+
+    [ServerRpc]
+    private void SubmitGhostTransform(Vector3 position, Quaternion rotation)
+    {
+        GhostMotor.ApplyOwnerTransform(Owner, position, rotation);
     }
 }

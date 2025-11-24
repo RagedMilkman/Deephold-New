@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine;
 
@@ -6,15 +8,41 @@ using UnityEngine;
 /// </summary>
 public class GhostMotor : NetworkBehaviour
 {
+    private static readonly Dictionary<NetworkConnection, GhostMotor> _ghostsByConnection = new();
+
     [SerializeField] private Transform _target;
     [SerializeField] private float _lerpRate = 12f;
 
     private Vector3 _replicatedPosition;
     private Quaternion _replicatedRotation;
+    private NetworkConnection _ownerConnection;
+
     private void Awake()
     {
         if (!_target)
             _target = transform;
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+
+        if (_ownerConnection != null)
+        {
+            _ghostsByConnection[_ownerConnection] = this;
+            NetworkObject.RemoveObserver(_ownerConnection);
+        }
+
+        _replicatedPosition = _target.position;
+        _replicatedRotation = _target.rotation;
+    }
+
+    public override void OnStopServer()
+    {
+        base.OnStopServer();
+
+        if (_ownerConnection != null)
+            _ghostsByConnection.Remove(_ownerConnection);
     }
 
     public override void OnStartClient()
@@ -30,21 +58,7 @@ public class GhostMotor : NetworkBehaviour
 
     private void Update()
     {
-        if (IsOwner)
-        {
-            Vector3 position = _target.position;
-            Quaternion rotation = _target.rotation;
-
-            if (IsServer)
-            {
-                BroadcastTransform(position, rotation);
-            }
-            else
-            {
-                SendTransform(position, rotation);
-            }
-        }
-        else
+        if (!IsOwner)
         {
             _target.SetPositionAndRotation(
                 Vector3.Lerp(_target.position, _replicatedPosition, Time.deltaTime * _lerpRate),
@@ -52,24 +66,36 @@ public class GhostMotor : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void SendTransform(Vector3 position, Quaternion rotation)
+    [Server]
+    private void ReceiveOwnerTransform(Vector3 position, Quaternion rotation)
     {
         _replicatedPosition = position;
         _replicatedRotation = rotation;
+        _target.SetPositionAndRotation(position, rotation);
         BroadcastTransform(position, rotation);
     }
 
     [ObserversRpc(BufferLast = true)]
     private void BroadcastTransform(Vector3 position, Quaternion rotation)
     {
-        // On the server, always run so transforms are sent to observers. Skip applying
-        // the replicated data only for the owning client instance.
-        if (IsOwner && !IsServer)
-            return;
-
         _replicatedPosition = position;
         _replicatedRotation = rotation;
+    }
+
+    [Server]
+    public void SetOwnerConnection(NetworkConnection connection)
+    {
+        _ownerConnection = connection;
+    }
+
+    [Server]
+    public static void ApplyOwnerTransform(NetworkConnection connection, Vector3 position, Quaternion rotation)
+    {
+        if (connection == null)
+            return;
+
+        if (_ghostsByConnection.TryGetValue(connection, out GhostMotor ghost))
+            ghost.ReceiveOwnerTransform(position, rotation);
     }
 
     /// <summary>
