@@ -46,6 +46,6 @@ public sealed class NetworkPlayerSpawner : MonoBehaviour
 
         FishNet.Object.NetworkObject ghostInstance = Instantiate(_ghostPlayerPrefab);
 
-        _networkManager.ServerManager.Spawn(ghostInstance.gameObject, null);
+        _networkManager.ServerManager.Spawn(ghostInstance.gameObject, connection);
     }
 }
