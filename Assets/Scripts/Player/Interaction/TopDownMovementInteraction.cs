@@ -1,3 +1,4 @@
+using FishNet.Connection;
 using FishNet.Object;
 using RootMotion.FinalIK;
 using UnityEngine;
@@ -98,9 +99,9 @@ public class TopDownMovementInteraction : NetworkBehaviour
         SubmitGhostTransform(transform.position, transform.rotation);
     }
 
-    [ServerRpc]
-    private void SubmitGhostTransform(Vector3 position, Quaternion rotation)
+    [ServerRpc(RequireOwnership = false)]
+    private void SubmitGhostTransform(Vector3 position, Quaternion rotation, NetworkConnection sender = null)
     {
-        GhostMotor.ApplyOwnerTransform(Owner, position, rotation);
+        GhostMotor.ApplyOwnerTransform(sender ?? Owner, position, rotation);
     }
 }

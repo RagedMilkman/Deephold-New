@@ -31,6 +31,10 @@ public class GhostMotor : NetworkBehaviour
         {
             _ghostsByConnection[_ownerConnection] = this;
         }
+        else
+        {
+            Debug.LogWarning($"GhostMotor on {name} started without an assigned owner connection; transforms will not sync until it is set.");
+        }
 
         _replicatedPosition = _target.position;
         _replicatedRotation = _target.rotation;
@@ -85,6 +89,9 @@ public class GhostMotor : NetworkBehaviour
     public void SetOwnerConnection(NetworkConnection connection)
     {
         _ownerConnection = connection;
+
+        if (IsServer && _ownerConnection != null)
+            _ghostsByConnection[_ownerConnection] = this;
     }
 
     [Server]
@@ -94,7 +101,13 @@ public class GhostMotor : NetworkBehaviour
             return;
 
         if (_ghostsByConnection.TryGetValue(connection, out GhostMotor ghost))
+        {
             ghost.ReceiveOwnerTransform(position, rotation);
+        }
+        else
+        {
+            Debug.LogWarning($"No server ghost registered for connection {connection.ClientId}; unable to apply transform.");
+        }
     }
 
     /// <summary>
