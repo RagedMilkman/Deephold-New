@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using FishNet.Broadcast;
 using FishNet.Connection;
-using FishNet.Managing;
+using FishNet.Managing.Client;
+using FishNet.Managing.Server;
 using FishNet.Object;
 using FishNet.Transporting;
 using UnityEngine;
@@ -18,7 +19,8 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private float _sendTimer;
     private GhostFollower _ghostFollower;
     private readonly Queue<BoneSnapshot> _pendingSnapshots = new();
-    private CustomMessagingManager _messagingManager;
+    private ClientManager _clientManager;
+    private ServerManager _serverManager;
 
     private void Awake()
     {
@@ -26,33 +28,29 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         BoneSnapshotUtility.CollectBones(_rigRoot, _bones);
     }
 
-    public override void OnStartNetwork()
-    {
-        base.OnStartNetwork();
-        _messagingManager = NetworkManager?.CustomMessagingManager;
-    }
-
     public override void OnStartServer()
     {
         base.OnStartServer();
-        _messagingManager?.RegisterBroadcast<BoneSnapshotMessage>(OnServerReceivedSnapshot);
+        _serverManager = NetworkManager?.ServerManager;
+        _serverManager?.RegisterBroadcast<BoneSnapshotMessage>(OnServerReceivedSnapshot);
     }
 
     public override void OnStopServer()
     {
-        _messagingManager?.UnregisterBroadcast<BoneSnapshotMessage>(OnServerReceivedSnapshot);
+        _serverManager?.UnregisterBroadcast<BoneSnapshotMessage>(OnServerReceivedSnapshot);
         base.OnStopServer();
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-        _messagingManager?.RegisterBroadcast<BoneSnapshotMessage>(OnClientReceivedSnapshot);
+        _clientManager = NetworkManager?.ClientManager;
+        _clientManager?.RegisterBroadcast<BoneSnapshotMessage>(OnClientReceivedSnapshot);
     }
 
     public override void OnStopClient()
     {
-        _messagingManager?.UnregisterBroadcast<BoneSnapshotMessage>(OnClientReceivedSnapshot);
+        _clientManager?.UnregisterBroadcast<BoneSnapshotMessage>(OnClientReceivedSnapshot);
         base.OnStopClient();
     }
 
@@ -72,10 +70,10 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         if (!IsOwner)
             return;
 
-        if (_messagingManager == null)
-            _messagingManager = NetworkManager?.CustomMessagingManager;
-        if (_messagingManager == null)
-            return;
+        if (_clientManager == null)
+            _clientManager = NetworkManager?.ClientManager;
+        if (_serverManager == null)
+            _serverManager = NetworkManager?.ServerManager;
 
         _sendTimer += Time.deltaTime;
         float sendInterval = (_sendRate <= 0f) ? 0f : 1f / _sendRate;
@@ -120,7 +118,11 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Up = snapshot.Up
         };
 
-        _messagingManager.Broadcast(message, Channel.UnreliableSequenced);
+        if (IsServer && _serverManager != null)
+            _serverManager.Broadcast(message, Channel.Unreliable);
+
+        if (!IsServer && _clientManager != null)
+            _clientManager.Broadcast(message, Channel.Unreliable);
     }
 
     private void OnServerReceivedSnapshot(NetworkConnection sender, BoneSnapshotMessage message)
@@ -131,7 +133,10 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         if (sender != Owner || message.ObjectId != NetworkObject.ObjectId)
             return;
 
-        _messagingManager.Broadcast(message, Channel.UnreliableSequenced);
+        if (_serverManager == null)
+            _serverManager = NetworkManager?.ServerManager;
+
+        _serverManager?.Broadcast(message, Channel.Unreliable);
     }
 
     private void OnClientReceivedSnapshot(BoneSnapshotMessage message)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using FishNet.Broadcast;
+using FishNet.Serializing;
 using UnityEngine;
 
 /// <summary>
@@ -26,6 +27,40 @@ public struct BoneSnapshotMessage : IBroadcast
     public Vector3[] Positions;
     public Vector3[] Forward;
     public Vector3[] Up;
+
+    public void Write(Writer writer)
+    {
+        writer.WriteUInt32(ObjectId);
+        writer.WriteDouble(Timestamp);
+
+        int count = Positions?.Length ?? 0;
+        writer.WriteInt32(count);
+
+        for (int i = 0; i < count; i++)
+        {
+            writer.WriteVector3(Positions[i]);
+            writer.WriteVector3(Forward[i]);
+            writer.WriteVector3(Up[i]);
+        }
+    }
+
+    public void Read(Reader reader)
+    {
+        ObjectId = reader.ReadUInt32();
+        Timestamp = reader.ReadDouble();
+
+        int count = reader.ReadInt32();
+        Positions = new Vector3[count];
+        Forward = new Vector3[count];
+        Up = new Vector3[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            Positions[i] = reader.ReadVector3();
+            Forward[i] = reader.ReadVector3();
+            Up[i] = reader.ReadVector3();
+        }
+    }
 }
 
 /// <summary>
