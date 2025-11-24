@@ -1,3 +1,5 @@
+using RootMotion.Dynamics;
+using RootMotion.FinalIK;
 using UnityEngine;
 
 /// <summary>
@@ -13,6 +15,11 @@ public class GhostFollower : MonoBehaviour
         set => _target = value;
     }
 
+    private void Awake()
+    {
+        DisableGhostBehaviours();
+    }
+
     public void SetTarget(Transform target)
     {
         _target = target;
@@ -24,6 +31,18 @@ public class GhostFollower : MonoBehaviour
             return;
 
         SyncTransforms(_target, transform);
+    }
+
+    private void DisableGhostBehaviours()
+    {
+        foreach (PuppetMaster puppetMaster in GetComponentsInChildren<PuppetMaster>(true))
+            puppetMaster.enabled = false;
+
+        foreach (IK ik in GetComponentsInChildren<IK>(true))
+            ik.enabled = false;
+
+        foreach (Animator animator in GetComponentsInChildren<Animator>(true))
+            animator.enabled = false;
     }
 
     private void SyncTransforms(Transform source, Transform destination)
