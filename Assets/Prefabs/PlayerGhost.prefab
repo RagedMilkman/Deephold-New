@@ -34,20 +34,6 @@ Transform:
   - {fileID: 6489204562721431007}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6492137779550549413
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1414821280921427797}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b8a721b06eb40178a2e022ebf7cab2f, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  _target: {fileID: 7562141122493713027}
-  _lerpRate: 12
 --- !u!114 &6390988891232470549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,13 +47,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
   <IsNested>k__BackingField: 0
-  WasActiveDuringEdit: 1
+  WasActiveDuringEdit: 0
   WasActiveDuringEdit_Set1: 1
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
-    NetworkBehaviours:
-    - {fileID: 6492137779550549413}
+  NetworkBehaviours:
+  - {fileID: 6492137779550549413}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -94,26 +80,30 @@ MonoBehaviour:
   _teleportThreshold: 1
   <PrefabId>k__BackingField: 0
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 562937445123456789
+  <AssetPathHash>k__BackingField: 16698865363173554073
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
     Position: {x: 1.86791, y: -0, z: 1.02554}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
     Scale: {x: 1, y: 1, z: 1}
     IsValid: 1
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
-  activeFocusEdgeResponse: 2
-  maxActiveFocusDistance: 6
+--- !u!114 &6492137779550549413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414821280921427797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b8a721b06eb40178a2e022ebf7cab2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6390988891232470549}
+  _networkObjectCache: {fileID: 0}
+  _target: {fileID: 7562141122493713027}
+  _lerpRate: 12
 --- !u!1001 &8330895534152148680
 PrefabInstance:
   m_ObjectHideFlags: 0

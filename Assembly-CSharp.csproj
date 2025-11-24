@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\NetworkBootstrapper.cs" />
     <Compile Include="Assets\FishNet\Upgrading\UpgradeFromMirrorMenu.cs" />
+    <Compile Include="Assets\Scripts\Player\GhostMotor.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\TopDownMovementInteraction.cs" />
     <Compile Include="Assets\FishNet\Upgrading\MirrorUpgrade.cs" />
     <Compile Include="Assets\Scripts\Player\YawReplicator.cs" />
