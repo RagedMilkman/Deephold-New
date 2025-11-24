@@ -1,7 +1,5 @@
 using FishNet.Connection;
-using FishNet.Managing;
 using FishNet.Object;
-using FishNet.Object.Synchronizing;
 using UnityEngine;
 
 /// <summary>
@@ -15,8 +13,6 @@ public class GhostMotor : NetworkBehaviour
     private Vector3 _replicatedPosition;
     private Quaternion _replicatedRotation;
 
-    [SyncVar] private int _excludedClientId = -1;
-
     private void Awake()
     {
         if (!_target)
@@ -26,14 +22,6 @@ public class GhostMotor : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
-
-        NetworkManager networkManager = base.NetworkManager;
-        NetworkConnection localConnection = networkManager != null ? networkManager.ClientManager.Connection : null;
-        if (localConnection != null && localConnection.ClientId == _excludedClientId)
-        {
-            gameObject.SetActive(false);
-            return;
-        }
 
         _replicatedPosition = _target.position;
         _replicatedRotation = _target.rotation;
@@ -59,7 +47,16 @@ public class GhostMotor : NetworkBehaviour
     [Server]
     public void ExcludeConnection(NetworkConnection connection)
     {
-        _excludedClientId = connection.ClientId;
+        if (connection == null)
+            return;
+
+        TargetDisableForConnection(connection);
+    }
+
+    [TargetRpc]
+    private void TargetDisableForConnection(NetworkConnection connection)
+    {
+        gameObject.SetActive(false);
     }
 
     [ServerRpc]
