@@ -8,10 +8,16 @@ public sealed class OwnerOnlyVisibility : NetworkBehaviour
 {
     [SerializeField] private GameObject _target;
 
+    private Renderer[] _renderers;
+    private Canvas[] _canvases;
+
     private void Awake()
     {
         if (_target == null)
             _target = gameObject;
+
+        _renderers = _target.GetComponentsInChildren<Renderer>(true);
+        _canvases = _target.GetComponentsInChildren<Canvas>(true);
     }
 
     public override void OnStartClient()
@@ -22,7 +28,24 @@ public sealed class OwnerOnlyVisibility : NetworkBehaviour
 
     private void SetActiveState()
     {
-        if (_target != null)
-            _target.SetActive(IsOwner);
+        if (_target == null)
+            return;
+
+        SetVisibility(IsOwner);
+    }
+
+    private void SetVisibility(bool visible)
+    {
+        if (_renderers != null)
+        {
+            foreach (var renderer in _renderers)
+                renderer.enabled = visible;
+        }
+
+        if (_canvases != null)
+        {
+            foreach (var canvas in _canvases)
+                canvas.enabled = visible;
+        }
     }
 }
