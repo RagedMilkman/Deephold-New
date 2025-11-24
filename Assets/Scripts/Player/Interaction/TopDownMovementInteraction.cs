@@ -38,6 +38,13 @@ public class TopDownMovementInteraction : NetworkBehaviour
         if (_motor && _ownerCamera)
             _motor.SetCamera(_ownerCamera);
 
+        // Ensure only the player camera contributes audio when it becomes active.
+        if (Camera.main && Camera.main != _ownerCamera)
+        {
+            var mainListener = Camera.main.GetComponent<AudioListener>();
+            if (mainListener) mainListener.enabled = false;
+        }
+
         if (_motor && _aimIK)
             _motor.SetAimSolver(_aimIK);
     }

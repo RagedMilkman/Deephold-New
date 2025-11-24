@@ -63,7 +63,9 @@ public class GhostMotor : NetworkBehaviour
     [ObserversRpc(BufferLast = true)]
     private void BroadcastTransform(Vector3 position, Quaternion rotation)
     {
-        if (IsOwner)
+        // On the server, always run so transforms are sent to observers. Skip applying
+        // the replicated data only for the owning client instance.
+        if (IsOwner && !IsServer)
             return;
 
         _replicatedPosition = position;
