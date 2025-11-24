@@ -1,4 +1,5 @@
 using FishNet.Object;
+using FishNet.Connection;
 using UnityEngine;
 
 /// <summary>
@@ -11,6 +12,7 @@ public class GhostMotor : NetworkBehaviour
 
     private Vector3 _replicatedPosition;
     private Quaternion _replicatedRotation;
+    private NetworkConnection _excludedConnection;
 
     private void Awake()
     {
@@ -37,6 +39,23 @@ public class GhostMotor : NetworkBehaviour
                 Vector3.Lerp(_target.position, _replicatedPosition, Time.deltaTime * _lerpRate),
                 Quaternion.Slerp(_target.rotation, _replicatedRotation, Time.deltaTime * _lerpRate));
         }
+    }
+
+    /// <summary>
+    /// Prevents a specific connection from observing this ghost instance.
+    /// </summary>
+    [Server]
+    public void ExcludeConnection(NetworkConnection connection)
+    {
+        _excludedConnection = connection;
+    }
+
+    public override bool OnCheckObserver(NetworkConnection conn)
+    {
+        if (conn == _excludedConnection)
+            return false;
+
+        return base.OnCheckObserver(conn);
     }
 
     [ServerRpc]
