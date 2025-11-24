@@ -32,7 +32,17 @@ public class GhostMotor : NetworkBehaviour
     {
         if (IsOwner)
         {
-            SendTransform(_target.position, _target.rotation);
+            Vector3 position = _target.position;
+            Quaternion rotation = _target.rotation;
+
+            if (IsServer)
+            {
+                BroadcastTransform(position, rotation);
+            }
+            else
+            {
+                SendTransform(position, rotation);
+            }
         }
         else
         {
@@ -42,7 +52,7 @@ public class GhostMotor : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void SendTransform(Vector3 position, Quaternion rotation)
     {
         _replicatedPosition = position;
