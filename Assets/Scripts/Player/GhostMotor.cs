@@ -27,14 +27,7 @@ public class GhostMotor : NetworkBehaviour
     {
         base.OnStartServer();
 
-        if (_ownerConnection != null)
-        {
-            _ghostsByConnection[_ownerConnection] = this;
-        }
-        else
-        {
-            Debug.LogWarning($"GhostMotor on {name} started without an assigned owner connection; transforms will not sync until it is set.");
-        }
+        RegisterGhost(logWhenMissing: true);
 
         _replicatedPosition = _target.position;
         _replicatedRotation = _target.rotation;
@@ -90,8 +83,7 @@ public class GhostMotor : NetworkBehaviour
     {
         _ownerConnection = connection;
 
-        if (IsServer && _ownerConnection != null)
-            _ghostsByConnection[_ownerConnection] = this;
+        RegisterGhost();
     }
 
     [Server]
@@ -106,8 +98,38 @@ public class GhostMotor : NetworkBehaviour
         }
         else
         {
+            // Attempt to recover if a ghost was spawned but not registered (for example, if registration ran before the
+            // connection was assigned).
+            foreach (GhostMotor candidate in FindObjectsOfType<GhostMotor>())
+            {
+                if (candidate._ownerConnection != connection)
+                    continue;
+
+                candidate.RegisterGhost();
+                candidate.ReceiveOwnerTransform(position, rotation);
+                return;
+            }
+
             Debug.LogWarning($"No server ghost registered for connection {connection.ClientId}; unable to apply transform.");
         }
+    }
+
+    [Server]
+    private void RegisterGhost(bool logWhenMissing = false)
+    {
+        if (!IsServer)
+            return;
+
+        if (_ownerConnection == null)
+        {
+            if (logWhenMissing)
+            {
+                Debug.LogWarning($"GhostMotor on {name} started without an assigned owner connection; transforms will not sync until it is set.");
+            }
+            return;
+        }
+
+        _ghostsByConnection[_ownerConnection] = this;
     }
 
     /// <summary>
