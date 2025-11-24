@@ -68,6 +68,7 @@ MonoBehaviour:
   _yawReplicator: {fileID: 3605412805779328133}
   _ownerCamera: {fileID: 7750328062498287493}
   _aimIK: {fileID: 0}
+  _ghostPrefab: {fileID: 1414821280921427797, guid: 2c9c792d6eea478fb48a0c1be088fdb0, type: 3}
 --- !u!114 &6390988891232470549
 MonoBehaviour:
   m_ObjectHideFlags: 0

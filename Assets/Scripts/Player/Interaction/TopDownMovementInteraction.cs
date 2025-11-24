@@ -1,4 +1,3 @@
-using FishNet.Connection;
 using FishNet.Object;
 using RootMotion.FinalIK;
 using UnityEngine;
@@ -15,6 +14,10 @@ public class TopDownMovementInteraction : NetworkBehaviour
     [SerializeField] private YawReplicator _yawReplicator;
     [SerializeField] private Camera _ownerCamera;
     [SerializeField] private AimIK _aimIK;
+    [SerializeField] private GameObject _ghostPrefab;
+
+    private GameObject _ghostInstance;
+    private GhostFollower _ghostFollower;
 
     private void Awake()
     {
@@ -27,13 +30,27 @@ public class TopDownMovementInteraction : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
-        enabled = IsOwner;
-
-        if (!IsOwner)
+        if (IsOwner)
         {
-            DisableLocalOnlyComponents();
+            EnablePlayerSystems();
             return;
         }
+
+        DisablePlayerSystems();
+        SpawnGhost();
+    }
+
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+
+        if (!IsOwner)
+            DespawnGhost();
+    }
+
+    private void EnablePlayerSystems()
+    {
+        enabled = true;
 
         if (!_ownerCamera) _ownerCamera = Camera.main;
         if (_motor && _ownerCamera)
@@ -50,8 +67,10 @@ public class TopDownMovementInteraction : NetworkBehaviour
             _motor.SetAimSolver(_aimIK);
     }
 
-    private void DisableLocalOnlyComponents()
+    private void DisablePlayerSystems()
     {
+        enabled = false;
+
         if (_ownerCamera)
         {
             _ownerCamera.enabled = false;
@@ -95,13 +114,24 @@ public class TopDownMovementInteraction : NetworkBehaviour
             _motor.ApplyYaw(yaw, playerTarget);  // local visual
             _yawReplicator?.SubmitYaw(yaw);      // replicate to others
         }
-
-        SubmitGhostTransform(transform.position, transform.rotation);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void SubmitGhostTransform(Vector3 position, Quaternion rotation, NetworkConnection sender = null)
+    private void SpawnGhost()
     {
-        GhostMotor.ApplyOwnerTransform(sender ?? Owner, position, rotation);
+        if (_ghostPrefab == null || _ghostInstance != null)
+            return;
+
+        _ghostInstance = Instantiate(_ghostPrefab);
+        _ghostFollower = _ghostInstance.GetComponent<GhostFollower>();
+        _ghostFollower?.SetTarget(transform);
+    }
+
+    private void DespawnGhost()
+    {
+        if (_ghostInstance != null)
+            Destroy(_ghostInstance);
+
+        _ghostInstance = null;
+        _ghostFollower = null;
     }
 }
