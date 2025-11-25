@@ -13,6 +13,9 @@ public struct BoneSnapshot
     public Vector3[] Positions;
     public Vector3[] Forward;
     public Vector3[] Up;
+    public Vector3 CharacterRootPosition;
+    public Vector3 CharacterRootForward;
+    public Vector3 CharacterRootUp;
 
     public int BoneCount => Positions?.Length ?? 0;
 }
@@ -27,11 +30,17 @@ public struct BoneSnapshotMessage : IBroadcast
     public Vector3[] Positions;
     public Vector3[] Forward;
     public Vector3[] Up;
+    public Vector3 CharacterRootPosition;
+    public Vector3 CharacterRootForward;
+    public Vector3 CharacterRootUp;
 
     public void Write(Writer writer)
     {
         writer.WriteUInt32(ObjectId);
         writer.WriteDouble(Timestamp);
+        writer.WriteVector3(CharacterRootPosition);
+        writer.WriteVector3(CharacterRootForward);
+        writer.WriteVector3(CharacterRootUp);
 
         int count = Positions?.Length ?? 0;
         writer.WriteInt32(count);
@@ -48,6 +57,9 @@ public struct BoneSnapshotMessage : IBroadcast
     {
         ObjectId = reader.ReadUInt32();
         Timestamp = reader.ReadDouble();
+        CharacterRootPosition = reader.ReadVector3();
+        CharacterRootForward = reader.ReadVector3();
+        CharacterRootUp = reader.ReadVector3();
 
         int count = reader.ReadInt32();
         Positions = new Vector3[count];

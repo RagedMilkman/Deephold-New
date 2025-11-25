@@ -13,6 +13,7 @@ using UnityEngine;
 public class BoneSnapshotReplicator : NetworkBehaviour
 {
     [SerializeField] private Transform _rigRoot;
+    [SerializeField] private Transform _characterRoot;
     [SerializeField] private float _sendRate = 30f;
 
     private readonly List<Transform> _bones = new();
@@ -27,6 +28,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private void Awake()
     {
         if (!_rigRoot) _rigRoot = transform;
+        if (!_characterRoot) _characterRoot = transform;
         BoneSnapshotUtility.CollectBones(_rigRoot, _bones);
     }
 
@@ -60,7 +62,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         if (!IsServer || NetworkObject == null)
             return;
 
-        // Validate — only accept from the actual owner.
+        // Validate Â— only accept from the actual owner.
         if (sender != Owner || msg.ObjectId != NetworkObject.ObjectId)
             return;
 
@@ -106,7 +108,10 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Timestamp = msg.Timestamp,
             Positions = msg.Positions,
             Forward = msg.Forward,
-            Up = msg.Up
+            Up = msg.Up,
+            CharacterRootPosition = msg.CharacterRootPosition,
+            CharacterRootForward = msg.CharacterRootForward,
+            CharacterRootUp = msg.CharacterRootUp
         };
 
         if (_ghostFollower != null)
@@ -146,6 +151,11 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         var forward = new Vector3[_bones.Count];
         var up = new Vector3[_bones.Count];
 
+        BoneSnapshotUtility.CompressRotation(
+            _characterRoot.rotation,
+            out Vector3 characterForward,
+            out Vector3 characterUp);
+
         for (int i = 0; i < _bones.Count; i++)
         {
             Transform bone = _bones[i];
@@ -163,7 +173,10 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Timestamp = Time.timeAsDouble,
             Positions = positions,
             Forward = forward,
-            Up = up
+            Up = up,
+            CharacterRootPosition = _characterRoot.position,
+            CharacterRootForward = characterForward,
+            CharacterRootUp = characterUp
         };
     }
 
@@ -175,7 +188,10 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Timestamp = snapshot.Timestamp,
             Positions = snapshot.Positions,
             Forward = snapshot.Forward,
-            Up = snapshot.Up
+            Up = snapshot.Up,
+            CharacterRootPosition = snapshot.CharacterRootPosition,
+            CharacterRootForward = snapshot.CharacterRootForward,
+            CharacterRootUp = snapshot.CharacterRootUp
         };
 
         if (IsServer)

@@ -12,6 +12,8 @@ public class GhostFollower : MonoBehaviour
     private float _interpolationBackTime = 0.05f;
     [SerializeField, Tooltip("Root transform that contains the ghost skeleton.")]
     private Transform _skeletonRoot;
+    [SerializeField, Tooltip("Root transform of the character that should follow but not copy descendants.")]
+    private Transform _characterRoot;
 
     private readonly List<Transform> _bones = new();
     private readonly List<BoneSnapshot> _snapshots = new();
@@ -19,6 +21,7 @@ public class GhostFollower : MonoBehaviour
     private void Awake()
     {
         if (!_skeletonRoot) _skeletonRoot = transform;
+        if (!_characterRoot) _characterRoot = transform;
         BoneSnapshotUtility.CollectBones(_skeletonRoot, _bones);
         DisableGhostBehaviours();
     }
@@ -70,6 +73,13 @@ public class GhostFollower : MonoBehaviour
 
     private void ApplySnapshot(BoneSnapshot from, BoneSnapshot to, float t)
     {
+        Vector3 characterPosition = Vector3.Lerp(from.CharacterRootPosition, to.CharacterRootPosition, t);
+        Quaternion characterRotation = Quaternion.Slerp(
+            BoneSnapshotUtility.DecompressRotation(from.CharacterRootForward, from.CharacterRootUp),
+            BoneSnapshotUtility.DecompressRotation(to.CharacterRootForward, to.CharacterRootUp),
+            t);
+        _characterRoot.SetPositionAndRotation(characterPosition, characterRotation);
+
         int boneCount = Mathf.Min(_bones.Count, Mathf.Min(from.BoneCount, to.BoneCount));
         for (int i = 0; i < boneCount; i++)
         {
