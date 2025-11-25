@@ -103,9 +103,13 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         if (msg.ObjectId != NetworkObject.ObjectId)
             return;
 
+        // Use the local receipt time to keep interpolation in the follower on a
+        // consistent clock. Remote client clocks are not synchronized, so
+        // trusting the sender's Timestamp can lead to snapshots being treated as
+        // permanently "in the future" and never advancing.
         BoneSnapshot snapshot = new BoneSnapshot
         {
-            Timestamp = msg.Timestamp,
+            Timestamp = Time.timeAsDouble,
             Positions = msg.Positions,
             Forward = msg.Forward,
             Up = msg.Up,
