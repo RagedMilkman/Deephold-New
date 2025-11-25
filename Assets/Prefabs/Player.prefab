@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2758224920450142785}
   - component: {fileID: 6390988891232470549}
   - component: {fileID: 4212338670520547300}
+  - component: {fileID: 5567259644663957134}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -55,6 +56,7 @@ MonoBehaviour:
   _yawReplicator: {fileID: 3605412805779328133}
   _ownerCamera: {fileID: 7750328062498287493}
   _aimIK: {fileID: 0}
+  _boneSnapshotReplicator: {fileID: 0}
   _ghostPrefab: {fileID: 1414821280921427797, guid: 2c9c792d6eea478fb48a0c1be088fdb0, type: 3}
 --- !u!114 &6390988891232470549
 MonoBehaviour:
@@ -126,6 +128,23 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 6390988891232470549}
   _networkObjectCache: {fileID: 0}
   _target: {fileID: 1414821280921427797}
+--- !u!114 &5567259644663957134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414821280921427797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5562ec83048f3fb44959ad6666b6f51d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BoneSnapshotReplicator
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6390988891232470549}
+  _networkObjectCache: {fileID: 0}
+  _rigRoot: {fileID: 7562141122493713027}
+  _sendRate: 30
 --- !u!1 &6439894860181546876
 GameObject:
   m_ObjectHideFlags: 0

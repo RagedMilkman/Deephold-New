@@ -13,14 +13,16 @@ using UnityEngine;
 public class BoneSnapshotReplicator : NetworkBehaviour
 {
     [SerializeField] private Transform _rigRoot;
-    [SerializeField, Tooltip("How many snapshots to send per second from the owner.")]
-    private float _sendRate = 30f;
+    [SerializeField] private float _sendRate = 30f;
+
     private readonly List<Transform> _bones = new();
     private float _sendTimer;
+
     private GhostFollower _ghostFollower;
     private readonly Queue<BoneSnapshot> _pendingSnapshots = new();
-    private ClientManager _clientManager;
-    private ServerManager _serverManager;
+
+    private ClientManager _client;
+    private ServerManager _server;
 
     private void Awake()
     {
@@ -28,60 +30,113 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         BoneSnapshotUtility.CollectBones(_rigRoot, _bones);
     }
 
+    // ---------------------------------------------------------------------
+    // SERVER
+    // ---------------------------------------------------------------------
     public override void OnStartServer()
     {
         base.OnStartServer();
-        _serverManager = NetworkManager?.ServerManager;
-        _serverManager?.RegisterBroadcast<BoneSnapshotMessage>(OnServerReceivedSnapshot);
+
+        _server = NetworkManager.ServerManager;
+
+        // Server receives snapshots FROM clients (owners)
+        _server.RegisterBroadcast<BoneSnapshotMessage>(Server_ReceiveSnapshot);
     }
 
     public override void OnStopServer()
     {
-        _serverManager?.UnregisterBroadcast<BoneSnapshotMessage>(OnServerReceivedSnapshot);
+        if (_server != null)
+            _server.UnregisterBroadcast<BoneSnapshotMessage>(Server_ReceiveSnapshot);
+
         base.OnStopServer();
     }
 
+    /// <summary>
+    /// SERVER callback: received snapshot from client owner.
+    /// Must match (NetworkConnection sender, T message, Channel channel)
+    /// </summary>
+    private void Server_ReceiveSnapshot(NetworkConnection sender, BoneSnapshotMessage msg, Channel channel)
+    {
+        if (!IsServer || NetworkObject == null)
+            return;
+
+        // Validate — only accept from the actual owner.
+        if (sender != Owner || msg.ObjectId != NetworkObject.ObjectId)
+            return;
+
+        // Re-broadcast to all clients
+        _server.Broadcast(msg, true, Channel.Unreliable);
+    }
+
+    // ---------------------------------------------------------------------
+    // CLIENT
+    // ---------------------------------------------------------------------
     public override void OnStartClient()
     {
         base.OnStartClient();
-        _clientManager = NetworkManager?.ClientManager;
-        _clientManager?.RegisterBroadcast<BoneSnapshotMessage>(OnClientReceivedSnapshot);
+
+        _client = NetworkManager.ClientManager;
+
+        // client receives snapshots from server
+        _client.RegisterBroadcast<BoneSnapshotMessage>(Client_ReceiveSnapshot);
     }
 
     public override void OnStopClient()
     {
-        _clientManager?.UnregisterBroadcast<BoneSnapshotMessage>(OnClientReceivedSnapshot);
+        if (_client != null)
+            _client.UnregisterBroadcast<BoneSnapshotMessage>(Client_ReceiveSnapshot);
+
         base.OnStopClient();
     }
 
-    public void SetGhostFollower(GhostFollower follower)
+    /// <summary>
+    /// CLIENT callback: receives snapshot from server.
+    /// Must match (T message, Channel channel)
+    /// </summary>
+    private void Client_ReceiveSnapshot(BoneSnapshotMessage msg, Channel channel)
     {
-        _ghostFollower = follower;
+        if (IsOwner || NetworkObject == null)
+            return;
+
+        if (msg.ObjectId != NetworkObject.ObjectId)
+            return;
+
+        BoneSnapshot snapshot = new BoneSnapshot
+        {
+            Timestamp = msg.Timestamp,
+            Positions = msg.Positions,
+            Forward = msg.Forward,
+            Up = msg.Up
+        };
 
         if (_ghostFollower != null)
-        {
-            while (_pendingSnapshots.Count > 0)
-                _ghostFollower.EnqueueSnapshot(_pendingSnapshots.Dequeue());
-        }
+            _ghostFollower.EnqueueSnapshot(snapshot);
+        else
+            _pendingSnapshots.Enqueue(snapshot);
     }
 
+    // ---------------------------------------------------------------------
+    // SENDING FROM OWNER
+    // ---------------------------------------------------------------------
     private void LateUpdate()
     {
         if (!IsOwner)
             return;
 
-        if (_clientManager == null)
-            _clientManager = NetworkManager?.ClientManager;
-        if (_serverManager == null)
-            _serverManager = NetworkManager?.ServerManager;
+        if (_client == null)
+            _client = NetworkManager?.ClientManager;
+        if (_server == null)
+            _server = NetworkManager?.ServerManager;
 
         _sendTimer += Time.deltaTime;
-        float sendInterval = (_sendRate <= 0f) ? 0f : 1f / _sendRate;
+        float sendInterval = 1f / Mathf.Max(1f, _sendRate);
+
         if (_sendTimer < sendInterval)
             return;
 
         _sendTimer = 0f;
-        var snapshot = BuildSnapshot();
+
+        BoneSnapshot snapshot = BuildSnapshot();
         SendSnapshot(snapshot);
     }
 
@@ -94,11 +149,16 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         for (int i = 0; i < _bones.Count; i++)
         {
             Transform bone = _bones[i];
-            positions[i] = (i == 0) ? bone.position : bone.localPosition;
-            BoneSnapshotUtility.CompressRotation((i == 0) ? bone.rotation : bone.localRotation, out forward[i], out up[i]);
+
+            positions[i] = (i == 0 ? bone.position : bone.localPosition);
+
+            BoneSnapshotUtility.CompressRotation(
+                (i == 0 ? bone.rotation : bone.localRotation),
+                out forward[i], out up[i]
+            );
         }
 
-        return new BoneSnapshot
+        return new BoneSnapshot()
         {
             Timestamp = Time.timeAsDouble,
             Positions = positions,
@@ -109,55 +169,29 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
     private void SendSnapshot(BoneSnapshot snapshot)
     {
-        var message = new BoneSnapshotMessage
+        BoneSnapshotMessage msg = new BoneSnapshotMessage()
         {
-            ObjectId = NetworkObject != null ? NetworkObject.ObjectId : 0,
+            ObjectId = (uint)NetworkObject.ObjectId,
             Timestamp = snapshot.Timestamp,
             Positions = snapshot.Positions,
             Forward = snapshot.Forward,
             Up = snapshot.Up
         };
 
-        if (IsServer && _serverManager != null)
-            _serverManager.Broadcast(message, Channel.Unreliable);
-
-        if (!IsServer && _clientManager != null)
-            _clientManager.Broadcast(message, Channel.Unreliable);
-    }
-
-    private void OnServerReceivedSnapshot(NetworkConnection sender, BoneSnapshotMessage message)
-    {
-        if (!IsServer || NetworkObject == null)
-            return;
-
-        if (sender != Owner || message.ObjectId != NetworkObject.ObjectId)
-            return;
-
-        if (_serverManager == null)
-            _serverManager = NetworkManager?.ServerManager;
-
-        _serverManager?.Broadcast(message, Channel.Unreliable);
-    }
-
-    private void OnClientReceivedSnapshot(BoneSnapshotMessage message)
-    {
-        if (IsOwner || NetworkObject == null)
-            return;
-
-        if (message.ObjectId != NetworkObject.ObjectId)
-            return;
-
-        var snapshot = new BoneSnapshot
-        {
-            Timestamp = message.Timestamp,
-            Positions = message.Positions,
-            Forward = message.Forward,
-            Up = message.Up
-        };
-
-        if (_ghostFollower != null)
-            _ghostFollower.EnqueueSnapshot(snapshot);
+        if (IsServer)
+            _server.Broadcast(msg, true, Channel.Unreliable);
         else
-            _pendingSnapshots.Enqueue(snapshot);
+            _client.Broadcast(msg, Channel.Unreliable);
+    }
+
+    // ---------------------------------------------------------------------
+    // GHOST FOLLOWER ATTACHMENT
+    // ---------------------------------------------------------------------
+    public void SetGhostFollower(GhostFollower follower)
+    {
+        _ghostFollower = follower;
+
+        while (_pendingSnapshots.Count > 0)
+            _ghostFollower.EnqueueSnapshot(_pendingSnapshots.Dequeue());
     }
 }

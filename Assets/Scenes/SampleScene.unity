@@ -533,9 +533,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c016e6a5886430cb75bcd45a7c61c5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _networkManager: {fileID: 1637219449}
-  _ownerPlayerPrefab: {fileID: 6390988891232470549, guid: db1725a102d4e524eabc353b5d0a0b24, type: 3}
-  _ghostPlayerPrefab: {fileID: 6390988891232470549, guid: 2c9c792d6eea478fb48a0c1be088fdb0, type: 3}
+  networkManager: {fileID: 0}
+  playerPrefab: {fileID: 6390988891232470549, guid: db1725a102d4e524eabc353b5d0a0b24, type: 3}
 --- !u!1 &1892275359
 GameObject:
   m_ObjectHideFlags: 0
