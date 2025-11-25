@@ -10,6 +10,8 @@ using UnityEngine;
 public struct BoneSnapshot
 {
     public double Timestamp;
+    public Vector3 RootPosition;
+    public Quaternion RootRotation;
     public Vector3[] Positions;
     public Vector3[] Forward;
     public Vector3[] Up;
@@ -24,6 +26,8 @@ public struct BoneSnapshotMessage : IBroadcast
 {
     public uint ObjectId;
     public double Timestamp;
+    public Vector3 RootPosition;
+    public Quaternion RootRotation;
     public Vector3[] Positions;
     public Vector3[] Forward;
     public Vector3[] Up;
@@ -32,6 +36,8 @@ public struct BoneSnapshotMessage : IBroadcast
     {
         writer.WriteUInt32(ObjectId);
         writer.WriteDouble(Timestamp);
+        writer.WriteVector3(RootPosition);
+        writer.WriteQuaternion(RootRotation);
 
         int count = Positions?.Length ?? 0;
         writer.WriteInt32(count);
@@ -48,6 +54,8 @@ public struct BoneSnapshotMessage : IBroadcast
     {
         ObjectId = reader.ReadUInt32();
         Timestamp = reader.ReadDouble();
+        RootPosition = reader.ReadVector3();
+        RootRotation = reader.ReadQuaternion();
 
         int count = reader.ReadInt32();
         Positions = new Vector3[count];

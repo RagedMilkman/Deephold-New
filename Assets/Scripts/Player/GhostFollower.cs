@@ -10,6 +10,8 @@ public class GhostFollower : MonoBehaviour
 {
     [SerializeField, Tooltip("Seconds to buffer before interpolating received snapshots.")]
     private float _interpolationBackTime = 0.05f;
+    [SerializeField, Tooltip("Transform that should receive world-space root movement.")]
+    private Transform _rootTarget;
     [SerializeField, Tooltip("Root transform that contains the ghost skeleton.")]
     private Transform _skeletonRoot;
 
@@ -18,6 +20,7 @@ public class GhostFollower : MonoBehaviour
 
     private void Awake()
     {
+        if (!_rootTarget) _rootTarget = transform;
         if (!_skeletonRoot) _skeletonRoot = transform;
         BoneSnapshotUtility.CollectBones(_skeletonRoot, _bones);
         DisableGhostBehaviours();
@@ -70,6 +73,10 @@ public class GhostFollower : MonoBehaviour
 
     private void ApplySnapshot(BoneSnapshot from, BoneSnapshot to, float t)
     {
+        _rootTarget.SetPositionAndRotation(
+            Vector3.Lerp(from.RootPosition, to.RootPosition, t),
+            Quaternion.Slerp(from.RootRotation, to.RootRotation, t));
+
         int boneCount = Mathf.Min(_bones.Count, Mathf.Min(from.BoneCount, to.BoneCount));
         for (int i = 0; i < boneCount; i++)
         {
@@ -79,15 +86,8 @@ public class GhostFollower : MonoBehaviour
                 BoneSnapshotUtility.DecompressRotation(to.Forward[i], to.Up[i]),
                 t);
 
-            if (i == 0)
-            {
-                _bones[i].SetPositionAndRotation(blendedPosition, blendedRotation);
-            }
-            else
-            {
-                _bones[i].localPosition = blendedPosition;
-                _bones[i].localRotation = blendedRotation;
-            }
+            _bones[i].localPosition = blendedPosition;
+            _bones[i].localRotation = blendedRotation;
         }
     }
 }

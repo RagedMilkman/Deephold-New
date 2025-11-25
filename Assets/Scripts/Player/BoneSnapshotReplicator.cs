@@ -12,7 +12,10 @@ using UnityEngine;
 /// </summary>
 public class BoneSnapshotReplicator : NetworkBehaviour
 {
-    [SerializeField] private Transform _rigRoot;
+    [SerializeField, Tooltip("Root transform used for world placement (not treated as a bone).")]
+    private Transform _rootTransform;
+    [SerializeField, Tooltip("Skeleton root whose descendants will be captured as bones.")]
+    private Transform _rigRoot;
     [SerializeField] private float _sendRate = 30f;
 
     private readonly List<Transform> _bones = new();
@@ -26,6 +29,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
     private void Awake()
     {
+        if (!_rootTransform) _rootTransform = transform;
         if (!_rigRoot) _rigRoot = transform;
         BoneSnapshotUtility.CollectBones(_rigRoot, _bones);
     }
@@ -60,7 +64,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         if (!IsServer || NetworkObject == null)
             return;
 
-        // Validate — only accept from the actual owner.
+        // Validate â€” only accept from the actual owner.
         if (sender != Owner || msg.ObjectId != NetworkObject.ObjectId)
             return;
 
@@ -104,6 +108,8 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         BoneSnapshot snapshot = new BoneSnapshot
         {
             Timestamp = msg.Timestamp,
+            RootPosition = msg.RootPosition,
+            RootRotation = msg.RootRotation,
             Positions = msg.Positions,
             Forward = msg.Forward,
             Up = msg.Up
@@ -150,10 +156,10 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         {
             Transform bone = _bones[i];
 
-            positions[i] = (i == 0 ? bone.position : bone.localPosition);
+            positions[i] = bone.localPosition;
 
             BoneSnapshotUtility.CompressRotation(
-                (i == 0 ? bone.rotation : bone.localRotation),
+                bone.localRotation,
                 out forward[i], out up[i]
             );
         }
@@ -161,6 +167,8 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         return new BoneSnapshot()
         {
             Timestamp = Time.timeAsDouble,
+            RootPosition = _rootTransform.position,
+            RootRotation = _rootTransform.rotation,
             Positions = positions,
             Forward = forward,
             Up = up
@@ -173,6 +181,8 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         {
             ObjectId = (uint)NetworkObject.ObjectId,
             Timestamp = snapshot.Timestamp,
+            RootPosition = snapshot.RootPosition,
+            RootRotation = snapshot.RootRotation,
             Positions = snapshot.Positions,
             Forward = snapshot.Forward,
             Up = snapshot.Up
