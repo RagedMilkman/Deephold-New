@@ -80,6 +80,42 @@ public static class BoneSnapshotUtility
         CollectRecursive(root, bones);
     }
 
+    /// <summary>
+    /// Ensures <paramref name="bones"/> is up to date with the current hierarchy under <paramref name="root"/>.
+    /// Returns true if the list was refreshed.
+    /// </summary>
+    public static bool EnsureBoneList(Transform root, List<Transform> bones)
+    {
+        if (root == null)
+            throw new ArgumentNullException(nameof(root));
+
+        bool needsRefresh = bones.Count == 0 || bones[0] == null || bones[0] != root;
+
+        if (!needsRefresh)
+        {
+            for (int i = 1; i < bones.Count; i++)
+            {
+                Transform bone = bones[i];
+                if (bone == null || !bone.IsChildOf(root))
+                {
+                    needsRefresh = true;
+                    break;
+                }
+            }
+
+            if (!needsRefresh)
+            {
+                int currentHierarchyCount = root.GetComponentsInChildren<Transform>(true).Length;
+                needsRefresh = currentHierarchyCount != bones.Count;
+            }
+        }
+
+        if (needsRefresh)
+            CollectBones(root, bones);
+
+        return needsRefresh;
+    }
+
     private static void CollectRecursive(Transform current, List<Transform> bones)
     {
         bones.Add(current);

@@ -60,7 +60,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         if (!IsServer || NetworkObject == null)
             return;
 
-        // Validate — only accept from the actual owner.
+        // Validate: only accept from the actual owner.
         if (sender != Owner || msg.ObjectId != NetworkObject.ObjectId)
             return;
 
@@ -136,6 +136,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
         _sendTimer = 0f;
 
+        BoneSnapshotUtility.EnsureBoneList(_rigRoot, _bones);
         BoneSnapshot snapshot = BuildSnapshot();
         SendSnapshot(snapshot);
     }

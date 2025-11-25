@@ -28,6 +28,8 @@ public class GhostFollower : MonoBehaviour
         if (snapshot.Positions == null || snapshot.Forward == null || snapshot.Up == null)
             return;
 
+        BoneSnapshotUtility.EnsureBoneList(_skeletonRoot, _bones);
+
         if (snapshot.BoneCount != _bones.Count)
             BoneSnapshotUtility.CollectBones(_skeletonRoot, _bones);
 
@@ -40,6 +42,8 @@ public class GhostFollower : MonoBehaviour
     {
         if (_snapshots.Count == 0)
             return;
+
+        BoneSnapshotUtility.EnsureBoneList(_skeletonRoot, _bones);
 
         double interpolationTime = Time.timeAsDouble - _interpolationBackTime;
 
