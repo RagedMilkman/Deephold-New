@@ -14,9 +14,16 @@ public class GhostFollower : MonoBehaviour
     private Transform _skeletonRoot;
     [SerializeField, Tooltip("Root transform of the character that should follow but not copy descendants.")]
     private Transform _characterRoot;
+    [SerializeField, Tooltip("Write snapshot enqueue/apply info to the console.")]
+    private bool _debugLogSnapshots;
 
     private readonly List<Transform> _bones = new();
     private readonly List<BoneSnapshot> _snapshots = new();
+
+    private int _enqueuedSnapshots;
+    private int _appliedSnapshots;
+    private double _lastEnqueueTime;
+    private double _lastApplyTime;
 
     private void Awake()
     {
@@ -25,6 +32,12 @@ public class GhostFollower : MonoBehaviour
         BoneSnapshotUtility.CollectBones(_skeletonRoot, _bones);
         DisableGhostBehaviours();
     }
+
+    public int EnqueuedSnapshots => _enqueuedSnapshots;
+    public int AppliedSnapshots => _appliedSnapshots;
+    public int BufferedSnapshots => _snapshots.Count;
+    public double LastEnqueueTime => _lastEnqueueTime;
+    public double LastApplyTime => _lastApplyTime;
 
     public void EnqueueSnapshot(BoneSnapshot snapshot)
     {
@@ -37,6 +50,14 @@ public class GhostFollower : MonoBehaviour
         _snapshots.Add(snapshot);
         if (_snapshots.Count > 5)
             _snapshots.RemoveAt(0);
+
+        _enqueuedSnapshots++;
+        _lastEnqueueTime = snapshot.Timestamp;
+
+        if (_debugLogSnapshots)
+        {
+            Debug.Log($"[GhostFollower] Enqueued snapshot {_enqueuedSnapshots} at {_lastEnqueueTime:F3}s (buffer={_snapshots.Count}).");
+        }
     }
 
     private void LateUpdate()
@@ -57,6 +78,14 @@ public class GhostFollower : MonoBehaviour
         t = Mathf.Clamp01(t);
 
         ApplySnapshot(lhs, rhs, t);
+
+        _appliedSnapshots++;
+        _lastApplyTime = interpolationTime;
+
+        if (_debugLogSnapshots)
+        {
+            Debug.Log($"[GhostFollower] Applied snapshot {_appliedSnapshots} at {_lastApplyTime:F3}s (t={t:F2}, buffer={_snapshots.Count}).");
+        }
     }
 
     private void DisableGhostBehaviours()

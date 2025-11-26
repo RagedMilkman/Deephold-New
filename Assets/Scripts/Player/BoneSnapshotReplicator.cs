@@ -15,12 +15,19 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     [SerializeField] private Transform _rigRoot;
     [SerializeField] private Transform _characterRoot;
     [SerializeField] private float _sendRate = 30f;
+    [SerializeField, Tooltip("Write snapshot send/receive info to the console.")]
+    private bool _debugLogSnapshots;
 
     private readonly List<Transform> _bones = new();
     private float _sendTimer;
 
     private GhostFollower _ghostFollower;
     private readonly Queue<BoneSnapshot> _pendingSnapshots = new();
+
+    private int _sentSnapshots;
+    private int _receivedSnapshots;
+    private double _lastSendTime;
+    private double _lastReceiveTime;
 
     private ClientManager _client;
     private ServerManager _server;
@@ -31,6 +38,11 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         if (!_characterRoot) _characterRoot = transform;
         BoneSnapshotUtility.CollectBones(_rigRoot, _bones);
     }
+
+    public int SentSnapshots => _sentSnapshots;
+    public int ReceivedSnapshots => _receivedSnapshots;
+    public double LastSendTime => _lastSendTime;
+    public double LastReceiveTime => _lastReceiveTime;
 
     // ---------------------------------------------------------------------
     // SERVER
@@ -122,6 +134,13 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             _ghostFollower.EnqueueSnapshot(snapshot);
         else
             _pendingSnapshots.Enqueue(snapshot);
+
+        _receivedSnapshots++;
+        _lastReceiveTime = snapshot.Timestamp;
+        if (_debugLogSnapshots)
+        {
+            Debug.Log($"[BoneSnapshotReplicator] Received snapshot {_receivedSnapshots} at {_lastReceiveTime:F3}s for object {NetworkObject.ObjectId}.");
+        }
     }
 
     // ---------------------------------------------------------------------
@@ -202,6 +221,13 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             _server.Broadcast(msg, true, Channel.Unreliable);
         else
             _client.Broadcast(msg, Channel.Unreliable);
+
+        _sentSnapshots++;
+        _lastSendTime = snapshot.Timestamp;
+        if (_debugLogSnapshots)
+        {
+            Debug.Log($"[BoneSnapshotReplicator] Sent snapshot {_sentSnapshots} at {_lastSendTime:F3}s for object {NetworkObject.ObjectId}.");
+        }
     }
 
     // ---------------------------------------------------------------------
