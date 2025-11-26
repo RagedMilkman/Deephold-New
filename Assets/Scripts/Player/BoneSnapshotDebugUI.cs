@@ -6,7 +6,9 @@ using UnityEngine;
 /// </summary>
 public class BoneSnapshotDebugUI : MonoBehaviour
 {
+    [SerializeField] private Transform _replicatorRoot;
     [SerializeField] private BoneSnapshotReplicator _replicator;
+    [SerializeField] private Transform _ghostRoot;
     [SerializeField] private GhostFollower _ghostFollower;
     [SerializeField] private Vector2 _screenPosition = new(20f, 20f);
     [SerializeField] private bool _showBackground = true;
@@ -16,9 +18,20 @@ public class BoneSnapshotDebugUI : MonoBehaviour
     private void Awake()
     {
         if (!_replicator)
-            _replicator = GetComponentInChildren<BoneSnapshotReplicator>();
+        {
+            if (_replicatorRoot)
+                _replicator = _replicatorRoot.GetComponentInChildren<BoneSnapshotReplicator>();
+            else
+                _replicator = GetComponentInChildren<BoneSnapshotReplicator>();
+        }
+
         if (!_ghostFollower)
-            _ghostFollower = GetComponentInChildren<GhostFollower>();
+        {
+            if (_ghostRoot)
+                _ghostFollower = _ghostRoot.GetComponentInChildren<GhostFollower>();
+            else
+                _ghostFollower = GetComponentInChildren<GhostFollower>();
+        }
 
         _labelStyle = new GUIStyle(GUI.skin.box)
         {
