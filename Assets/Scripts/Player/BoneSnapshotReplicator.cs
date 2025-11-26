@@ -10,6 +10,8 @@ using UnityEngine;
 /// <summary>
 /// Replicates bone snapshots from the owner to remote ghost followers.
 /// </summary>
+// Run after IK/puppet systems so snapshots include their final pose updates.
+[DefaultExecutionOrder(10000)]
 public class BoneSnapshotReplicator : NetworkBehaviour
 {
     [SerializeField] private Transform _rigRoot;
