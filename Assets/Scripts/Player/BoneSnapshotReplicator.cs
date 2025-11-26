@@ -17,6 +17,8 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     [SerializeField] private float _sendRate = 30f;
     [SerializeField, Tooltip("Write snapshot send/receive info to the console.")]
     private bool _debugLogSnapshots;
+    [SerializeField, Tooltip("Reset debug counters when a GhostFollower is attached.")]
+    private bool _resetDebugCountersOnAttach = true;
 
     private readonly List<Transform> _bones = new();
     private float _sendTimer;
@@ -43,6 +45,14 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     public int ReceivedSnapshots => _receivedSnapshots;
     public double LastSendTime => _lastSendTime;
     public double LastReceiveTime => _lastReceiveTime;
+
+    public void ResetDebugCounters()
+    {
+        _sentSnapshots = 0;
+        _receivedSnapshots = 0;
+        _lastSendTime = 0;
+        _lastReceiveTime = 0;
+    }
 
     // ---------------------------------------------------------------------
     // SERVER
@@ -237,7 +247,16 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     {
         _ghostFollower = follower;
 
-        while (_pendingSnapshots.Count > 0)
-            _ghostFollower.EnqueueSnapshot(_pendingSnapshots.Dequeue());
+        if (_ghostFollower != null && _resetDebugCountersOnAttach)
+        {
+            ResetDebugCounters();
+            _ghostFollower.ResetDebugCounters();
+        }
+
+        if (_ghostFollower != null)
+        {
+            while (_pendingSnapshots.Count > 0)
+                _ghostFollower.EnqueueSnapshot(_pendingSnapshots.Dequeue());
+        }
     }
 }

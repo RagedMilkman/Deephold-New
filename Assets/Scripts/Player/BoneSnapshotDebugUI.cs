@@ -67,6 +67,17 @@ public class BoneSnapshotDebugUI : MonoBehaviour
             sb.AppendLine($"  Last apply time: {_ghostFollower.LastApplyTime:F3}s");
         }
 
+        if (_replicator != null && _ghostFollower != null)
+        {
+            int enqueueDelta = _ghostFollower.EnqueuedSnapshots - _replicator.ReceivedSnapshots;
+            int applyDelta = _ghostFollower.AppliedSnapshots - _replicator.ReceivedSnapshots;
+
+            sb.AppendLine();
+            sb.AppendLine("Comparison");
+            sb.AppendLine($"  Enqueued - received: {enqueueDelta}");
+            sb.AppendLine($"  Applied - received: {applyDelta}");
+        }
+
         return sb.ToString();
     }
 }

@@ -39,6 +39,15 @@ public class GhostFollower : MonoBehaviour
     public double LastEnqueueTime => _lastEnqueueTime;
     public double LastApplyTime => _lastApplyTime;
 
+    public void ResetDebugCounters()
+    {
+        _snapshots.Clear();
+        _enqueuedSnapshots = 0;
+        _appliedSnapshots = 0;
+        _lastEnqueueTime = 0;
+        _lastApplyTime = 0;
+    }
+
     public void EnqueueSnapshot(BoneSnapshot snapshot)
     {
         if (snapshot.Positions == null || snapshot.Forward == null || snapshot.Up == null)
