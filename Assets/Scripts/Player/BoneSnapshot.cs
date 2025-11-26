@@ -13,6 +13,7 @@ public struct BoneSnapshot
     public Vector3[] Positions;
     public Vector3[] Forward;
     public Vector3[] Up;
+    public string[] BonePaths;
     public Vector3 CharacterRootPosition;
     public Vector3 CharacterRootForward;
     public Vector3 CharacterRootUp;
@@ -30,6 +31,7 @@ public struct BoneSnapshotMessage : IBroadcast
     public Vector3[] Positions;
     public Vector3[] Forward;
     public Vector3[] Up;
+    public string[] BonePaths;
     public Vector3 CharacterRootPosition;
     public Vector3 CharacterRootForward;
     public Vector3 CharacterRootUp;
@@ -51,6 +53,14 @@ public struct BoneSnapshotMessage : IBroadcast
             writer.WriteVector3(Forward[i]);
             writer.WriteVector3(Up[i]);
         }
+
+        writer.WriteBool(BonePaths != null);
+        if (BonePaths != null)
+        {
+            writer.WriteInt32(BonePaths.Length);
+            for (int i = 0; i < BonePaths.Length; i++)
+                writer.WriteString(BonePaths[i]);
+        }
     }
 
     public void Read(Reader reader)
@@ -71,6 +81,15 @@ public struct BoneSnapshotMessage : IBroadcast
             Positions[i] = reader.ReadVector3();
             Forward[i] = reader.ReadVector3();
             Up[i] = reader.ReadVector3();
+        }
+
+        bool hasPaths = reader.ReadBool();
+        if (hasPaths)
+        {
+            int pathCount = reader.ReadInt32();
+            BonePaths = new string[pathCount];
+            for (int i = 0; i < pathCount; i++)
+                BonePaths[i] = reader.ReadString();
         }
     }
 }
@@ -99,6 +118,37 @@ public static class BoneSnapshotUtility
             CollectRecursive(current.GetChild(i), bones);
     }
 
+    public static string[] CollectBonePaths(Transform root)
+    {
+        var paths = new List<string>();
+        CollectBonePathRecursive(root, root, paths);
+        return paths.ToArray();
+    }
+
+    private static void CollectBonePathRecursive(Transform root, Transform current, List<string> paths)
+    {
+        paths.Add(GetPath(root, current));
+        for (int i = 0; i < current.childCount; i++)
+            CollectBonePathRecursive(root, current.GetChild(i), paths);
+    }
+
+    private static string GetPath(Transform root, Transform current)
+    {
+        if (current == root)
+            return current.name;
+
+        var stack = new Stack<string>();
+        Transform cursor = current;
+        while (cursor != null && cursor != root)
+        {
+            stack.Push(cursor.name);
+            cursor = cursor.parent;
+        }
+
+        stack.Push(root.name);
+        return string.Join("/", stack.ToArray());
+    }
+
     /// <summary>
     /// Compresses a rotation into two direction vectors (forward/up) for 6-float transport.
     /// </summary>
@@ -117,6 +167,6 @@ public static class BoneSnapshotUtility
             forward = Vector3.forward;
         if (up == Vector3.zero)
             up = Vector3.up;
-        return Quaternion.LookRotation(forward, up);
+        return Quaternion.LookRotation(forward.normalized, up.normalized);
     }
 }

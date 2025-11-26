@@ -23,6 +23,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private bool _resetDebugCountersOnAttach = true;
 
     private readonly List<Transform> _bones = new();
+    private string[] _bonePaths;
     private float _sendTimer;
 
     private GhostFollower _ghostFollower;
@@ -41,6 +42,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         if (!_rigRoot) _rigRoot = transform;
         if (!_characterRoot) _characterRoot = transform;
         BoneSnapshotUtility.CollectBones(_rigRoot, _bones);
+        _bonePaths = BoneSnapshotUtility.CollectBonePaths(_rigRoot);
     }
 
     public int SentSnapshots => _sentSnapshots;
@@ -137,6 +139,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Positions = msg.Positions,
             Forward = msg.Forward,
             Up = msg.Up,
+            BonePaths = msg.BonePaths,
             CharacterRootPosition = msg.CharacterRootPosition,
             CharacterRootForward = msg.CharacterRootForward,
             CharacterRootUp = msg.CharacterRootUp
@@ -209,6 +212,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Positions = positions,
             Forward = forward,
             Up = up,
+            BonePaths = _bonePaths,
             CharacterRootPosition = _characterRoot.position,
             CharacterRootForward = characterForward,
             CharacterRootUp = characterUp
@@ -224,6 +228,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Positions = snapshot.Positions,
             Forward = snapshot.Forward,
             Up = snapshot.Up,
+            BonePaths = snapshot.BonePaths,
             CharacterRootPosition = snapshot.CharacterRootPosition,
             CharacterRootForward = snapshot.CharacterRootForward,
             CharacterRootUp = snapshot.CharacterRootUp

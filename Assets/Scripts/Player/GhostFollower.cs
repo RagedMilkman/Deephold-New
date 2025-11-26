@@ -19,6 +19,10 @@ public class GhostFollower : MonoBehaviour
 
     private readonly List<Transform> _bones = new();
     private readonly List<BoneSnapshot> _snapshots = new();
+    private readonly Dictionary<string, Transform> _boneLookup = new();
+
+    private string[] _cachedBonePaths;
+    private bool _loggedPathMismatch;
 
     private int _enqueuedSnapshots;
     private int _appliedSnapshots;
@@ -29,7 +33,7 @@ public class GhostFollower : MonoBehaviour
     {
         if (!_skeletonRoot) _skeletonRoot = transform;
         if (!_characterRoot) _characterRoot = transform;
-        BoneSnapshotUtility.CollectBones(_skeletonRoot, _bones);
+        CollectBonesAndLookup();
         DisableGhostBehaviours();
     }
 
@@ -46,6 +50,7 @@ public class GhostFollower : MonoBehaviour
         _appliedSnapshots = 0;
         _lastEnqueueTime = 0;
         _lastApplyTime = 0;
+        _loggedPathMismatch = false;
     }
 
     public void EnqueueSnapshot(BoneSnapshot snapshot)
@@ -53,8 +58,10 @@ public class GhostFollower : MonoBehaviour
         if (snapshot.Positions == null || snapshot.Forward == null || snapshot.Up == null)
             return;
 
-        if (snapshot.BoneCount != _bones.Count)
-            BoneSnapshotUtility.CollectBones(_skeletonRoot, _bones);
+        if (snapshot.BonePaths != null)
+            EnsureBoneOrder(snapshot.BonePaths);
+        else if (snapshot.BoneCount != _bones.Count)
+            CollectBonesAndLookup();
 
         _snapshots.Add(snapshot);
         if (_snapshots.Count > 5)
@@ -137,5 +144,76 @@ public class GhostFollower : MonoBehaviour
                 _bones[i].localRotation = blendedRotation;
             }
         }
+    }
+
+    private void CollectBonesAndLookup()
+    {
+        BoneSnapshotUtility.CollectBones(_skeletonRoot, _bones);
+        _cachedBonePaths = BoneSnapshotUtility.CollectBonePaths(_skeletonRoot);
+
+        _boneLookup.Clear();
+        for (int i = 0; i < _bones.Count; i++)
+        {
+            string path = _cachedBonePaths[i];
+            if (!_boneLookup.ContainsKey(path))
+                _boneLookup.Add(path, _bones[i]);
+
+            string rootStripped = StripRoot(path);
+            if (!_boneLookup.ContainsKey(rootStripped))
+                _boneLookup.Add(rootStripped, _bones[i]);
+        }
+    }
+
+    private void EnsureBoneOrder(string[] paths)
+    {
+        if (paths.Length == 0)
+            return;
+
+        if (_cachedBonePaths != null && _cachedBonePaths.Length == paths.Length)
+        {
+            bool matches = true;
+            for (int i = 0; i < paths.Length; i++)
+            {
+                if (_cachedBonePaths[i] != paths[i])
+                {
+                    matches = false;
+                    break;
+                }
+            }
+
+            if (matches)
+                return;
+        }
+
+        var reordered = new List<Transform>(paths.Length);
+        for (int i = 0; i < paths.Length; i++)
+        {
+            Transform resolved;
+            if (_boneLookup.TryGetValue(paths[i], out resolved) || _boneLookup.TryGetValue(StripRoot(paths[i]), out resolved))
+            {
+                reordered.Add(resolved);
+            }
+            else
+            {
+                if (!_loggedPathMismatch)
+                {
+                    Debug.LogWarning($"[GhostFollower] Could not resolve bone path '{paths[i]}'. Falling back to local traversal order.");
+                    _loggedPathMismatch = true;
+                }
+
+                CollectBonesAndLookup();
+                return;
+            }
+        }
+
+        _bones.Clear();
+        _bones.AddRange(reordered);
+        _cachedBonePaths = paths;
+    }
+
+    private static string StripRoot(string path)
+    {
+        int slashIndex = path.IndexOf('/') + 1;
+        return (slashIndex <= 0 || slashIndex >= path.Length) ? path : path.Substring(slashIndex);
     }
 }
