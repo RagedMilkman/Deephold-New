@@ -27,6 +27,7 @@ public class GhostFollower : MonoBehaviour
     private readonly List<Transform> _bones = new();
     private readonly List<BoneSnapshot> _snapshots = new();
     private readonly Dictionary<string, Transform> _boneLookup = new();
+    private readonly Dictionary<string, Transform> _boneNameLookup = new();
 
     private string[] _cachedBonePaths;
     private bool _loggedPathMismatch;
@@ -181,6 +182,7 @@ public class GhostFollower : MonoBehaviour
         _cachedBonePaths = BoneSnapshotUtility.CollectBonePaths(_skeletonRoot);
 
         _boneLookup.Clear();
+        _boneNameLookup.Clear();
         for (int i = 0; i < _bones.Count; i++)
         {
             string path = _cachedBonePaths[i];
@@ -190,6 +192,10 @@ public class GhostFollower : MonoBehaviour
             string rootStripped = StripRoot(path);
             if (!_boneLookup.ContainsKey(rootStripped))
                 _boneLookup.Add(rootStripped, _bones[i]);
+
+            string name = _bones[i].name;
+            if (!_boneNameLookup.ContainsKey(name))
+                _boneNameLookup.Add(name, _bones[i]);
         }
     }
 
@@ -224,6 +230,13 @@ public class GhostFollower : MonoBehaviour
             }
             else
             {
+                string terminalName = GetTerminalName(paths[i]);
+                if (!string.IsNullOrEmpty(terminalName) && _boneNameLookup.TryGetValue(terminalName, out resolved))
+                {
+                    reordered.Add(resolved);
+                    continue;
+                }
+
                 if (!_loggedPathMismatch)
                 {
                     Debug.LogWarning($"[GhostFollower] Could not resolve bone path '{paths[i]}'. Falling back to local traversal order.");
@@ -243,6 +256,12 @@ public class GhostFollower : MonoBehaviour
     private static string StripRoot(string path)
     {
         int slashIndex = path.IndexOf('/') + 1;
+        return (slashIndex <= 0 || slashIndex >= path.Length) ? path : path.Substring(slashIndex);
+    }
+
+    private static string GetTerminalName(string path)
+    {
+        int slashIndex = path.LastIndexOf('/') + 1;
         return (slashIndex <= 0 || slashIndex >= path.Length) ? path : path.Substring(slashIndex);
     }
 }
