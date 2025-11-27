@@ -46,8 +46,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationBackTime: 0.05
-  _skeletonRoot: {fileID: 8357734395874210538}
+  _skeletonRoot: {fileID: 7812697904247935660}
   _characterRoot: {fileID: 6489204562721431007}
+  _debugLogSnapshots: 0
+  _verifyAfterApply: 1
+  _verifyPositionTolerance: 0.001
+  _verifyRotationTolerance: 0.5
 --- !u!1001 &8330895534152148680
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -208,90 +212,22 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.016771793
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedComponents:
+    - {fileID: 5925328573840572616, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+    - {fileID: 801833631192838038, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+    m_RemovedGameObjects:
+    - {fileID: 7839918641680929499, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+    - {fileID: 2765569997796284300, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7478472528683366501, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1315533097734741336}
-    - targetCorrespondingSourceObject: {fileID: 7478472528683366501, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1749205242565629453}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
---- !u!1 &1465242717540228781 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7478472528683366501, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
-  m_PrefabInstance: {fileID: 8330895534152148680}
-  m_PrefabAsset: {fileID: 0}
---- !u!143 &1315533097734741336
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1465242717540228781}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.86, z: 0}
---- !u!114 &1749205242565629453
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1465242717540228781}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f7b5a8b1c04b6f4885689a81723d94e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TopDownMotor
-  cam: {fileID: 0}
-  rotateTarget: {fileID: 6489204562721431007}
-  body: {fileID: 6489204562721431007}
-  controller: {fileID: 1315533097734741336}
-  moveSpeed: 4
-  acceleration: 12
-  sidewaysSpeedMultiplier: 0.75
-  backwardSpeedMultiplier: 0.6
-  activeStanceSpeedMultiplier: 0.65
-  aimRayMaxDistance: 1000
-  useGroundLayerMask: 0
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 0
-  minAimDistance: 0.05
-  defaultStance: 0
-  lockRootYaw: 1
-  rotationMode: 0
-  aimIK: {fileID: 0}
-  headLookFallbackDistance: 5
-  headLookWeight: 1
 --- !u!4 &6489204562721431007 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2995738668064062231, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
   m_PrefabInstance: {fileID: 8330895534152148680}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &8357734395874210538 stripped
+--- !u!4 &7812697904247935660 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 27560906324153378, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+  m_CorrespondingSourceObject: {fileID: 2301636281318634596, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
   m_PrefabInstance: {fileID: 8330895534152148680}
   m_PrefabAsset: {fileID: 0}

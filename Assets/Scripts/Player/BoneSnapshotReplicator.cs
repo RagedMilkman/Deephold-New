@@ -198,10 +198,10 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         {
             Transform bone = _bones[i];
 
-            positions[i] = (i == 0 ? bone.position : bone.localPosition);
+            positions[i] = bone.localPosition; // positions[i] = (i == 0 ? bone.position : bone.localPosition);
 
             BoneSnapshotUtility.CompressRotation(
-                (i == 0 ? bone.rotation : bone.localRotation),
+               bone.localRotation, //  (i == 0 ? bone.rotation : bone.localRotation),
                 out forward[i], out up[i]
             );
         }

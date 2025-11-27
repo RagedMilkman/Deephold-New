@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FishNet.Utility.Extension;
 using RootMotion.Dynamics;
 using RootMotion.FinalIK;
 using UnityEngine;
@@ -133,27 +134,30 @@ public class GhostFollower : MonoBehaviour
 
         int boneCount = Mathf.Min(_bones.Count, Mathf.Min(from.BoneCount, to.BoneCount));
         for (int i = 0; i < boneCount; i++)
-        {
+        {            
             Vector3 blendedPosition = Vector3.Lerp(from.Positions[i], to.Positions[i], t);
             Quaternion blendedRotation = Quaternion.Slerp(
                 BoneSnapshotUtility.DecompressRotation(from.Forward[i], from.Up[i]),
                 BoneSnapshotUtility.DecompressRotation(to.Forward[i], to.Up[i]),
                 t);
 
-            if (i == 0)
-            {
-                _bones[i].SetPositionAndRotation(blendedPosition, blendedRotation);
-            }
-            else
-            {
-                _bones[i].localPosition = blendedPosition;
-                _bones[i].localRotation = blendedRotation;
-            }
+            //  if (i == 0)
+            //  {
+            //      _bones[i].SetPositionAndRotation(blendedPosition, blendedRotation);
+            //  }
+            //  else
+            //  {
+            _bones[i].SetLocalPositionAndRotation(blendedPosition, blendedRotation);
+           // _bones[i].localPosition = blendedPosition;
+           //     _bones[i].localRotation = blendedRotation;
+        //    }
 
             if (_verifyAfterApply)
             {
-                Vector3 currentPosition = (i == 0) ? _bones[i].position : _bones[i].localPosition;
-                Quaternion currentRotation = (i == 0) ? _bones[i].rotation : _bones[i].localRotation;
+                Debug.Log("Verify");
+
+                Vector3 currentPosition = _bones[i].localPosition;
+                Quaternion currentRotation = _bones[i].localRotation;
 
                 float positionError = Vector3.Distance(currentPosition, blendedPosition);
                 float rotationError = Quaternion.Angle(currentRotation, blendedRotation);

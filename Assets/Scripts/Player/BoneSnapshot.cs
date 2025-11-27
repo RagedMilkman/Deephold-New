@@ -54,7 +54,7 @@ public struct BoneSnapshotMessage : IBroadcast
             writer.WriteVector3(Up[i]);
         }
 
-        writer.WriteBool(BonePaths != null);
+        writer.WriteBoolean(BonePaths != null);
         if (BonePaths != null)
         {
             writer.WriteInt32(BonePaths.Length);
@@ -83,7 +83,7 @@ public struct BoneSnapshotMessage : IBroadcast
             Up[i] = reader.ReadVector3();
         }
 
-        bool hasPaths = reader.ReadBool();
+        bool hasPaths = reader.ReadBoolean();
         if (hasPaths)
         {
             int pathCount = reader.ReadInt32();

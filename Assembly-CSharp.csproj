@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\Player\OwnerOnlyVisibility.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerCameraOrbit.cs" />
     <Compile Include="Assets\Scripts\NetworkPlayerController.cs" />
+    <Compile Include="Assets\Scripts\Player\BoneSnapshotDebugUI.cs" />
     <Compile Include="Assets\Scripts\Player\TopDownMotor.cs" />
   </ItemGroup>
   <ItemGroup>
