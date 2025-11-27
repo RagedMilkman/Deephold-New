@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FishNet.Broadcast;
 using FishNet.Connection;
@@ -136,10 +137,10 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         BoneSnapshot snapshot = new BoneSnapshot
         {
             Timestamp = Time.timeAsDouble,
-            Positions = msg.Positions,
-            Forward = msg.Forward,
-            Up = msg.Up,
-            BonePaths = msg.BonePaths,
+            Positions = Clone(msg.Positions),
+            Forward = Clone(msg.Forward),
+            Up = Clone(msg.Up),
+            BonePaths = Clone(msg.BonePaths),
             CharacterRootPosition = msg.CharacterRootPosition,
             CharacterRootForward = msg.CharacterRootForward,
             CharacterRootUp = msg.CharacterRootUp
@@ -265,5 +266,15 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             while (_pendingSnapshots.Count > 0)
                 _ghostFollower.EnqueueSnapshot(_pendingSnapshots.Dequeue());
         }
+    }
+
+    private static T[] Clone<T>(T[] source)
+    {
+        if (source == null)
+            return null;
+
+        T[] copy = new T[source.Length];
+        Array.Copy(source, copy, source.Length);
+        return copy;
     }
 }
