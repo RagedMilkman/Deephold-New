@@ -64,7 +64,10 @@ public class GhostFollower : MonoBehaviour
 
     public void EnqueueSnapshot(BoneSnapshot snapshot)
     {
-        if (snapshot.Positions == null || snapshot.Forward == null || snapshot.Up == null)
+        if (snapshot.Positions == null || snapshot.Bones == null)
+            return;
+
+        if (snapshot.Positions.Length != snapshot.Bones.Length)
             return;
 
         if (snapshot.BonePaths != null)
@@ -139,8 +142,8 @@ public class GhostFollower : MonoBehaviour
         {            
             Vector3 blendedPosition = Vector3.Lerp(from.Positions[i], to.Positions[i], t);
             Quaternion blendedRotation = Quaternion.Slerp(
-                BoneSnapshotUtility.DecompressRotation(from.Forward[i], from.Up[i]),
-                BoneSnapshotUtility.DecompressRotation(to.Forward[i], to.Up[i]),
+                BoneSnapshotUtility.DecompressRotation(from.Bones[i].Forward, from.Bones[i].Up),
+                BoneSnapshotUtility.DecompressRotation(to.Bones[i].Forward, to.Bones[i].Up),
                 t);
 
             //  if (i == 0)
@@ -168,7 +171,7 @@ public class GhostFollower : MonoBehaviour
                 {
                     string boneName = (_cachedBonePaths != null && i < _cachedBonePaths.Length)
                         ? _cachedBonePaths[i]
-                        : _bones[i].name;
+                        : (!string.IsNullOrEmpty(from.Bones[i].Name) ? from.Bones[i].Name : _bones[i].name);
                     Debug.LogWarning(
                         $"[GhostFollower] Verification failed for '{boneName}' (index {i}): " +
                         $"pos error={positionError:F4}, rot error={rotationError:F2}deg (tolerance {_verifyPositionTolerance:F4}/{_verifyRotationTolerance:F2}).");

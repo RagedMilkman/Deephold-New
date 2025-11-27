@@ -101,8 +101,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             ObjectId = msg.ObjectId,
             Timestamp = msg.Timestamp,
             Positions = Clone(msg.Positions),
-            Forward = Clone(msg.Forward),
-            Up = Clone(msg.Up),
+            Bones = Clone(msg.Bones),
             BonePaths = Clone(msg.BonePaths),
             CharacterRootPosition = msg.CharacterRootPosition,
             CharacterRootForward = msg.CharacterRootForward,
@@ -153,8 +152,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         {
             Timestamp = Time.timeAsDouble,
             Positions = Clone(msg.Positions),
-            Forward = Clone(msg.Forward),
-            Up = Clone(msg.Up),
+            Bones = Clone(msg.Bones),
             BonePaths = Clone(msg.BonePaths),
             CharacterRootPosition = msg.CharacterRootPosition,
             CharacterRootForward = msg.CharacterRootForward,
@@ -202,8 +200,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private BoneSnapshot BuildSnapshot()
     {
         var positions = new Vector3[_bones.Count];
-        var forward = new Vector3[_bones.Count];
-        var up = new Vector3[_bones.Count];
+        var bones = new BoneSnapshotBone[_bones.Count];
 
         BoneSnapshotUtility.CompressRotation(
             _characterRoot.rotation,
@@ -218,16 +215,17 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
             BoneSnapshotUtility.CompressRotation(
                bone.localRotation, //  (i == 0 ? bone.rotation : bone.localRotation),
-                out forward[i], out up[i]
+                out bones[i].Forward, out bones[i].Up
             );
+
+            bones[i].Name = bone.name;
         }
 
         return new BoneSnapshot()
         {
             Timestamp = Time.timeAsDouble,
             Positions = positions,
-            Forward = forward,
-            Up = up,
+            Bones = bones,
             BonePaths = _bonePaths,
             CharacterRootPosition = _characterRoot.position,
             CharacterRootForward = characterForward,
@@ -242,8 +240,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             ObjectId = (uint)NetworkObject.ObjectId,
             Timestamp = snapshot.Timestamp,
             Positions = snapshot.Positions,
-            Forward = snapshot.Forward,
-            Up = snapshot.Up,
+            Bones = snapshot.Bones,
             BonePaths = snapshot.BonePaths,
             CharacterRootPosition = snapshot.CharacterRootPosition,
             CharacterRootForward = snapshot.CharacterRootForward,

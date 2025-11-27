@@ -11,14 +11,28 @@ public struct BoneSnapshot
 {
     public double Timestamp;
     public Vector3[] Positions;
-    public Vector3[] Forward;
-    public Vector3[] Up;
+    public BoneSnapshotBone[] Bones;
     public string[] BonePaths;
     public Vector3 CharacterRootPosition;
     public Vector3 CharacterRootForward;
     public Vector3 CharacterRootUp;
 
-    public int BoneCount => Positions?.Length ?? 0;
+    public int BoneCount
+    {
+        get
+        {
+            int positionCount = Positions?.Length ?? 0;
+            int boneCount = Bones?.Length ?? 0;
+            return Mathf.Min(positionCount, boneCount);
+        }
+    }
+}
+
+public struct BoneSnapshotBone
+{
+    public string Name;
+    public Vector3 Forward;
+    public Vector3 Up;
 }
 
 /// <summary>
@@ -29,8 +43,7 @@ public struct BoneSnapshotMessage : IBroadcast
     public uint ObjectId;
     public double Timestamp;
     public Vector3[] Positions;
-    public Vector3[] Forward;
-    public Vector3[] Up;
+    public BoneSnapshotBone[] Bones;
     public string[] BonePaths;
     public Vector3 CharacterRootPosition;
     public Vector3 CharacterRootForward;
@@ -44,14 +57,17 @@ public struct BoneSnapshotMessage : IBroadcast
         writer.WriteVector3(CharacterRootForward);
         writer.WriteVector3(CharacterRootUp);
 
-        int count = Positions?.Length ?? 0;
+        int count = (Positions != null && Bones != null)
+            ? Mathf.Min(Positions.Length, Bones.Length)
+            : 0;
         writer.WriteInt32(count);
 
         for (int i = 0; i < count; i++)
         {
             writer.WriteVector3(Positions[i]);
-            writer.WriteVector3(Forward[i]);
-            writer.WriteVector3(Up[i]);
+            writer.WriteVector3(Bones[i].Forward);
+            writer.WriteVector3(Bones[i].Up);
+            writer.WriteString(Bones[i].Name);
         }
 
         writer.WriteBoolean(BonePaths != null);
@@ -73,14 +89,17 @@ public struct BoneSnapshotMessage : IBroadcast
 
         int count = reader.ReadInt32();
         Positions = new Vector3[count];
-        Forward = new Vector3[count];
-        Up = new Vector3[count];
+        Bones = new BoneSnapshotBone[count];
 
         for (int i = 0; i < count; i++)
         {
             Positions[i] = reader.ReadVector3();
-            Forward[i] = reader.ReadVector3();
-            Up[i] = reader.ReadVector3();
+            Bones[i] = new BoneSnapshotBone
+            {
+                Forward = reader.ReadVector3(),
+                Up = reader.ReadVector3(),
+                Name = reader.ReadString()
+            };
         }
 
         bool hasPaths = reader.ReadBoolean();
