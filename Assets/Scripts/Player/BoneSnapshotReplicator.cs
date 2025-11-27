@@ -93,8 +93,23 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         if (sender != Owner || msg.ObjectId != NetworkObject.ObjectId)
             return;
 
-        // Re-broadcast to all clients
-        _server.Broadcast(msg, true, Channel.Unreliable);
+        // Re-broadcast to all clients. Clone arrays so pooled message buffers from
+        // the incoming broadcast cannot be mutated while the server sends to
+        // others.
+        var relay = new BoneSnapshotMessage
+        {
+            ObjectId = msg.ObjectId,
+            Timestamp = msg.Timestamp,
+            Positions = Clone(msg.Positions),
+            Forward = Clone(msg.Forward),
+            Up = Clone(msg.Up),
+            BonePaths = Clone(msg.BonePaths),
+            CharacterRootPosition = msg.CharacterRootPosition,
+            CharacterRootForward = msg.CharacterRootForward,
+            CharacterRootUp = msg.CharacterRootUp
+        };
+
+        _server.Broadcast(relay, true, Channel.Unreliable);
     }
 
     // ---------------------------------------------------------------------
