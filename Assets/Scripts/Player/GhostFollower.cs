@@ -28,6 +28,7 @@ public class GhostFollower : MonoBehaviour
     private readonly List<BoneSnapshot> _snapshots = new();
     private readonly Dictionary<string, Transform> _boneLookup = new();
     private readonly Dictionary<string, Transform> _boneNameLookup = new();
+    private readonly Dictionary<string, Transform> _boneSuffixLookup = new();
 
     private string[] _cachedBonePaths;
     private bool _loggedPathMismatch;
@@ -183,6 +184,7 @@ public class GhostFollower : MonoBehaviour
 
         _boneLookup.Clear();
         _boneNameLookup.Clear();
+        _boneSuffixLookup.Clear();
         for (int i = 0; i < _bones.Count; i++)
         {
             string path = _cachedBonePaths[i];
@@ -196,6 +198,8 @@ public class GhostFollower : MonoBehaviour
             string name = _bones[i].name;
             if (!_boneNameLookup.ContainsKey(name))
                 _boneNameLookup.Add(name, _bones[i]);
+
+            AddSuffixes(path, _bones[i]);
         }
     }
 
@@ -230,6 +234,13 @@ public class GhostFollower : MonoBehaviour
             }
             else
             {
+                if (_boneSuffixLookup.TryGetValue(GetSuffix(paths[i], 2), out resolved) ||
+                    _boneSuffixLookup.TryGetValue(GetSuffix(paths[i], 3), out resolved))
+                {
+                    reordered.Add(resolved);
+                    continue;
+                }
+
                 string terminalName = GetTerminalName(paths[i]);
                 if (!string.IsNullOrEmpty(terminalName) && _boneNameLookup.TryGetValue(terminalName, out resolved))
                 {
@@ -257,6 +268,36 @@ public class GhostFollower : MonoBehaviour
     {
         int slashIndex = path.IndexOf('/') + 1;
         return (slashIndex <= 0 || slashIndex >= path.Length) ? path : path.Substring(slashIndex);
+    }
+
+    private void AddSuffixes(string path, Transform bone)
+    {
+        string two = GetSuffix(path, 2);
+        if (!string.IsNullOrEmpty(two) && !_boneSuffixLookup.ContainsKey(two))
+            _boneSuffixLookup.Add(two, bone);
+
+        string three = GetSuffix(path, 3);
+        if (!string.IsNullOrEmpty(three) && !_boneSuffixLookup.ContainsKey(three))
+            _boneSuffixLookup.Add(three, bone);
+    }
+
+    private static string GetSuffix(string path, int segments)
+    {
+        if (segments <= 0 || string.IsNullOrEmpty(path))
+            return string.Empty;
+
+        int slashCount = 0;
+        for (int i = path.Length - 1; i >= 0; i--)
+        {
+            if (path[i] == '/')
+            {
+                slashCount++;
+                if (slashCount == segments)
+                    return path.Substring(i + 1);
+            }
+        }
+
+        return path;
     }
 
     private static string GetTerminalName(string path)
