@@ -131,20 +131,14 @@ public class GhostFollower : MonoBehaviour
     private void ApplySnapshot(BoneSnapshot from, BoneSnapshot to, float t)
     {
         Vector3 characterPosition = Vector3.Lerp(from.CharacterRootPosition, to.CharacterRootPosition, t);
-        Quaternion characterRotation = Quaternion.Slerp(
-            BoneSnapshotUtility.DecompressRotation(from.CharacterRootForward, from.CharacterRootUp),
-            BoneSnapshotUtility.DecompressRotation(to.CharacterRootForward, to.CharacterRootUp),
-            t);
+        Quaternion characterRotation = Quaternion.Slerp(from.CharacterRootRotation, to.CharacterRootRotation, t);
         _characterRoot.SetPositionAndRotation(characterPosition, characterRotation);
 
         int boneCount = Mathf.Min(_bones.Count, Mathf.Min(from.BoneCount, to.BoneCount));
         for (int i = 0; i < boneCount; i++)
         {            
             Vector3 blendedPosition = Vector3.Lerp(from.Positions[i], to.Positions[i], t);
-            Quaternion blendedRotation = Quaternion.Slerp(
-                BoneSnapshotUtility.DecompressRotation(from.Bones[i].Forward, from.Bones[i].Up),
-                BoneSnapshotUtility.DecompressRotation(to.Bones[i].Forward, to.Bones[i].Up),
-                t);
+            Quaternion blendedRotation = Quaternion.Slerp(from.Bones[i].Rotation, to.Bones[i].Rotation, t);
 
             //  if (i == 0)
             //  {

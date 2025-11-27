@@ -104,8 +104,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Bones = Clone(msg.Bones),
             BonePaths = Clone(msg.BonePaths),
             CharacterRootPosition = msg.CharacterRootPosition,
-            CharacterRootForward = msg.CharacterRootForward,
-            CharacterRootUp = msg.CharacterRootUp
+            CharacterRootRotation = msg.CharacterRootRotation
         };
 
         _server.Broadcast(relay, true, Channel.Unreliable);
@@ -155,8 +154,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Bones = Clone(msg.Bones),
             BonePaths = Clone(msg.BonePaths),
             CharacterRootPosition = msg.CharacterRootPosition,
-            CharacterRootForward = msg.CharacterRootForward,
-            CharacterRootUp = msg.CharacterRootUp
+            CharacterRootRotation = msg.CharacterRootRotation
         };
 
         if (_ghostFollower != null)
@@ -202,22 +200,13 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         var positions = new Vector3[_bones.Count];
         var bones = new BoneSnapshotBone[_bones.Count];
 
-        BoneSnapshotUtility.CompressRotation(
-            _characterRoot.rotation,
-            out Vector3 characterForward,
-            out Vector3 characterUp);
-
         for (int i = 0; i < _bones.Count; i++)
         {
             Transform bone = _bones[i];
 
             positions[i] = bone.localPosition; // positions[i] = (i == 0 ? bone.position : bone.localPosition);
 
-            BoneSnapshotUtility.CompressRotation(
-               bone.localRotation, //  (i == 0 ? bone.rotation : bone.localRotation),
-                out bones[i].Forward, out bones[i].Up
-            );
-
+            bones[i].Rotation = bone.localRotation;
             bones[i].Name = bone.name;
         }
 
@@ -228,8 +217,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Bones = bones,
             BonePaths = _bonePaths,
             CharacterRootPosition = _characterRoot.position,
-            CharacterRootForward = characterForward,
-            CharacterRootUp = characterUp
+            CharacterRootRotation = _characterRoot.rotation
         };
     }
 
@@ -243,8 +231,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Bones = snapshot.Bones,
             BonePaths = snapshot.BonePaths,
             CharacterRootPosition = snapshot.CharacterRootPosition,
-            CharacterRootForward = snapshot.CharacterRootForward,
-            CharacterRootUp = snapshot.CharacterRootUp
+            CharacterRootRotation = snapshot.CharacterRootRotation
         };
 
         if (IsServer)

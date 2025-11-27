@@ -14,8 +14,7 @@ public struct BoneSnapshot
     public BoneSnapshotBone[] Bones;
     public string[] BonePaths;
     public Vector3 CharacterRootPosition;
-    public Vector3 CharacterRootForward;
-    public Vector3 CharacterRootUp;
+    public Quaternion CharacterRootRotation;
 
     public int BoneCount
     {
@@ -31,8 +30,7 @@ public struct BoneSnapshot
 public struct BoneSnapshotBone
 {
     public string Name;
-    public Vector3 Forward;
-    public Vector3 Up;
+    public Quaternion Rotation;
 }
 
 /// <summary>
@@ -46,16 +44,14 @@ public struct BoneSnapshotMessage : IBroadcast
     public BoneSnapshotBone[] Bones;
     public string[] BonePaths;
     public Vector3 CharacterRootPosition;
-    public Vector3 CharacterRootForward;
-    public Vector3 CharacterRootUp;
+    public Quaternion CharacterRootRotation;
 
     public void Write(Writer writer)
     {
         writer.WriteUInt32(ObjectId);
         writer.WriteDouble(Timestamp);
         writer.WriteVector3(CharacterRootPosition);
-        writer.WriteVector3(CharacterRootForward);
-        writer.WriteVector3(CharacterRootUp);
+        writer.WriteQuaternion(CharacterRootRotation);
 
         int count = (Positions != null && Bones != null)
             ? Mathf.Min(Positions.Length, Bones.Length)
@@ -65,8 +61,7 @@ public struct BoneSnapshotMessage : IBroadcast
         for (int i = 0; i < count; i++)
         {
             writer.WriteVector3(Positions[i]);
-            writer.WriteVector3(Bones[i].Forward);
-            writer.WriteVector3(Bones[i].Up);
+            writer.WriteQuaternion(Bones[i].Rotation);
             writer.WriteString(Bones[i].Name);
         }
 
@@ -84,8 +79,7 @@ public struct BoneSnapshotMessage : IBroadcast
         ObjectId = reader.ReadUInt32();
         Timestamp = reader.ReadDouble();
         CharacterRootPosition = reader.ReadVector3();
-        CharacterRootForward = reader.ReadVector3();
-        CharacterRootUp = reader.ReadVector3();
+        CharacterRootRotation = reader.ReadQuaternion();
 
         int count = reader.ReadInt32();
         Positions = new Vector3[count];
@@ -96,8 +90,7 @@ public struct BoneSnapshotMessage : IBroadcast
             Positions[i] = reader.ReadVector3();
             Bones[i] = new BoneSnapshotBone
             {
-                Forward = reader.ReadVector3(),
-                Up = reader.ReadVector3(),
+                Rotation = reader.ReadQuaternion(),
                 Name = reader.ReadString()
             };
         }
@@ -168,24 +161,4 @@ public static class BoneSnapshotUtility
         return string.Join("/", stack.ToArray());
     }
 
-    /// <summary>
-    /// Compresses a rotation into two direction vectors (forward/up) for 6-float transport.
-    /// </summary>
-    public static void CompressRotation(Quaternion rotation, out Vector3 forward, out Vector3 up)
-    {
-        forward = rotation * Vector3.forward;
-        up = rotation * Vector3.up;
-    }
-
-    /// <summary>
-    /// Decompresses a rotation encoded as forward and up vectors.
-    /// </summary>
-    public static Quaternion DecompressRotation(Vector3 forward, Vector3 up)
-    {
-        if (forward == Vector3.zero)
-            forward = Vector3.forward;
-        if (up == Vector3.zero)
-            up = Vector3.up;
-        return Quaternion.LookRotation(forward.normalized, up.normalized);
-    }
 }
