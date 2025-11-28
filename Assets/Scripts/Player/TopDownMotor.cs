@@ -290,7 +290,10 @@ public class TopDownMotor : MonoBehaviour
 
     public void ApplyYaw(float yawDeg, Vector3? aimPoint = null)
     {
-        ApplyYawTo(rotateTarget, yawDeg);
+        if (rotationMode != RotationMode.RotateHead || rigAnimator == null)
+        {
+            ApplyYawTo(rotateTarget, yawDeg);
+        }
 
         if (rotationMode == RotationMode.RotateHead && rigAnimator != null)
         {
