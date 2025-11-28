@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using RootMotion.FinalIK;
 using UnityEngine;
 
 /// <summary>
@@ -224,14 +225,14 @@ public class BipedGaitController : MonoBehaviour
             return;
 
         Transform searchRoot = bodyRoot != null ? bodyRoot : transform;
-        TwoBoneIKSolver[] solvers = searchRoot.GetComponentsInChildren<TwoBoneIKSolver>(true);
-        if (solvers == null || solvers.Length == 0)
+        FullBodyBipedIK solver = searchRoot.GetComponentInChildren<FullBodyBipedIK>(true);
+        if (solver == null)
         {
             return;
         }
 
-        bool leftAssigned = AssignFootTargetFromSolvers(leftFoot, TwoBoneIKSolver.LimbDesignation.LeftLeg, solvers);
-        bool rightAssigned = AssignFootTargetFromSolvers(rightFoot, TwoBoneIKSolver.LimbDesignation.RightLeg, solvers);
+        bool leftAssigned = AssignFootTargetFromFinalIk(leftFoot, FootSide.Left, solver);
+        bool rightAssigned = AssignFootTargetFromFinalIk(rightFoot, FootSide.Right, solver);
 
         if (leftAssigned)
         {
@@ -253,48 +254,46 @@ public class BipedGaitController : MonoBehaviour
         }
     }
 
-    private bool AssignFootTargetFromSolvers(Foot foot, TwoBoneIKSolver.LimbDesignation designation, TwoBoneIKSolver[] solvers)
+    private bool AssignFootTargetFromFinalIk(Foot foot, FootSide side, FullBodyBipedIK solver)
     {
-        if (foot == null)
+        if (foot == null || solver == null || solver.solver == null)
             return false;
 
         Transform footTarget = foot.currentTarget;
-        bool foundMatchingSolver = false;
+        IKEffector effector = GetFootEffector(solver, side);
+        if (effector == null)
+            return false;
 
-        for (int i = 0; i < solvers.Length; i++)
+        // If the foot already has a target transform, push that reference
+        // into the solver so the IK chain follows the gait controller.
+        if (footTarget != null)
         {
-            TwoBoneIKSolver solver = solvers[i];
-            if (solver == null || solver.limbDesignation != designation)
-                continue;
+            if (effector.target == footTarget)
+                return false;
 
-            foundMatchingSolver = true;
-
-            // If the foot already has a target transform, push that reference
-            // into the solver so the IK chain follows the gait controller.
-            if (footTarget != null)
-            {
-                if (solver.target == footTarget)
-                    return false;
-
-                solver.target = footTarget;
-                return true;
-            }
-
-            // Otherwise adopt the solver's existing target so the foot can
-            // start driving it.
-            if (solver.target != null)
-            {
-                foot.currentTarget = solver.target;
-                return true;
-            }
+            effector.target = footTarget;
+            return true;
         }
 
-        if (!foundMatchingSolver)
+        // Otherwise adopt the solver's existing target so the foot can
+        // start driving it.
+        if (effector.target != null)
         {
-            Debug.Log($"[{name}] Auto-assign: no solver with designation '{designation}' found yet.");
+            foot.currentTarget = effector.target;
+            return true;
         }
 
         return false;
+    }
+
+    private static IKEffector GetFootEffector(FullBodyBipedIK solver, FootSide side)
+    {
+        if (solver == null || solver.solver == null)
+            return null;
+
+        return side == FootSide.Left
+            ? solver.solver.leftFootEffector
+            : solver.solver.rightFootEffector;
     }
 
     private bool AreFootTargetsAssigned()
