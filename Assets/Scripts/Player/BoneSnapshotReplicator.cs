@@ -208,6 +208,12 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
             bones[i].Rotation = bone.localRotation;
             bones[i].Name = bone.name;
+
+            if (_bones[i].name == "B-hips")
+            {
+                Debug.Log("Hip rotation");
+                Debug.Log(bone.localRotation.eulerAngles);
+            }
         }
 
         return new BoneSnapshot()

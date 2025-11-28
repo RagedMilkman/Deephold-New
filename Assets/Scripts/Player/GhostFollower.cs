@@ -146,14 +146,24 @@ public class GhostFollower : MonoBehaviour
             //  }
             //  else
             //  {
+
+            
+
             _bones[i].SetLocalPositionAndRotation(blendedPosition, blendedRotation);
+
+            //if (_bones[i].name == "B-hips")
+            //{
+            //    Debug.Log("Hip rotation");
+            //    Debug.Log(_bones[i].transform.localRotation.eulerAngles);
+            //    Debug.Log(blendedRotation.eulerAngles);
+            //}
+                
            // _bones[i].localPosition = blendedPosition;
            //     _bones[i].localRotation = blendedRotation;
-        //    }
+           //    }
 
             if (_verifyAfterApply)
             {
-                Debug.Log("Verify");
 
                 Vector3 currentPosition = _bones[i].localPosition;
                 Quaternion currentRotation = _bones[i].localRotation;

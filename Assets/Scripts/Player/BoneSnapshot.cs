@@ -51,7 +51,7 @@ public struct BoneSnapshotMessage : IBroadcast
         writer.WriteUInt32(ObjectId);
         writer.WriteDouble(Timestamp);
         writer.WriteVector3(CharacterRootPosition);
-        writer.WriteQuaternion(CharacterRootRotation);
+        writer.Writequaternion(CharacterRootRotation);
 
         int count = (Positions != null && Bones != null)
             ? Mathf.Min(Positions.Length, Bones.Length)
@@ -61,7 +61,7 @@ public struct BoneSnapshotMessage : IBroadcast
         for (int i = 0; i < count; i++)
         {
             writer.WriteVector3(Positions[i]);
-            writer.WriteQuaternion(Bones[i].Rotation);
+            writer.Writequaternion(Bones[i].Rotation);
             writer.WriteString(Bones[i].Name);
         }
 
@@ -79,7 +79,7 @@ public struct BoneSnapshotMessage : IBroadcast
         ObjectId = reader.ReadUInt32();
         Timestamp = reader.ReadDouble();
         CharacterRootPosition = reader.ReadVector3();
-        CharacterRootRotation = reader.ReadQuaternion();
+        CharacterRootRotation = reader.Readquaternion();
 
         int count = reader.ReadInt32();
         Positions = new Vector3[count];
@@ -90,7 +90,7 @@ public struct BoneSnapshotMessage : IBroadcast
             Positions[i] = reader.ReadVector3();
             Bones[i] = new BoneSnapshotBone
             {
-                Rotation = reader.ReadQuaternion(),
+                Rotation = reader.Readquaternion(),
                 Name = reader.ReadString()
             };
         }
