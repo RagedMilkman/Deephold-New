@@ -1020,7 +1020,7 @@ public class HumanoidRigAnimator : MonoBehaviour
             usedNodes.Add(node);
         }
 
-        bool parentNeeded = result.ShouldAskParent;
+        bool parentNeeded = ShouldProcessParent(node, result);
 
         if (!parentNeeded && node.Parent?.HasResidualRotation?.Invoke() == true)
         {
@@ -1039,6 +1039,21 @@ public class HumanoidRigAnimator : MonoBehaviour
         }
 
         return result;
+    }
+
+    private bool ShouldProcessParent(BoneChainNode node, BoneRotator.BoneRotationResult result)
+    {
+        if (!result.ShouldAskParent)
+        {
+            return false;
+        }
+
+        if (node.AssociatedBone == HumanBodyBones.Head && !ShouldForceParentRotation)
+        {
+            return result.ExceededComfort;
+        }
+
+        return true;
     }
 
     private static Vector3 GetTargetForNode(BoneChainNode node, Vector3 headTarget, Vector3 chestTarget)
