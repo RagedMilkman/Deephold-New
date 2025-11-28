@@ -1110,11 +1110,7 @@ public class HumanoidRigAnimator : MonoBehaviour
             return;
         }
 
-        if (!headExceededComfortLastFrame)
-        {
-            UpdateChestLookTarget(headTarget);
-        }
-
+        UpdateChestLookTarget(headTarget);
         headExceededComfortLastFrame = true;
     }
 
