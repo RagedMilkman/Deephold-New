@@ -12,6 +12,7 @@ public class TopDownMovementInteraction : NetworkBehaviour
     [Header("References")]
     [SerializeField] private TopDownMotor _motor;
     [SerializeField] private YawReplicator _yawReplicator;
+    [SerializeField] private PositionReplicator _positionReplicator;
     [SerializeField] private Camera _ownerCamera;
     [SerializeField] private AimIK _aimIK;
     [SerializeField] private BoneSnapshotReplicator _boneSnapshotReplicator;
@@ -24,6 +25,7 @@ public class TopDownMovementInteraction : NetworkBehaviour
     {
         if (!_motor) _motor = GetComponentInChildren<TopDownMotor>();
         if (!_yawReplicator) _yawReplicator = GetComponentInChildren<YawReplicator>();
+        if (!_positionReplicator) _positionReplicator = GetComponentInChildren<PositionReplicator>();
         if (!_ownerCamera) _ownerCamera = GetComponentInChildren<Camera>(true);
         if (!_aimIK) _aimIK = GetComponentInChildren<AimIK>();
         if (!_boneSnapshotReplicator) _boneSnapshotReplicator = GetComponentInChildren<BoneSnapshotReplicator>();
@@ -107,6 +109,7 @@ public class TopDownMovementInteraction : NetworkBehaviour
         _motor.SetActiveStance(activeStance);
 
         _motor.TickMove(input, wantsSprint, Time.deltaTime);
+        _positionReplicator?.SubmitPosition(_motor.transform.position);
 
         // Mouse-aim sets facing (and replicates yaw)
         if (mouse != null &&

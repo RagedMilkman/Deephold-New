@@ -307,6 +307,11 @@ public class TopDownMotor : MonoBehaviour
     public void ApplyReplicatedYaw(float yawDeg)
         => ApplyYaw(yawDeg);
 
+    public void ApplyReplicatedPosition(Vector3 position)
+    {
+        transform.position = position;
+    }
+
     public void LockRootYaw()
     {
         var e = transform.eulerAngles;

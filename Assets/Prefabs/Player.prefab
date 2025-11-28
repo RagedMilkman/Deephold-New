@@ -54,6 +54,7 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 6390988891232470549}
   _motor: {fileID: 1749205242565629453}
   _yawReplicator: {fileID: 3605412805779328133}
+  _positionReplicator: {fileID: 5964103329937050036}
   _ownerCamera: {fileID: 7750328062498287493}
   _aimIK: {fileID: 0}
   _boneSnapshotReplicator: {fileID: 0}
@@ -528,6 +529,9 @@ PrefabInstance:
       addedObject: {fileID: 3605412805779328133}
     - targetCorrespondingSourceObject: {fileID: 7478472528683366501, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 5964103329937050036}
+    - targetCorrespondingSourceObject: {fileID: 7478472528683366501, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1315533097734741336}
     - targetCorrespondingSourceObject: {fileID: 7478472528683366501, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       insertIndex: -1
@@ -557,6 +561,25 @@ MonoBehaviour:
   _motor: {fileID: 1749205242565629453}
   _sendInterval: 0.05
   _minDelta: 0.5
+--- !u!114 &5964103329937050036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465242717540228781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f774f9c2f0f4c2da3a3f26ddc4c2b59, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PositionReplicator
+  _componentIndexCache: 2
+  _addedNetworkObject: {fileID: 6390988891232470549}
+  _networkObjectCache: {fileID: 6390988891232470549}
+  _target: {fileID: 1465242717540228781}
+  _motor: {fileID: 1749205242565629453}
+  _sendInterval: 0.05
+  _minDistance: 0.01
 --- !u!143 &1315533097734741336
 CharacterController:
   m_ObjectHideFlags: 0
