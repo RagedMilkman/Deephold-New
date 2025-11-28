@@ -399,6 +399,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         else if (hasHeadLookTarget)
         {
             UpdateCurrentHeadLookTarget();
+            UpdateTargetsForActiveStance();
             ApplyHeadLookAtTarget();
         }
         else
@@ -573,6 +574,25 @@ public class HumanoidRigAnimator : MonoBehaviour
     private void UpdateHeadLookTargetLinearly()
     {
         currentHeadLookTarget = desiredHeadLookTarget;
+    }
+
+    private void UpdateTargetsForActiveStance()
+    {
+        if (currentStance != TopDownMotor.Stance.Active)
+        {
+            return;
+        }
+
+        desiredChestLookTarget = desiredHeadLookTarget;
+
+        if (!chestTargetInitialized)
+        {
+            chestLookTarget = desiredChestLookTarget;
+            chestTargetInitialized = true;
+            return;
+        }
+
+        SmoothChestLookTarget();
     }
 
     private void SmoothChestLookTarget()
