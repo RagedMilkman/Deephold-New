@@ -1152,7 +1152,9 @@ public class HumanoidRigAnimator : MonoBehaviour
 
     private void UpdateChestLookTarget(Vector3 headTarget)
     {
-        desiredChestLookTarget = GetChestTarget(headTarget);
+        desiredChestLookTarget = currentStance == TopDownMotor.Stance.Active
+            ? headTarget
+            : GetChestTarget(headTarget);
 
         if (!chestTargetInitialized)
         {
