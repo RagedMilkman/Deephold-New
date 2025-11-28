@@ -697,6 +697,8 @@ MonoBehaviour:
   headTargetLongitudeSpeed: 300
   headYawSpeed: 360
   headPitchSpeed: 360
+  chestTargetOffsetDistance: 0
+  chestTargetVerticalOffsetDistance: -0.5
   headYawRestrictLimit: 60
   headPitchRestrictLimit: 40
   comfortableHeadYawLimit: 30
@@ -713,6 +715,7 @@ MonoBehaviour:
   spinePitchAxis: 1
   drawHeadComfortRange: 1
   drawSpineComfortRange: 1
+  drawChestTarget: 0
   comfortRangeDebugLength: 1
   characterYawSpeed: 720
   bipedIk: {fileID: 0}
