@@ -56,7 +56,6 @@ MonoBehaviour:
   _yawReplicator: {fileID: 3605412805779328133}
   _positionReplicator: {fileID: 5964103329937050036}
   _ownerCamera: {fileID: 7750328062498287493}
-  _aimIK: {fileID: 0}
   _boneSnapshotReplicator: {fileID: 0}
   _ghostPrefab: {fileID: 1414821280921427797, guid: 2c9c792d6eea478fb48a0c1be088fdb0, type: 3}
 --- !u!114 &6390988891232470549
@@ -368,6 +367,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 2813405995968088212, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.023701288
+      objectReference: {fileID: 0}
+    - target: {fileID: 2813405995968088212, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.073229335
+      objectReference: {fileID: 0}
     - target: {fileID: 2849586331574408223, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -431,6 +438,14 @@ PrefabInstance:
     - target: {fileID: 4652861837701102537, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalPosition.z
       value: -0.043278616
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659229053818309540, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.05646831
+      objectReference: {fileID: 0}
+    - target: {fileID: 4659229053818309540, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.03748316
       objectReference: {fileID: 0}
     - target: {fileID: 4984505607652927022, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: state
@@ -536,6 +551,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7478472528683366501, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1749205242565629453}
+    - targetCorrespondingSourceObject: {fileID: 999019639842759593, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3070434819797415186}
   m_SourcePrefab: {fileID: 100100000, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
 --- !u!1 &1465242717540228781 stripped
 GameObject:
@@ -637,10 +655,9 @@ MonoBehaviour:
   minAimDistance: 0.05
   defaultStance: 0
   lockRootYaw: 1
-  rotationMode: 0
-  aimIK: {fileID: 0}
+  rotationMode: 1
+  rigAnimator: {fileID: 3070434819797415186}
   headLookFallbackDistance: 5
-  headLookWeight: 1
 --- !u!4 &6489204562721431007 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2995738668064062231, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
@@ -651,3 +668,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2301636281318634596, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
   m_PrefabInstance: {fileID: 8330895534152148680}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &9097396903711180129 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 999019639842759593, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+  m_PrefabInstance: {fileID: 8330895534152148680}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3070434819797415186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9097396903711180129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4400d87f2c7a704db0381a8de634627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HumanoidRigAnimator
+  debugSpinArms: 0
+  debugSpinLegs: 0
+  debugSpinTorso: 0
+  debugSpinHead: 0
+  debugSpinSpeed: 180
+  enableHeadRotation: 1
+  enableSpineRotation: 1
+  enableCharacterRotation: 1
+  headTargetLatitudeSpeed: 300
+  headTargetLongitudeSpeed: 300
+  headYawSpeed: 360
+  headPitchSpeed: 360
+  headYawRestrictLimit: 60
+  headPitchRestrictLimit: 40
+  comfortableHeadYawLimit: 30
+  comfortableHeadPitchLimit: 30
+  headYawAxis: 2
+  headPitchAxis: 1
+  spineYawRestrictLimit: 30
+  spinePitchRestrictLimit: 30
+  comfortableSpineYawLimit: 20
+  comfortableSpinePitchLimit: 15
+  spineYawSpeed: 180
+  spinePitchSpeed: 180
+  spineYawAxis: 2
+  spinePitchAxis: 1
+  drawHeadComfortRange: 1
+  drawSpineComfortRange: 1
+  comfortRangeDebugLength: 1
+  characterYawSpeed: 720
+  bipedIk: {fileID: 0}
+  leftHandTarget: {fileID: 0}
+  rightHandTarget: {fileID: 0}
+  handPositionWeight: 1
+  handRotationWeight: 1

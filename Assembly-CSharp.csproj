@@ -62,6 +62,7 @@
     <Analyzer Include="E:\Code\Unity\Deephold\Assets\FishNet\Runtime\Plugins\CodeAnalysis\FishNet.CodeAnalysis.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Player\HumanoidRigDebugVisualizer.cs" />
     <Compile Include="Assets\Scripts\NetworkBootstrapper.cs" />
     <Compile Include="Assets\FishNet\Upgrading\UpgradeFromMirrorMenu.cs" />
     <Compile Include="Assets\Scripts\Player\GhostFollower.cs" />
