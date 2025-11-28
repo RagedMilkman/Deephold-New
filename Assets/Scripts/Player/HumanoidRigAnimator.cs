@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using RootMotion.FinalIK;
 
 /// <summary>
 /// Humanoid rig helper that exposes simple controls for driving debug spins and head look direction.
@@ -38,18 +39,6 @@ public class HumanoidRigAnimator : MonoBehaviour
         internal Action ResetState { get; }
         internal Func<bool> HasResidualRotation { get; }
         internal HumanBodyBones? AssociatedBone { get; }
-    }
-
-    private sealed class ArmRig
-    {
-        internal TwoBoneIKSolver Solver;
-        internal bool HasDefaultTarget;
-        internal Transform DefaultTarget;
-        internal HandGripAlign GripAlign;
-        internal bool HasDefaultHandMount;
-        internal Transform DefaultHandMount;
-        internal Transform DesiredWristTarget;
-        internal Transform DesiredPalmTarget;
     }
 
     private enum BoneAxisOption
@@ -118,6 +107,13 @@ public class HumanoidRigAnimator : MonoBehaviour
     [Header("Character Rotation Smoothing")]
     [SerializeField] [Min(0f)] private float characterYawSpeed = 720f;
 
+    [Header("Final IK Integration")]
+    [SerializeField] private BipedIK bipedIk;
+    [SerializeField] private Transform leftHandTarget;
+    [SerializeField] private Transform rightHandTarget;
+    [SerializeField] [Range(0f, 1f)] private float handPositionWeight = 1f;
+    [SerializeField] [Range(0f, 1f)] private float handRotationWeight = 1f;
+
     private Animator humanoidAnimator;
     private bool bonesReady;
 
@@ -155,8 +151,6 @@ public class HumanoidRigAnimator : MonoBehaviour
     private bool lastHeadRotationEnabled;
     private bool lastSpineRotationEnabled;
     private bool lastCharacterRotationEnabled;
-
-    private readonly Dictionary<HandMount.HandSide, ArmRig> armRigs = new();
 
     internal float ComfortRangeDebugLength => comfortRangeDebugLength;
     internal bool ShouldForceParentRotation =>
@@ -214,6 +208,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     private void Awake()
     {
         CacheAnimator();
+        CacheBipedIk();
         CacheBones();
         InitializeBoneRotators();
     }
@@ -221,6 +216,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     private void OnEnable()
     {
         RestoreDefaultPoses();
+        ApplyHandTargets();
     }
 
     private void OnDisable()
@@ -231,9 +227,11 @@ public class HumanoidRigAnimator : MonoBehaviour
     private void Reset()
     {
         CacheAnimator();
+        CacheBipedIk();
         CacheBones();
         InitializeBoneRotators();
         RestoreDefaultPoses();
+        ApplyHandTargets();
     }
 
     public void SetHeadLookTarget(Vector3 worldPosition)
@@ -306,229 +304,21 @@ public class HumanoidRigAnimator : MonoBehaviour
         }
 
         bonesReady = bonePoses.Count > 0;
-
-        CacheArmAttachments();
     }
 
-    public void RefreshArmAttachments()
+    public void ApplyHandTargets(Transform leftTarget = null, Transform rightTarget = null)
     {
-        CacheArmAttachments();
+        leftHandTarget = leftTarget;
+        rightHandTarget = rightTarget;
+        ApplyHandEffectors();
     }
 
-    public void ApplyHandMounts(
-        Transform leftWristTarget,
-        Transform leftPalmTarget,
-        Transform rightWristTarget,
-        Transform rightPalmTarget)
+    private void CacheBipedIk()
     {
-        ApplyHandMount(HandMount.HandSide.Left, leftWristTarget, leftPalmTarget);
-        ApplyHandMount(HandMount.HandSide.Right, rightWristTarget, rightPalmTarget);
-    }
-
-    private void CacheArmAttachments()
-    {
-        if (humanoidAnimator == null || !humanoidAnimator.isHuman)
-        {
-            armRigs.Clear();
-            return;
-        }
-
-        var seenSides = new HashSet<HandMount.HandSide>();
-        var leftHand = humanoidAnimator.GetBoneTransform(HumanBodyBones.LeftHand);
-        var rightHand = humanoidAnimator.GetBoneTransform(HumanBodyBones.RightHand);
-
-        foreach (var solver in GetComponentsInChildren<TwoBoneIKSolver>(true))
-        {
-            if (!solver || !solver.wrist)
-                continue;
-
-            var side = DetermineHandSide(solver.wrist, leftHand, rightHand);
-            if (!side.HasValue)
-                continue;
-
-            seenSides.Add(side.Value);
-            var rig = GetOrCreateArmRig(side.Value);
-
-            if (rig.Solver != solver)
-            {
-                rig.Solver = solver;
-                rig.HasDefaultTarget = false;
-            }
-
-            if (!rig.HasDefaultTarget)
-            {
-                rig.DefaultTarget = solver.target;
-                rig.HasDefaultTarget = true;
-            }
-
-            ApplyArmRigTargets(rig);
-        }
-
-        foreach (var aligner in GetComponentsInChildren<HandGripAlign>(true))
-        {
-            if (!aligner || !aligner.wristJoint)
-                continue;
-
-            var side = DetermineHandSide(aligner.wristJoint, leftHand, rightHand);
-            if (!side.HasValue)
-                continue;
-
-            seenSides.Add(side.Value);
-            var rig = GetOrCreateArmRig(side.Value);
-
-            if (rig.GripAlign != aligner)
-            {
-                rig.GripAlign = aligner;
-                rig.HasDefaultHandMount = false;
-            }
-
-            if (!rig.HasDefaultHandMount)
-            {
-                rig.DefaultHandMount = aligner.itemHandMount;
-                rig.HasDefaultHandMount = true;
-            }
-
-            ApplyArmRigTargets(rig);
-        }
-
-        var sidesToRemove = new List<HandMount.HandSide>();
-        foreach (var entry in armRigs)
-        {
-            if (seenSides.Contains(entry.Key))
-                continue;
-
-            var rig = entry.Value;
-            bool hasSolver = rig.Solver;
-            bool hasAlign = rig.GripAlign;
-            bool hasPendingTargets = rig.DesiredWristTarget != null || rig.DesiredPalmTarget != null;
-
-            if (!hasSolver && !hasAlign && !hasPendingTargets)
-                sidesToRemove.Add(entry.Key);
-        }
-
-        for (int i = 0; i < sidesToRemove.Count; i++)
-            armRigs.Remove(sidesToRemove[i]);
-    }
-
-    private void ApplyHandMount(HandMount.HandSide side, Transform wristTarget, Transform palmTarget)
-    {
-        var rig = GetOrCreateArmRig(side);
-        if (rig == null)
+        if (bipedIk != null)
             return;
 
-        rig.DesiredWristTarget = wristTarget;
-        rig.DesiredPalmTarget = palmTarget;
-
-        ApplyArmRigTargets(rig);
-    }
-
-    private void ApplyArmRigTargets(ArmRig rig)
-    {
-        if (rig == null)
-            return;
-
-        bool solverUpdated = false;
-        if (rig.Solver)
-        {
-            Transform resolvedTarget = rig.DesiredWristTarget != null
-                ? rig.DesiredWristTarget
-                : (rig.HasDefaultTarget ? rig.DefaultTarget : rig.Solver.target);
-
-            if (rig.Solver.target != resolvedTarget)
-            {
-                rig.Solver.target = resolvedTarget;
-                solverUpdated = true;
-            }
-            else if (resolvedTarget != null)
-            {
-                solverUpdated = true;
-            }
-
-            if (solverUpdated)
-            {
-                try
-                {
-                    rig.Solver.Solve();
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogException(ex, rig.Solver);
-                }
-            }
-        }
-
-        if (rig.GripAlign)
-        {
-            Transform resolvedMount = rig.DesiredPalmTarget != null
-                ? rig.DesiredPalmTarget
-                : (rig.HasDefaultHandMount ? rig.DefaultHandMount : rig.GripAlign.itemHandMount);
-
-            bool alignerUpdated = false;
-            if (rig.GripAlign.itemHandMount != resolvedMount)
-            {
-                rig.GripAlign.itemHandMount = resolvedMount;
-                alignerUpdated = true;
-            }
-            else if (resolvedMount != null)
-            {
-                alignerUpdated = true;
-            }
-
-            if (alignerUpdated)
-            {
-                try
-                {
-                    rig.GripAlign.AlignImmediate();
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogException(ex, rig.GripAlign);
-                }
-            }
-        }
-    }
-
-    private ArmRig GetOrCreateArmRig(HandMount.HandSide side)
-    {
-        if (!armRigs.TryGetValue(side, out var rig) || rig == null)
-        {
-            rig = new ArmRig();
-            armRigs[side] = rig;
-        }
-
-        return rig;
-    }
-
-    private bool IsArmRigActive(HandMount.HandSide side)
-    {
-        if (!armRigs.TryGetValue(side, out var rig) || rig == null)
-            return false;
-
-        var solver = rig.Solver;
-        if (!solver)
-            return false;
-
-        if (!solver.isActiveAndEnabled)
-            return false;
-
-        return solver.ikWeight > 0f;
-    }
-
-    private static HandMount.HandSide? DetermineHandSide(
-        Transform wrist,
-        Transform leftHandBone,
-        Transform rightHandBone)
-    {
-        if (!wrist)
-            return null;
-
-        if (leftHandBone && (wrist == leftHandBone || wrist.IsChildOf(leftHandBone)))
-            return HandMount.HandSide.Left;
-
-        if (rightHandBone && (wrist == rightHandBone || wrist.IsChildOf(rightHandBone)))
-            return HandMount.HandSide.Right;
-
-        return null;
+        bipedIk = GetComponentInChildren<BipedIK>();
     }
 
     private void LateUpdate()
@@ -540,26 +330,14 @@ public class HumanoidRigAnimator : MonoBehaviour
             return;
         }
 
+        ApplyHandEffectors();
+
         if (debugSpinArms)
         {
             ApplySpin(HumanBodyBones.LeftUpperArm, Vector3.up);
             ApplySpin(HumanBodyBones.RightUpperArm, Vector3.up);
             ApplySpin(HumanBodyBones.LeftLowerArm, Vector3.up);
             ApplySpin(HumanBodyBones.RightLowerArm, Vector3.up);
-        }
-        else
-        {
-            if (!IsArmRigActive(HandMount.HandSide.Left))
-            {
-                RestoreBoneDefaultPose(HumanBodyBones.LeftUpperArm);
-                RestoreBoneDefaultPose(HumanBodyBones.LeftLowerArm);
-            }
-
-            if (!IsArmRigActive(HandMount.HandSide.Right))
-            {
-                RestoreBoneDefaultPose(HumanBodyBones.RightUpperArm);
-                RestoreBoneDefaultPose(HumanBodyBones.RightLowerArm);
-            }
         }
 
         if (debugSpinLegs)
@@ -626,6 +404,34 @@ public class HumanoidRigAnimator : MonoBehaviour
         {
             HumanoidRigDebugVisualizer.DrawHeadTargetLine(headPose, currentHeadLookTarget);
         }
+    }
+
+    private void ApplyHandEffectors()
+    {
+        if (bipedIk == null)
+        {
+            CacheBipedIk();
+        }
+
+        if (bipedIk == null)
+        {
+            return;
+        }
+
+        ApplyHandEffector(bipedIk.solvers.leftHand, leftHandTarget);
+        ApplyHandEffector(bipedIk.solvers.rightHand, rightHandTarget);
+    }
+
+    private void ApplyHandEffector(IKSolverLimb solver, Transform target)
+    {
+        if (solver == null)
+        {
+            return;
+        }
+
+        solver.target = target;
+        solver.IKPositionWeight = target && handPositionWeight > 0f ? handPositionWeight : 0f;
+        solver.IKRotationWeight = target && handRotationWeight > 0f ? handRotationWeight : 0f;
     }
 
     private void ApplyRotation(HumanBodyBones bone, Quaternion offset)
