@@ -64,8 +64,10 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\NetworkBootstrapper.cs" />
     <Compile Include="Assets\FishNet\Upgrading\UpgradeFromMirrorMenu.cs" />
+    <Compile Include="Assets\Scripts\Player\TwoBoneIKSolver.cs" />
     <Compile Include="Assets\Scripts\Player\GhostFollower.cs" />
     <Compile Include="Assets\Scripts\Player\PositionReplicator.cs" />
+    <Compile Include="Assets\Scripts\Player\BoneRotator.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\TopDownMovementInteraction.cs" />
     <Compile Include="Assets\FishNet\Upgrading\MirrorUpgrade.cs" />
     <Compile Include="Assets\Scripts\Player\BoneSnapshot.cs" />
@@ -75,8 +77,10 @@
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\Player\OwnerOnlyVisibility.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerCameraOrbit.cs" />
+    <Compile Include="Assets\Scripts\Player\HumanoidRigAnimator.cs" />
     <Compile Include="Assets\Scripts\NetworkPlayerController.cs" />
     <Compile Include="Assets\Scripts\Player\BoneSnapshotDebugUI.cs" />
+    <Compile Include="Assets\Scripts\Player\HandGripAlign.cs" />
     <Compile Include="Assets\Scripts\Player\TopDownMotor.cs" />
   </ItemGroup>
   <ItemGroup>
