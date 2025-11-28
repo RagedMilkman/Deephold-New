@@ -67,6 +67,10 @@ public class HumanoidRigAnimator : MonoBehaviour
     [SerializeField] [Min(0f)] private float headTargetLatitudeSpeed = 90f;
     [SerializeField] [Min(0f)] private float headTargetLongitudeSpeed = 135f;
 
+    [Header("Chest Target Smoothing")]
+    [SerializeField] [Min(0f)] private float chestTargetLatitudeSpeed = 90f;
+    [SerializeField] [Min(0f)] private float chestTargetLongitudeSpeed = 135f;
+
     [Header("Head Rotation Smoothing")]
     [SerializeField] [Min(0f)] private float headYawSpeed = 360f;
     [SerializeField] [Min(0f)] private float headPitchSpeed = 360f;
@@ -149,6 +153,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     private bool hasHeadLookTarget;
     private Vector3 desiredHeadLookTarget;
     private Vector3 currentHeadLookTarget;
+    private Vector3 desiredChestLookTarget;
     private Vector3 chestLookTarget;
     private BoneRotator headRotator;
     private BoneRotator spineRotator;
@@ -268,6 +273,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         hasHeadLookTarget = false;
         desiredHeadLookTarget = Vector3.zero;
         currentHeadLookTarget = Vector3.zero;
+        desiredChestLookTarget = Vector3.zero;
         chestLookTarget = Vector3.zero;
         chestTargetInitialized = false;
         headExceededComfortLastFrame = false;
@@ -567,6 +573,51 @@ public class HumanoidRigAnimator : MonoBehaviour
     private void UpdateHeadLookTargetLinearly()
     {
         currentHeadLookTarget = desiredHeadLookTarget;
+    }
+
+    private void SmoothChestLookTarget()
+    {
+        if (!bonePoses.TryGetValue(HumanBodyBones.Chest, out var chestPose) || chestPose.Transform == null)
+        {
+            chestLookTarget = desiredChestLookTarget;
+            return;
+        }
+
+        Vector3 chestPosition = chestPose.Transform.position;
+        Vector3 desiredOffset = desiredChestLookTarget - chestPosition;
+        if (desiredOffset.sqrMagnitude < 0.0001f)
+        {
+            chestLookTarget = desiredChestLookTarget;
+            return;
+        }
+
+        Vector3 currentOffset = chestLookTarget - chestPosition;
+        if (currentOffset.sqrMagnitude < 0.0001f)
+        {
+            currentOffset = desiredOffset;
+        }
+
+        Vector3 desiredDirection = desiredOffset.normalized;
+        Vector3 currentDirection = currentOffset.normalized;
+
+        DirectionToLatLon(desiredDirection, out float desiredLatitude, out float desiredLongitude);
+        DirectionToLatLon(currentDirection, out float currentLatitude, out float currentLongitude);
+
+        float maxLatitudeDelta = chestTargetLatitudeSpeed * Time.deltaTime;
+        float maxLongitudeDelta = chestTargetLongitudeSpeed * Time.deltaTime;
+
+        float newLatitude = chestTargetLatitudeSpeed <= 0f
+            ? desiredLatitude
+            : MoveAngleTowards(currentLatitude, desiredLatitude, maxLatitudeDelta);
+
+        float newLongitude = chestTargetLongitudeSpeed <= 0f
+            ? desiredLongitude
+            : MoveAngleTowards(currentLongitude, desiredLongitude, maxLongitudeDelta);
+
+        Vector3 updatedDirection = LatLonToDirection(newLatitude, newLongitude);
+
+        float desiredDistance = desiredOffset.magnitude;
+        chestLookTarget = chestPosition + updatedDirection * desiredDistance;
     }
 
     private bool AdjustCharacterYaw(Vector3 targetPosition)
@@ -1101,8 +1152,16 @@ public class HumanoidRigAnimator : MonoBehaviour
 
     private void UpdateChestLookTarget(Vector3 headTarget)
     {
-        chestLookTarget = GetChestTarget(headTarget);
-        chestTargetInitialized = true;
+        desiredChestLookTarget = GetChestTarget(headTarget);
+
+        if (!chestTargetInitialized)
+        {
+            chestLookTarget = desiredChestLookTarget;
+            chestTargetInitialized = true;
+            return;
+        }
+
+        SmoothChestLookTarget();
     }
 
     private void UpdateChestLookTargetIfNeeded(Vector3 headTarget, bool headExceededComfort)
