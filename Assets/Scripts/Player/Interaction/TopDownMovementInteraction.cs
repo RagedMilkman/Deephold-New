@@ -1,11 +1,10 @@
 using FishNet.Object;
-using RootMotion.FinalIK;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
 /// Owner-only top down movement and aiming controller.
-/// Drives local FinalIK aiming and sends yaw to other clients via <see cref="YawReplicator"/>.
+/// Drives local player aiming and sends yaw to other clients via <see cref="YawReplicator"/>.
 /// </summary>
 public class TopDownMovementInteraction : NetworkBehaviour
 {
@@ -14,7 +13,6 @@ public class TopDownMovementInteraction : NetworkBehaviour
     [SerializeField] private YawReplicator _yawReplicator;
     [SerializeField] private PositionReplicator _positionReplicator;
     [SerializeField] private Camera _ownerCamera;
-    [SerializeField] private AimIK _aimIK;
     [SerializeField] private BoneSnapshotReplicator _boneSnapshotReplicator;
     [SerializeField] private GameObject _ghostPrefab;
 
@@ -27,7 +25,6 @@ public class TopDownMovementInteraction : NetworkBehaviour
         if (!_yawReplicator) _yawReplicator = GetComponentInChildren<YawReplicator>();
         if (!_positionReplicator) _positionReplicator = GetComponentInChildren<PositionReplicator>();
         if (!_ownerCamera) _ownerCamera = GetComponentInChildren<Camera>(true);
-        if (!_aimIK) _aimIK = GetComponentInChildren<AimIK>();
         if (!_boneSnapshotReplicator) _boneSnapshotReplicator = GetComponentInChildren<BoneSnapshotReplicator>();
     }
 
@@ -66,9 +63,6 @@ public class TopDownMovementInteraction : NetworkBehaviour
             var mainListener = Camera.main.GetComponent<AudioListener>();
             if (mainListener) mainListener.enabled = false;
         }
-
-        if (_motor && _aimIK)
-            _motor.SetAimSolver(_aimIK);
     }
 
     private void DisablePlayerSystems()
@@ -82,8 +76,6 @@ public class TopDownMovementInteraction : NetworkBehaviour
             if (listener) listener.enabled = false;
         }
 
-        if (_aimIK)
-            _aimIK.enabled = false;
     }
 
     private void Update()

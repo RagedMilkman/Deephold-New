@@ -1,5 +1,4 @@
 ﻿using System;
-using RootMotion.FinalIK;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -52,9 +51,8 @@ public class TopDownMotor : MonoBehaviour
     [Header("Root Rotation")]
     [SerializeField] bool lockRootYaw = true;   // WASD never rotates player root/camera
     [SerializeField] RotationMode rotationMode = RotationMode.RotateBody;
-    [SerializeField] AimIK aimIK;
+    [SerializeField] HumanoidRigAnimator rigAnimator;
     [SerializeField] float headLookFallbackDistance = 5f;
-    [SerializeField, Range(0f, 1f)] float headLookWeight = 1f;
 
     Vector3 moveVel;
     float initialRootYaw;
@@ -64,19 +62,21 @@ public class TopDownMotor : MonoBehaviour
     void Reset()
     {
         controller = GetComponent<CharacterController>();
-        if (!aimIK) aimIK = GetComponentInChildren<AimIK>();
+        if (!rigAnimator) rigAnimator = GetComponentInChildren<HumanoidRigAnimator>();
         if (!rotateTarget) rotateTarget = body ? body : transform;
         currentMovementType = MovementType.Standing;
+        UpdateRigAnimatorState();
     }
 
     void Awake()
     {
         if (!controller) controller = GetComponent<CharacterController>();
-        if (!aimIK) aimIK = GetComponentInChildren<AimIK>();
+        if (!rigAnimator) rigAnimator = GetComponentInChildren<HumanoidRigAnimator>();
         if (!rotateTarget) rotateTarget = body ? body : transform;
         initialRootYaw = transform.eulerAngles.y;
         currentStance = defaultStance;
         currentMovementType = MovementType.Standing;
+        UpdateRigAnimatorState();
     }
 
     void OnValidate()
@@ -88,7 +88,7 @@ public class TopDownMotor : MonoBehaviour
         if (!Application.isPlaying)
         {
             if (!controller) controller = GetComponent<CharacterController>();
-            if (!aimIK) aimIK = GetComponentInChildren<AimIK>();
+            if (!rigAnimator) rigAnimator = GetComponentInChildren<HumanoidRigAnimator>();
             if (!rotateTarget) rotateTarget = body ? body : transform;
         }
     }
@@ -100,10 +100,10 @@ public class TopDownMotor : MonoBehaviour
         if (!cam) cam = ownerCam;
     }
 
-    public void SetAimSolver(AimIK solver)
+    public void SetRigAnimator(HumanoidRigAnimator animator)
     {
-        aimIK = solver;
-        UpdateAimIK(null);
+        rigAnimator = animator;
+        UpdateRigAnimatorState();
     }
 
     public void TickMove(Vector2 input, float dt)
@@ -286,17 +286,17 @@ public class TopDownMotor : MonoBehaviour
 
     public void ApplyYaw(float yawDeg, Vector3? aimPoint = null)
     {
-        if (rotationMode == RotationMode.RotateBody || aimIK == null)
+        if (rotationMode == RotationMode.RotateBody || rigAnimator == null)
         {
             ApplyYawTo(rotateTarget, yawDeg);
-            UpdateAimIK(aimPoint);
+            UpdateHeadLook(aimPoint);
             return;
         }
 
         Vector3 origin = rotateTarget ? rotateTarget.position : transform.position;
         Vector3 target = aimPoint ?? origin + Quaternion.Euler(0f, yawDeg, 0f) * Vector3.forward * headLookFallbackDistance;
 
-        UpdateAimIK(target);
+        UpdateHeadLook(target);
     }
 
     public static void ApplyYawTo(Transform t, float yawDeg)
@@ -336,6 +336,10 @@ public class TopDownMotor : MonoBehaviour
         if (currentStance == stance) return;
 
         currentStance = stance;
+        if (rigAnimator != null)
+        {
+            rigAnimator.SetStance(currentStance);
+        }
         StanceChanged?.Invoke(currentStance);
     }
 
@@ -356,17 +360,31 @@ public class TopDownMotor : MonoBehaviour
             return;
 
         currentMovementType = newType;
+        if (rigAnimator != null)
+        {
+            rigAnimator.SetMovementType(newType);
+        }
     }
 
-    void UpdateAimIK(Vector3? target)
+    void UpdateHeadLook(Vector3? target)
     {
-        if (!aimIK)
+        if (!rigAnimator)
             return;
 
         Vector3 origin = rotateTarget ? rotateTarget.position : transform.position;
         Vector3 lookTarget = target ?? origin + (rotateTarget ? rotateTarget.forward : transform.forward) * headLookFallbackDistance;
 
-        aimIK.solver.IKPosition = lookTarget;
-        aimIK.solver.IKPositionWeight = headLookWeight;
+        rigAnimator.SetHeadLookTarget(lookTarget);
+    }
+
+    void UpdateRigAnimatorState()
+    {
+        if (rigAnimator == null)
+        {
+            return;
+        }
+
+        rigAnimator.SetStance(currentStance);
+        rigAnimator.SetMovementType(currentMovementType);
     }
 }
