@@ -72,6 +72,7 @@
     <Compile Include="Assets\Scripts\Player\Animation\BoneRotator.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\TopDownMovementInteraction.cs" />
     <Compile Include="Assets\FishNet\Upgrading\MirrorUpgrade.cs" />
+    <Compile Include="Assets\Scripts\Player\Animation\BipedGaitController.cs" />
     <Compile Include="Assets\Scripts\Player\Network\GhostFollower.cs" />
     <Compile Include="Assets\Scripts\NetworkPlayerSpawner.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
