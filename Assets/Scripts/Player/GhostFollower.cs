@@ -17,12 +17,6 @@ public class GhostFollower : MonoBehaviour
     private Transform _characterRoot;
     [SerializeField, Tooltip("Write snapshot enqueue/apply info to the console.")]
     private bool _debugLogSnapshots;
-    [SerializeField, Tooltip("Verify that applied snapshots remain on the bones after assignment.")]
-    private bool _verifyAfterApply;
-    [SerializeField, Tooltip("Maximum allowed positional delta (world for root, local for children) when verifying."), Min(0f)]
-    private float _verifyPositionTolerance = 0.001f;
-    [SerializeField, Tooltip("Maximum allowed rotational delta in degrees when verifying."), Min(0f)]
-    private float _verifyRotationTolerance = 0.5f;
 
     private readonly List<Transform> _bones = new();
     private readonly List<BoneSnapshot> _snapshots = new();
@@ -138,49 +132,9 @@ public class GhostFollower : MonoBehaviour
         for (int i = 0; i < boneCount; i++)
         {            
             Vector3 blendedPosition = Vector3.Lerp(from.Positions[i], to.Positions[i], t);
-            Quaternion blendedRotation = Quaternion.Slerp(from.Bones[i].Rotation, to.Bones[i].Rotation, t);
-
-            //  if (i == 0)
-            //  {
-            //      _bones[i].SetPositionAndRotation(blendedPosition, blendedRotation);
-            //  }
-            //  else
-            //  {
-
-            
+            Quaternion blendedRotation = Quaternion.Slerp(from.Bones[i].Rotation, to.Bones[i].Rotation, t);          
 
             _bones[i].SetLocalPositionAndRotation(blendedPosition, blendedRotation);
-
-            //if (_bones[i].name == "B-hips")
-            //{
-            //    Debug.Log("Hip rotation");
-            //    Debug.Log(_bones[i].transform.localRotation.eulerAngles);
-            //    Debug.Log(blendedRotation.eulerAngles);
-            //}
-                
-           // _bones[i].localPosition = blendedPosition;
-           //     _bones[i].localRotation = blendedRotation;
-           //    }
-
-            if (_verifyAfterApply)
-            {
-
-                Vector3 currentPosition = _bones[i].localPosition;
-                Quaternion currentRotation = _bones[i].localRotation;
-
-                float positionError = Vector3.Distance(currentPosition, blendedPosition);
-                float rotationError = Quaternion.Angle(currentRotation, blendedRotation);
-
-                if (positionError > _verifyPositionTolerance || rotationError > _verifyRotationTolerance)
-                {
-                    string boneName = (_cachedBonePaths != null && i < _cachedBonePaths.Length)
-                        ? _cachedBonePaths[i]
-                        : (!string.IsNullOrEmpty(from.Bones[i].Name) ? from.Bones[i].Name : _bones[i].name);
-                    Debug.LogWarning(
-                        $"[GhostFollower] Verification failed for '{boneName}' (index {i}): " +
-                        $"pos error={positionError:F4}, rot error={rotationError:F2}deg (tolerance {_verifyPositionTolerance:F4}/{_verifyRotationTolerance:F2}).");
-                }
-            }
         }
     }
 

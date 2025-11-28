@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 6390988891232470549}
   - component: {fileID: 4212338670520547300}
   - component: {fileID: 5567259644663957134}
-  - component: {fileID: 6511257881800538328}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -149,24 +148,6 @@ MonoBehaviour:
   _sendRate: 30
   _debugLogSnapshots: 0
   _resetDebugCountersOnAttach: 0
---- !u!114 &6511257881800538328
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1414821280921427797}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 459940560ef34d545b17813df0087510, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BoneSnapshotDebugUI
-  _replicatorRoot: {fileID: 0}
-  _replicator: {fileID: 0}
-  _ghostRoot: {fileID: 0}
-  _ghostFollower: {fileID: 0}
-  _screenPosition: {x: 20, y: 20}
-  _showBackground: 1
 --- !u!1 &6439894860181546876
 GameObject:
   m_ObjectHideFlags: 0

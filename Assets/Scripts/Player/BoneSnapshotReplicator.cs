@@ -204,16 +204,10 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         {
             Transform bone = _bones[i];
 
-            positions[i] = bone.localPosition; // positions[i] = (i == 0 ? bone.position : bone.localPosition);
+            positions[i] = bone.localPosition;
 
             bones[i].Rotation = bone.localRotation;
             bones[i].Name = bone.name;
-
-            if (_bones[i].name == "B-hips")
-            {
-                Debug.Log("Hip rotation");
-                Debug.Log(bone.localRotation.eulerAngles);
-            }
         }
 
         return new BoneSnapshot()
