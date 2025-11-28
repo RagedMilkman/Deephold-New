@@ -571,12 +571,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6f774f9c2f0f4c2da3a3f26ddc4c2b59, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PositionReplicator
   _componentIndexCache: 2
   _addedNetworkObject: {fileID: 6390988891232470549}
   _networkObjectCache: {fileID: 6390988891232470549}
-  _target: {fileID: 1465242717540228781}
+  _target: {fileID: 6489204562721431007}
   _motor: {fileID: 1749205242565629453}
   _sendInterval: 0.05
   _minDistance: 0.01
@@ -598,13 +598,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 1.59
-  m_Radius: 0.28
+  m_Height: 1.14
+  m_Radius: 0.19
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.95, z: 0}
+  m_Center: {x: 0, y: 1.28, z: 0}
 --- !u!114 &1749205242565629453
 MonoBehaviour:
   m_ObjectHideFlags: 0

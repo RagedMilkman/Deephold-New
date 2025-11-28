@@ -65,10 +65,10 @@
     <Compile Include="Assets\Scripts\NetworkBootstrapper.cs" />
     <Compile Include="Assets\FishNet\Upgrading\UpgradeFromMirrorMenu.cs" />
     <Compile Include="Assets\Scripts\Player\GhostFollower.cs" />
+    <Compile Include="Assets\Scripts\Player\PositionReplicator.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\TopDownMovementInteraction.cs" />
     <Compile Include="Assets\FishNet\Upgrading\MirrorUpgrade.cs" />
     <Compile Include="Assets\Scripts\Player\BoneSnapshot.cs" />
-    <Compile Include="Assets\Scripts\Player\PositionReplicator.cs" />
     <Compile Include="Assets\Scripts\Player\YawReplicator.cs" />
     <Compile Include="Assets\Scripts\Player\BoneSnapshotReplicator.cs" />
     <Compile Include="Assets\Scripts\NetworkPlayerSpawner.cs" />
