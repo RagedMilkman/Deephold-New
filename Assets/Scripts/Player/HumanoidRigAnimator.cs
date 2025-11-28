@@ -211,10 +211,6 @@ public class HumanoidRigAnimator : MonoBehaviour
         CacheAnimator();
         CacheBipedIk();
         CacheBones();
-        if (characterYawTransform == null)
-        {
-            characterYawTransform = transform.root;
-        }
         InitializeBoneRotators();
     }
 
@@ -234,10 +230,14 @@ public class HumanoidRigAnimator : MonoBehaviour
         CacheAnimator();
         CacheBipedIk();
         CacheBones();
-        characterYawTransform = transform.root;
         InitializeBoneRotators();
         RestoreDefaultPoses();
         ApplyHandTargets();
+    }
+
+    public void SetCharacterYawTransform(Transform yawTransform)
+    {
+        characterYawTransform = yawTransform ? yawTransform : transform.root;
     }
 
     public void SetHeadLookTarget(Vector3 worldPosition)

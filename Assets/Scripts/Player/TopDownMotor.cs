@@ -64,6 +64,7 @@ public class TopDownMotor : MonoBehaviour
         controller = GetComponent<CharacterController>();
         if (!rigAnimator) rigAnimator = GetComponentInChildren<HumanoidRigAnimator>();
         if (!rotateTarget) rotateTarget = body ? body : transform;
+        UpdateRigYawTarget();
         currentMovementType = MovementType.Standing;
         UpdateRigAnimatorState();
     }
@@ -73,6 +74,7 @@ public class TopDownMotor : MonoBehaviour
         if (!controller) controller = GetComponent<CharacterController>();
         if (!rigAnimator) rigAnimator = GetComponentInChildren<HumanoidRigAnimator>();
         if (!rotateTarget) rotateTarget = body ? body : transform;
+        UpdateRigYawTarget();
         initialRootYaw = transform.eulerAngles.y;
         currentStance = defaultStance;
         currentMovementType = MovementType.Standing;
@@ -90,6 +92,7 @@ public class TopDownMotor : MonoBehaviour
             if (!controller) controller = GetComponent<CharacterController>();
             if (!rigAnimator) rigAnimator = GetComponentInChildren<HumanoidRigAnimator>();
             if (!rotateTarget) rotateTarget = body ? body : transform;
+            UpdateRigYawTarget();
         }
     }
 
@@ -103,6 +106,7 @@ public class TopDownMotor : MonoBehaviour
     public void SetRigAnimator(HumanoidRigAnimator animator)
     {
         rigAnimator = animator;
+        UpdateRigYawTarget();
         UpdateRigAnimatorState();
     }
 
@@ -324,6 +328,15 @@ public class TopDownMotor : MonoBehaviour
         if (body && (!rotateTarget || rotateTarget == transform))
         {
             rotateTarget = body;
+        }
+        UpdateRigYawTarget();
+    }
+
+    void UpdateRigYawTarget()
+    {
+        if (rigAnimator)
+        {
+            rigAnimator.SetCharacterYawTransform(rotateTarget ? rotateTarget : transform.root);
         }
     }
 
