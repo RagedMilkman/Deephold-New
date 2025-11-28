@@ -46,6 +46,7 @@ internal sealed class BoneRotator
     private readonly Func<float> pitchSpeedProvider;
 
     private const float ResidualRotationThreshold = 0.5f;
+    private const float ComfortHysteresisDegrees = 1f;
 
     private bool outOfComfortRange;
     private bool hasSmoothedAngles;
@@ -140,7 +141,14 @@ internal sealed class BoneRotator
         float comfortableYaw = Mathf.Clamp(Mathf.Max(0f, comfortableYawLimitProvider()), 0f, restrictYaw);
         float comfortablePitch = Mathf.Clamp(Mathf.Max(0f, comfortablePitchLimitProvider()), 0f, restrictPitch);
 
-        bool desiredExceedsComfort = Mathf.Abs(yaw) > comfortableYaw || Mathf.Abs(pitch) > comfortablePitch;
+        float enterYawComfort = comfortableYaw + ComfortHysteresisDegrees;
+        float enterPitchComfort = comfortablePitch + ComfortHysteresisDegrees;
+        float exitYawComfort = Mathf.Max(0f, comfortableYaw - ComfortHysteresisDegrees);
+        float exitPitchComfort = Mathf.Max(0f, comfortablePitch - ComfortHysteresisDegrees);
+
+        bool desiredExceedsComfort = outOfComfortRange
+            ? IsBeyondComfort(yaw, pitch, exitYawComfort, exitPitchComfort)
+            : IsBeyondComfort(yaw, pitch, enterYawComfort, enterPitchComfort);
 
         float clampedYaw = Mathf.Clamp(yaw, -restrictYaw, restrictYaw);
         float clampedPitch = Mathf.Clamp(pitch, -restrictPitch, restrictPitch);
@@ -173,7 +181,9 @@ internal sealed class BoneRotator
 
         HumanoidRigAnimator.ApplyBoneYawPitch(pose, currentYaw, currentPitch, forward, up, right);
 
-        bool appliedExceedsComfort = Mathf.Abs(currentYaw) > comfortableYaw || Mathf.Abs(currentPitch) > comfortablePitch;
+        bool appliedExceedsComfort = outOfComfortRange
+            ? IsBeyondComfort(currentYaw, currentPitch, exitYawComfort, exitPitchComfort)
+            : IsBeyondComfort(currentYaw, currentPitch, enterYawComfort, enterPitchComfort);
         bool smoothingLimited = (wasRestricted || desiredExceedsComfort)
             && (Mathf.Abs(Mathf.DeltaAngle(currentYaw, targetYaw)) > 0.01f
                 || Mathf.Abs(Mathf.DeltaAngle(currentPitch, targetPitch)) > 0.01f);
@@ -231,5 +241,10 @@ internal sealed class BoneRotator
         hasSmoothedAngles = false;
         currentYaw = 0f;
         currentPitch = 0f;
+    }
+
+    private static bool IsBeyondComfort(float yaw, float pitch, float comfortableYaw, float comfortablePitch)
+    {
+        return Mathf.Abs(yaw) > comfortableYaw || Mathf.Abs(pitch) > comfortablePitch;
     }
 }
