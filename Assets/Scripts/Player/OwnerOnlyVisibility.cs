@@ -10,7 +10,6 @@ public sealed class OwnerOnlyVisibility : NetworkBehaviour
 
     private Renderer[] _renderers;
     private Canvas[] _canvases;
-    private Collider[] _colliders;
 
     private void Awake()
     {
@@ -19,7 +18,6 @@ public sealed class OwnerOnlyVisibility : NetworkBehaviour
 
         _renderers = _target.GetComponentsInChildren<Renderer>(true);
         _canvases = _target.GetComponentsInChildren<Canvas>(true);
-        _colliders = _target.GetComponentsInChildren<Collider>(true);
     }
 
     public override void OnStartClient()
@@ -48,12 +46,6 @@ public sealed class OwnerOnlyVisibility : NetworkBehaviour
         {
             foreach (var canvas in _canvases)
                 canvas.enabled = visible;
-        }
-
-        if (_colliders != null)
-        {
-            foreach (var collider in _colliders)
-                collider.enabled = visible;
         }
     }
 }

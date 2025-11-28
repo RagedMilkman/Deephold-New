@@ -49,9 +49,6 @@ MonoBehaviour:
   _skeletonRoot: {fileID: 7812697904247935660}
   _characterRoot: {fileID: 6489204562721431007}
   _debugLogSnapshots: 0
-  _verifyAfterApply: 1
-  _verifyPositionTolerance: 0.001
-  _verifyRotationTolerance: 0.5
 --- !u!1001 &8330895534152148680
 PrefabInstance:
   m_ObjectHideFlags: 0
