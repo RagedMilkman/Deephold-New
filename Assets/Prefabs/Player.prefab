@@ -875,10 +875,13 @@ MonoBehaviour:
   enableCharacterRotation: 1
   headTargetLatitudeSpeed: 300
   headTargetLongitudeSpeed: 300
+  chestTargetLatitudeSpeed: 200
+  chestTargetLongitudeSpeed: 200
   headYawSpeed: 360
   headPitchSpeed: 360
   chestTargetOffsetDistance: 0
-  chestTargetVerticalOffsetDistance: -0.5
+  chestTargetVerticalOffsetDistance: -0.4
+  maxHeadChestTargetSeparation: 2
   headYawRestrictLimit: 60
   headPitchRestrictLimit: 40
   comfortableHeadYawLimit: 30
@@ -893,8 +896,8 @@ MonoBehaviour:
   spinePitchSpeed: 180
   spineYawAxis: 2
   spinePitchAxis: 1
-  drawHeadComfortRange: 1
-  drawSpineComfortRange: 1
+  drawHeadComfortRange: 0
+  drawSpineComfortRange: 0
   drawChestTarget: 0
   comfortRangeDebugLength: 1
   characterYawSpeed: 720
