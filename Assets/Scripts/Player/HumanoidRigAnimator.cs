@@ -109,6 +109,7 @@ public class HumanoidRigAnimator : MonoBehaviour
 
     [Header("Final IK Integration")]
     [SerializeField] private BipedIK bipedIk;
+    [SerializeField] private Transform characterYawTransform;
     [SerializeField] private Transform leftHandTarget;
     [SerializeField] private Transform rightHandTarget;
     [SerializeField] [Range(0f, 1f)] private float handPositionWeight = 1f;
@@ -210,6 +211,10 @@ public class HumanoidRigAnimator : MonoBehaviour
         CacheAnimator();
         CacheBipedIk();
         CacheBones();
+        if (characterYawTransform == null)
+        {
+            characterYawTransform = transform.root;
+        }
         InitializeBoneRotators();
     }
 
@@ -229,6 +234,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         CacheAnimator();
         CacheBipedIk();
         CacheBones();
+        characterYawTransform = transform.root;
         InitializeBoneRotators();
         RestoreDefaultPoses();
         ApplyHandTargets();
@@ -524,9 +530,14 @@ public class HumanoidRigAnimator : MonoBehaviour
             return false;
         }
 
-        Vector3 toTarget = targetPosition - transform.position;
+        if (characterYawTransform == null)
+        {
+            characterYawTransform = transform.root;
+        }
+
+        Vector3 toTarget = targetPosition - characterYawTransform.position;
         Vector3 flattenedTarget = new(toTarget.x, 0f, toTarget.z);
-        Vector3 flattenedForward = new(transform.forward.x, 0f, transform.forward.z);
+        Vector3 flattenedForward = new(characterYawTransform.forward.x, 0f, characterYawTransform.forward.z);
 
         if (flattenedTarget.sqrMagnitude < 0.0001f || flattenedForward.sqrMagnitude < 0.0001f)
         {
@@ -567,7 +578,7 @@ public class HumanoidRigAnimator : MonoBehaviour
 
         if (Mathf.Abs(appliedDelta) > 0.01f)
         {
-            transform.Rotate(Vector3.up, appliedDelta, Space.World);
+            characterYawTransform.Rotate(Vector3.up, appliedDelta, Space.World);
             return true;
         }
 
