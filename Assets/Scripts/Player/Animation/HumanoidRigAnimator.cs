@@ -406,9 +406,9 @@ public class HumanoidRigAnimator : MonoBehaviour
             return;
         }
 
-        Vector3 chestTarget = GetChestTarget(currentHeadLookTarget);
         var usedNodes = new HashSet<BoneChainNode>();
-        ProcessBoneChain(boneChainLeaf, currentHeadLookTarget, usedNodes);
+        Vector3 chestTarget = GetChestTarget(currentHeadLookTarget);
+        ProcessBoneChain(boneChainLeaf, currentHeadLookTarget, chestTarget, usedNodes);
 
         RestoreUnusedBones(usedNodes);
 
@@ -1002,14 +1002,19 @@ public class HumanoidRigAnimator : MonoBehaviour
         boneChainLeaf = currentParent;
     }
 
-    private BoneRotator.BoneRotationResult ProcessBoneChain(BoneChainNode node, Vector3 targetPosition, HashSet<BoneChainNode> usedNodes)
+    private BoneRotator.BoneRotationResult ProcessBoneChain(
+        BoneChainNode node,
+        Vector3 headTarget,
+        Vector3 chestTarget,
+        HashSet<BoneChainNode> usedNodes)
     {
         if (node == null)
         {
             return BoneRotator.BoneRotationResult.NotApplied(requestParent: false);
         }
 
-        var result = node.Rotate(targetPosition);
+        Vector3 nodeTarget = GetTargetForNode(node, headTarget, chestTarget);
+        var result = node.Rotate(nodeTarget);
         if (result.Applied)
         {
             usedNodes.Add(node);
@@ -1024,9 +1029,9 @@ public class HumanoidRigAnimator : MonoBehaviour
 
         if (parentNeeded && node.Parent != null)
         {
-            ProcessBoneChain(node.Parent, targetPosition, usedNodes);
+            ProcessBoneChain(node.Parent, headTarget, chestTarget, usedNodes);
 
-            result = node.Rotate(targetPosition);
+            result = node.Rotate(nodeTarget);
             if (result.Applied)
             {
                 usedNodes.Add(node);
@@ -1034,6 +1039,18 @@ public class HumanoidRigAnimator : MonoBehaviour
         }
 
         return result;
+    }
+
+    private static Vector3 GetTargetForNode(BoneChainNode node, Vector3 headTarget, Vector3 chestTarget)
+    {
+        if (node == null)
+        {
+            return headTarget;
+        }
+
+        return node.AssociatedBone == HumanBodyBones.Head
+            ? headTarget
+            : chestTarget;
     }
 
     private void RestoreUnusedBones(HashSet<BoneChainNode> usedNodes)
