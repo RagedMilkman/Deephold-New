@@ -58,10 +58,10 @@ public class GhostFollower : MonoBehaviour
 
     public void EnqueueSnapshot(BoneSnapshot snapshot)
     {
-        if (snapshot.Positions == null || snapshot.Bones == null)
+        if (snapshot.Positions == null || snapshot.Rotations == null)
             return;
 
-        if (snapshot.Positions.Length != snapshot.Bones.Length)
+        if (snapshot.Positions.Length != snapshot.Rotations.Length)
             return;
 
         if (snapshot.BonePaths != null)
@@ -132,7 +132,7 @@ public class GhostFollower : MonoBehaviour
         for (int i = 0; i < boneCount; i++)
         {            
             Vector3 blendedPosition = Vector3.Lerp(from.Positions[i], to.Positions[i], t);
-            Quaternion blendedRotation = Quaternion.Slerp(from.Bones[i].Rotation, to.Bones[i].Rotation, t);          
+            Quaternion blendedRotation = Quaternion.Slerp(from.Rotations[i], to.Rotations[i], t);
 
             _bones[i].SetLocalPositionAndRotation(blendedPosition, blendedRotation);
         }

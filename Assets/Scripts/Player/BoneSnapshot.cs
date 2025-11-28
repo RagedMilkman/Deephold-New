@@ -11,7 +11,7 @@ public struct BoneSnapshot
 {
     public double Timestamp;
     public Vector3[] Positions;
-    public BoneSnapshotBone[] Bones;
+    public Quaternion[] Rotations;
     public string[] BonePaths;
     public Vector3 CharacterRootPosition;
     public Quaternion CharacterRootRotation;
@@ -21,16 +21,10 @@ public struct BoneSnapshot
         get
         {
             int positionCount = Positions?.Length ?? 0;
-            int boneCount = Bones?.Length ?? 0;
-            return Mathf.Min(positionCount, boneCount);
+            int rotationCount = Rotations?.Length ?? 0;
+            return Mathf.Min(positionCount, rotationCount);
         }
     }
-}
-
-public struct BoneSnapshotBone
-{
-    public string Name;
-    public Quaternion Rotation;
 }
 
 /// <summary>
@@ -41,7 +35,7 @@ public struct BoneSnapshotMessage : IBroadcast
     public uint ObjectId;
     public double Timestamp;
     public Vector3[] Positions;
-    public BoneSnapshotBone[] Bones;
+    public Quaternion[] Rotations;
     public string[] BonePaths;
     public Vector3 CharacterRootPosition;
     public Quaternion CharacterRootRotation;
@@ -53,16 +47,15 @@ public struct BoneSnapshotMessage : IBroadcast
         writer.WriteVector3(CharacterRootPosition);
         writer.Writequaternion(CharacterRootRotation);
 
-        int count = (Positions != null && Bones != null)
-            ? Mathf.Min(Positions.Length, Bones.Length)
+        int count = (Positions != null && Rotations != null)
+            ? Mathf.Min(Positions.Length, Rotations.Length)
             : 0;
         writer.WriteInt32(count);
 
         for (int i = 0; i < count; i++)
         {
             writer.WriteVector3(Positions[i]);
-            writer.Writequaternion(Bones[i].Rotation);
-            writer.WriteString(Bones[i].Name);
+            writer.Writequaternion(Rotations[i]);
         }
 
         writer.WriteBoolean(BonePaths != null);
@@ -83,16 +76,12 @@ public struct BoneSnapshotMessage : IBroadcast
 
         int count = reader.ReadInt32();
         Positions = new Vector3[count];
-        Bones = new BoneSnapshotBone[count];
+        Rotations = new Quaternion[count];
 
         for (int i = 0; i < count; i++)
         {
             Positions[i] = reader.ReadVector3();
-            Bones[i] = new BoneSnapshotBone
-            {
-                Rotation = reader.Readquaternion(),
-                Name = reader.ReadString()
-            };
+            Rotations[i] = reader.Readquaternion();
         }
 
         bool hasPaths = reader.ReadBoolean();

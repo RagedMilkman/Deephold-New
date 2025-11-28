@@ -101,7 +101,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             ObjectId = msg.ObjectId,
             Timestamp = msg.Timestamp,
             Positions = Clone(msg.Positions),
-            Bones = Clone(msg.Bones),
+            Rotations = Clone(msg.Rotations),
             BonePaths = Clone(msg.BonePaths),
             CharacterRootPosition = msg.CharacterRootPosition,
             CharacterRootRotation = msg.CharacterRootRotation
@@ -151,7 +151,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         {
             Timestamp = Time.timeAsDouble,
             Positions = Clone(msg.Positions),
-            Bones = Clone(msg.Bones),
+            Rotations = Clone(msg.Rotations),
             BonePaths = Clone(msg.BonePaths),
             CharacterRootPosition = msg.CharacterRootPosition,
             CharacterRootRotation = msg.CharacterRootRotation
@@ -198,7 +198,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private BoneSnapshot BuildSnapshot()
     {
         var positions = new Vector3[_bones.Count];
-        var bones = new BoneSnapshotBone[_bones.Count];
+        var rotations = new Quaternion[_bones.Count];
 
         for (int i = 0; i < _bones.Count; i++)
         {
@@ -206,15 +206,14 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
             positions[i] = bone.localPosition;
 
-            bones[i].Rotation = bone.localRotation;
-            bones[i].Name = bone.name;
+            rotations[i] = bone.localRotation;
         }
 
         return new BoneSnapshot()
         {
             Timestamp = Time.timeAsDouble,
             Positions = positions,
-            Bones = bones,
+            Rotations = rotations,
             BonePaths = _bonePaths,
             CharacterRootPosition = _characterRoot.position,
             CharacterRootRotation = _characterRoot.rotation
@@ -228,7 +227,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             ObjectId = (uint)NetworkObject.ObjectId,
             Timestamp = snapshot.Timestamp,
             Positions = snapshot.Positions,
-            Bones = snapshot.Bones,
+            Rotations = snapshot.Rotations,
             BonePaths = snapshot.BonePaths,
             CharacterRootPosition = snapshot.CharacterRootPosition,
             CharacterRootRotation = snapshot.CharacterRootRotation
