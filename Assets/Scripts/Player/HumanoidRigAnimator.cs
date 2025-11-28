@@ -73,6 +73,7 @@ public class HumanoidRigAnimator : MonoBehaviour
 
     [Header("Chest Target Offset")]
     [SerializeField] [Min(0f)] private float chestTargetOffsetDistance = 0f;
+    [SerializeField] private float chestTargetVerticalOffsetDistance = 0f;
 
     [Header("Head Rotation Limits")]
     [SerializeField] [Min(0f)] private float headYawRestrictLimit = 70f;
@@ -482,25 +483,27 @@ public class HumanoidRigAnimator : MonoBehaviour
 
     private Vector3 GetChestTarget(Vector3 targetPosition)
     {
-        if (chestTargetOffsetDistance <= 0f)
+        Vector3 chestTarget = targetPosition;
+
+        if (chestTargetOffsetDistance > 0f
+            && bonePoses.TryGetValue(HumanBodyBones.Chest, out var chestPose)
+            && chestPose.Transform != null)
         {
-            return targetPosition;
+            Vector3 chestPosition = chestPose.Transform.position;
+            Vector3 direction = targetPosition - chestPosition;
+            if (direction.sqrMagnitude >= 0.0001f)
+            {
+                float adjustedDistance = direction.magnitude + chestTargetOffsetDistance;
+                chestTarget = chestPosition + direction.normalized * adjustedDistance;
+            }
         }
 
-        if (!bonePoses.TryGetValue(HumanBodyBones.Chest, out var chestPose) || chestPose.Transform == null)
+        if (Mathf.Abs(chestTargetVerticalOffsetDistance) > 0f)
         {
-            return targetPosition;
+            chestTarget += Vector3.up * chestTargetVerticalOffsetDistance;
         }
 
-        Vector3 chestPosition = chestPose.Transform.position;
-        Vector3 direction = targetPosition - chestPosition;
-        if (direction.sqrMagnitude < 0.0001f)
-        {
-            return targetPosition;
-        }
-
-        float adjustedDistance = direction.magnitude + chestTargetOffsetDistance;
-        return chestPosition + direction.normalized * adjustedDistance;
+        return chestTarget;
     }
 
     private void UpdateCurrentHeadLookTarget()
