@@ -290,17 +290,18 @@ public class TopDownMotor : MonoBehaviour
 
     public void ApplyYaw(float yawDeg, Vector3? aimPoint = null)
     {
-        if (rotationMode == RotationMode.RotateBody || rigAnimator == null)
+        ApplyYawTo(rotateTarget, yawDeg);
+
+        if (rotationMode == RotationMode.RotateHead && rigAnimator != null)
         {
-            ApplyYawTo(rotateTarget, yawDeg);
-            UpdateHeadLook(aimPoint);
+            Vector3 origin = rotateTarget ? rotateTarget.position : transform.position;
+            Vector3 target = aimPoint ?? origin + Quaternion.Euler(0f, yawDeg, 0f) * Vector3.forward * headLookFallbackDistance;
+
+            UpdateHeadLook(target);
             return;
         }
 
-        Vector3 origin = rotateTarget ? rotateTarget.position : transform.position;
-        Vector3 target = aimPoint ?? origin + Quaternion.Euler(0f, yawDeg, 0f) * Vector3.forward * headLookFallbackDistance;
-
-        UpdateHeadLook(target);
+        UpdateHeadLook(aimPoint);
     }
 
     public static void ApplyYawTo(Transform t, float yawDeg)
