@@ -75,6 +75,9 @@ public class HumanoidRigAnimator : MonoBehaviour
     [SerializeField] [Min(0f)] private float chestTargetOffsetDistance = 0f;
     [SerializeField] private float chestTargetVerticalOffsetDistance = 0f;
 
+    [Header("Chest Target Coupling")]
+    [SerializeField] [Min(0f)] private float maxHeadChestTargetSeparation = 0.5f;
+
     [Header("Head Rotation Limits")]
     [SerializeField] [Min(0f)] private float headYawRestrictLimit = 70f;
     [SerializeField] [Min(0f)] private float headPitchRestrictLimit = 50f;
@@ -1104,14 +1107,51 @@ public class HumanoidRigAnimator : MonoBehaviour
 
     private void UpdateChestLookTargetIfNeeded(Vector3 headTarget, bool headExceededComfort)
     {
-        if (!headExceededComfort)
+        bool headChestGapTooLarge = ChestTargetSeparationExceedsLimit();
+
+        if (!headExceededComfort && !headChestGapTooLarge)
         {
             headExceededComfortLastFrame = false;
             return;
         }
 
         UpdateChestLookTarget(headTarget);
-        headExceededComfortLastFrame = true;
+        headExceededComfortLastFrame = headExceededComfort;
+    }
+
+    private bool ChestTargetSeparationExceedsLimit()
+    {
+        if (!hasHeadLookTarget || !chestTargetInitialized)
+        {
+            return false;
+        }
+
+        if (!bonePoses.TryGetValue(HumanBodyBones.Chest, out var chestPose) || chestPose.Transform == null)
+        {
+            return false;
+        }
+
+        Vector3 chestPosition = chestPose.Transform.position;
+        Vector3 chestDirection = chestLookTarget - chestPosition;
+        Vector3 headDirection = desiredHeadLookTarget - chestPosition;
+
+        const float epsilon = 0.0001f;
+        if (chestDirection.sqrMagnitude < epsilon || headDirection.sqrMagnitude < epsilon)
+        {
+            return false;
+        }
+
+        float referenceDistance = Mathf.Min(chestDirection.magnitude, headDirection.magnitude);
+        if (referenceDistance < epsilon)
+        {
+            return false;
+        }
+
+        Vector3 normalizedChestTarget = chestPosition + chestDirection.normalized * referenceDistance;
+        Vector3 normalizedHeadTarget = chestPosition + headDirection.normalized * referenceDistance;
+
+        float separation = Vector3.Distance(normalizedChestTarget, normalizedHeadTarget);
+        return separation > maxHeadChestTargetSeparation;
     }
 
     private void RestoreUnusedBones(HashSet<BoneChainNode> usedNodes)
