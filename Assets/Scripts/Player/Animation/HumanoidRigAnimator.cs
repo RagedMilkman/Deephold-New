@@ -159,6 +159,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     private bool lastSpineRotationEnabled;
     private bool lastCharacterRotationEnabled;
     private bool chestTargetInitialized;
+    private bool headExceededComfortLastFrame;
 
     internal float ComfortRangeDebugLength => comfortRangeDebugLength;
     internal bool ShouldForceParentRotation =>
@@ -266,6 +267,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         currentHeadLookTarget = Vector3.zero;
         chestLookTarget = Vector3.zero;
         chestTargetInitialized = false;
+        headExceededComfortLastFrame = false;
         headRotator?.Reset();
         spineRotator?.Reset();
         ResetCharacterYawSmoothing();
@@ -1022,6 +1024,11 @@ public class HumanoidRigAnimator : MonoBehaviour
             usedNodes.Add(node);
         }
 
+        if (node.AssociatedBone == HumanBodyBones.Head && !result.ExceededComfort)
+        {
+            headExceededComfortLastFrame = false;
+        }
+
         bool parentNeeded = ShouldProcessParent(node, result);
 
         if (!parentNeeded && node.Parent?.HasResidualRotation?.Invoke() == true)
@@ -1033,7 +1040,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         {
             if (node.AssociatedBone == HumanBodyBones.Head)
             {
-                UpdateChestLookTarget(headTarget);
+                UpdateChestLookTargetIfNeeded(headTarget, result.ExceededComfort);
             }
 
             ProcessBoneChain(node.Parent, headTarget, usedNodes);
@@ -1093,6 +1100,22 @@ public class HumanoidRigAnimator : MonoBehaviour
     {
         chestLookTarget = GetChestTarget(headTarget);
         chestTargetInitialized = true;
+    }
+
+    private void UpdateChestLookTargetIfNeeded(Vector3 headTarget, bool headExceededComfort)
+    {
+        if (!headExceededComfort)
+        {
+            headExceededComfortLastFrame = false;
+            return;
+        }
+
+        if (!headExceededComfortLastFrame)
+        {
+            UpdateChestLookTarget(headTarget);
+        }
+
+        headExceededComfortLastFrame = true;
     }
 
     private void RestoreUnusedBones(HashSet<BoneChainNode> usedNodes)
