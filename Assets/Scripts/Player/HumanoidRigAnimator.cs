@@ -71,6 +71,9 @@ public class HumanoidRigAnimator : MonoBehaviour
     [SerializeField] [Min(0f)] private float headYawSpeed = 360f;
     [SerializeField] [Min(0f)] private float headPitchSpeed = 360f;
 
+    [Header("Chest Target Offset")]
+    [SerializeField] [Min(0f)] private float chestTargetOffsetDistance = 0f;
+
     [Header("Head Rotation Limits")]
     [SerializeField] [Min(0f)] private float headYawRestrictLimit = 70f;
     [SerializeField] [Min(0f)] private float headPitchRestrictLimit = 50f;
@@ -465,6 +468,29 @@ public class HumanoidRigAnimator : MonoBehaviour
         }
 
         return TryGetConfiguredBasis(pose, spineYawAxis, spinePitchAxis, out forward, out up, out right);
+    }
+
+    private Vector3 GetChestTarget(Vector3 targetPosition)
+    {
+        if (chestTargetOffsetDistance <= 0f)
+        {
+            return targetPosition;
+        }
+
+        if (!bonePoses.TryGetValue(HumanBodyBones.Chest, out var chestPose) || chestPose.Transform == null)
+        {
+            return targetPosition;
+        }
+
+        Vector3 chestPosition = chestPose.Transform.position;
+        Vector3 direction = targetPosition - chestPosition;
+        if (direction.sqrMagnitude < 0.0001f)
+        {
+            return targetPosition;
+        }
+
+        float adjustedDistance = direction.magnitude + chestTargetOffsetDistance;
+        return chestPosition + direction.normalized * adjustedDistance;
     }
 
     private void UpdateCurrentHeadLookTarget()
@@ -928,7 +954,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         {
             spineChainNode = new BoneChainNode(
                 parent: currentParent,
-                rotate: target => spineRotator.Update(target),
+                rotate: target => spineRotator.Update(GetChestTarget(target)),
                 restoreDefaultPose: () => RestoreBoneDefaultPose(HumanBodyBones.Spine),
                 resetState: spineRotator.Reset,
                 hasResidualRotation: () => spineRotator.HasResidualRotation,
