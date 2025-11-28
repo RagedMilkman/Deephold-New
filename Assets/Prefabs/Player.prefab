@@ -56,7 +56,7 @@ MonoBehaviour:
   _yawReplicator: {fileID: 3605412805779328133}
   _positionReplicator: {fileID: 5964103329937050036}
   _ownerCamera: {fileID: 7750328062498287493}
-  _boneSnapshotReplicator: {fileID: 0}
+  _boneSnapshotReplicator: {fileID: 5567259644663957134}
   _ghostPrefab: {fileID: 1414821280921427797, guid: 2c9c792d6eea478fb48a0c1be088fdb0, type: 3}
 --- !u!114 &6390988891232470549
 MonoBehaviour:
@@ -654,7 +654,7 @@ MonoBehaviour:
     m_Bits: 0
   minAimDistance: 0.05
   defaultStance: 0
-  lockRootYaw: 1
+  lockRootYaw: 0
   rotationMode: 1
   rigAnimator: {fileID: 3070434819797415186}
   headLookFallbackDistance: 5
@@ -716,6 +716,7 @@ MonoBehaviour:
   comfortRangeDebugLength: 1
   characterYawSpeed: 720
   bipedIk: {fileID: 0}
+  characterYawTransform: {fileID: 6489204562721431007}
   leftHandTarget: {fileID: 0}
   rightHandTarget: {fileID: 0}
   handPositionWeight: 1
