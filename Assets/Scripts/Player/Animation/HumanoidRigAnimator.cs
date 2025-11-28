@@ -146,6 +146,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     private bool hasHeadLookTarget;
     private Vector3 desiredHeadLookTarget;
     private Vector3 currentHeadLookTarget;
+    private Vector3 chestLookTarget;
     private BoneRotator headRotator;
     private BoneRotator spineRotator;
     private readonly List<BoneChainNode> boneChainNodes = new();
@@ -157,6 +158,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     private bool lastHeadRotationEnabled;
     private bool lastSpineRotationEnabled;
     private bool lastCharacterRotationEnabled;
+    private bool chestTargetInitialized;
 
     internal float ComfortRangeDebugLength => comfortRangeDebugLength;
     internal bool ShouldForceParentRotation =>
@@ -262,6 +264,8 @@ public class HumanoidRigAnimator : MonoBehaviour
         hasHeadLookTarget = false;
         desiredHeadLookTarget = Vector3.zero;
         currentHeadLookTarget = Vector3.zero;
+        chestLookTarget = Vector3.zero;
+        chestTargetInitialized = false;
         headRotator?.Reset();
         spineRotator?.Reset();
         ResetCharacterYawSmoothing();
@@ -407,8 +411,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         }
 
         var usedNodes = new HashSet<BoneChainNode>();
-        Vector3 chestTarget = GetChestTarget(currentHeadLookTarget);
-        ProcessBoneChain(boneChainLeaf, currentHeadLookTarget, chestTarget, usedNodes);
+        ProcessBoneChain(boneChainLeaf, currentHeadLookTarget, usedNodes);
 
         RestoreUnusedBones(usedNodes);
 
@@ -417,7 +420,7 @@ public class HumanoidRigAnimator : MonoBehaviour
             && usedNodes.Contains(spineChainNode)
             && TryGetBonePose(HumanBodyBones.Chest, out var chestPose))
         {
-            HumanoidRigDebugVisualizer.DrawChestTargetLine(chestPose, chestTarget);
+            HumanoidRigDebugVisualizer.DrawChestTargetLine(chestPose, chestLookTarget);
         }
 
         if (headChainNode != null && usedNodes.Contains(headChainNode) && TryGetBonePose(HumanBodyBones.Head, out var headPose))
@@ -967,7 +970,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         {
             spineChainNode = new BoneChainNode(
                 parent: currentParent,
-                rotate: target => spineRotator.Update(GetChestTarget(target)),
+                rotate: target => spineRotator.Update(target),
                 restoreDefaultPose: () => RestoreBoneDefaultPose(HumanBodyBones.Spine),
                 resetState: spineRotator.Reset,
                 hasResidualRotation: () => spineRotator.HasResidualRotation,
@@ -1005,7 +1008,6 @@ public class HumanoidRigAnimator : MonoBehaviour
     private BoneRotator.BoneRotationResult ProcessBoneChain(
         BoneChainNode node,
         Vector3 headTarget,
-        Vector3 chestTarget,
         HashSet<BoneChainNode> usedNodes)
     {
         if (node == null)
@@ -1013,7 +1015,7 @@ public class HumanoidRigAnimator : MonoBehaviour
             return BoneRotator.BoneRotationResult.NotApplied(requestParent: false);
         }
 
-        Vector3 nodeTarget = GetTargetForNode(node, headTarget, chestTarget);
+        Vector3 nodeTarget = GetTargetForNode(node, headTarget);
         var result = node.Rotate(nodeTarget);
         if (result.Applied)
         {
@@ -1029,7 +1031,12 @@ public class HumanoidRigAnimator : MonoBehaviour
 
         if (parentNeeded && node.Parent != null)
         {
-            ProcessBoneChain(node.Parent, headTarget, chestTarget, usedNodes);
+            if (node.AssociatedBone == HumanBodyBones.Head)
+            {
+                UpdateChestLookTarget(headTarget);
+            }
+
+            ProcessBoneChain(node.Parent, headTarget, usedNodes);
 
             result = node.Rotate(nodeTarget);
             if (result.Applied)
@@ -1056,16 +1063,36 @@ public class HumanoidRigAnimator : MonoBehaviour
         return true;
     }
 
-    private static Vector3 GetTargetForNode(BoneChainNode node, Vector3 headTarget, Vector3 chestTarget)
+    private Vector3 GetTargetForNode(BoneChainNode node, Vector3 headTarget)
     {
         if (node == null)
         {
             return headTarget;
         }
 
-        return node.AssociatedBone == HumanBodyBones.Head
-            ? headTarget
-            : chestTarget;
+        if (node.AssociatedBone == HumanBodyBones.Head)
+        {
+            return headTarget;
+        }
+
+        EnsureChestTargetInitialized(headTarget);
+        return chestLookTarget;
+    }
+
+    private void EnsureChestTargetInitialized(Vector3 headTarget)
+    {
+        if (chestTargetInitialized)
+        {
+            return;
+        }
+
+        UpdateChestLookTarget(headTarget);
+    }
+
+    private void UpdateChestLookTarget(Vector3 headTarget)
+    {
+        chestLookTarget = GetChestTarget(headTarget);
+        chestTargetInitialized = true;
     }
 
     private void RestoreUnusedBones(HashSet<BoneChainNode> usedNodes)
