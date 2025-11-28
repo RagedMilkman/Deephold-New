@@ -105,6 +105,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     [Header("Debug Visualization")]
     [SerializeField] private bool drawHeadComfortRange = true;
     [SerializeField] private bool drawSpineComfortRange = true;
+    [SerializeField] private bool drawChestTarget = false;
     [SerializeField] [Min(0f)] private float comfortRangeDebugLength = 0.5f;
 
     [Header("Character Rotation Smoothing")]
@@ -404,10 +405,19 @@ public class HumanoidRigAnimator : MonoBehaviour
             return;
         }
 
+        Vector3 chestTarget = GetChestTarget(currentHeadLookTarget);
         var usedNodes = new HashSet<BoneChainNode>();
         ProcessBoneChain(boneChainLeaf, currentHeadLookTarget, usedNodes);
 
         RestoreUnusedBones(usedNodes);
+
+        if (drawChestTarget
+            && spineChainNode != null
+            && usedNodes.Contains(spineChainNode)
+            && TryGetBonePose(HumanBodyBones.Chest, out var chestPose))
+        {
+            HumanoidRigDebugVisualizer.DrawChestTargetLine(chestPose, chestTarget);
+        }
 
         if (headChainNode != null && usedNodes.Contains(headChainNode) && TryGetBonePose(HumanBodyBones.Head, out var headPose))
         {

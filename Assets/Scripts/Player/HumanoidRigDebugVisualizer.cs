@@ -74,6 +74,16 @@ internal static class HumanoidRigDebugVisualizer
         Debug.DrawLine(headPose.Transform.position, targetPosition, Color.cyan, Time.deltaTime, false);
     }
 
+    internal static void DrawChestTargetLine(HumanoidRigAnimator.BonePose chestPose, Vector3 targetPosition)
+    {
+        if (chestPose.Transform == null)
+        {
+            return;
+        }
+
+        Debug.DrawLine(chestPose.Transform.position, targetPosition, Color.yellow, Time.deltaTime, false);
+    }
+
     private static void DrawComfortSegment(Vector3 origin, Vector3 direction, Color color, float length)
     {
         Debug.DrawLine(origin, origin + direction * length, color, Time.deltaTime, false);
