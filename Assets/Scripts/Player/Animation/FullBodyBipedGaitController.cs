@@ -65,6 +65,10 @@ public class FullBodyBipedGaitController : MonoBehaviour
     [Tooltip("How far a planted foot can drift from its desired point before forcing a step.")]
     public float stepThreshold = 0.1f;
 
+    [Tooltip("Normalized progress the opposite foot must reach before this foot can start a new step (0-1).")]
+    [Range(0f, 1f)]
+    public float minOppositeStepLead = 0.35f;
+
     [Header("Ground")]
     [Tooltip("Offset added to the body root's Y position to define the ground plane.")]
     public float groundOffset = 0f;
@@ -110,8 +114,8 @@ public class FullBodyBipedGaitController : MonoBehaviour
         AutoAssignTargetsFromSolver();
         UpdateVelocity();
         UpdateDesiredAnchors();
-        UpdateFoot(leftFoot, desiredLeft, ref desiredLeftVel);
-        UpdateFoot(rightFoot, desiredRight, ref desiredRightVel);
+        UpdateFoot(leftFoot, rightFoot, desiredLeft, ref desiredLeftVel);
+        UpdateFoot(rightFoot, leftFoot, desiredRight, ref desiredRightVel);
     }
 
     private void AutoAssignTargetsFromSolver()
@@ -161,7 +165,7 @@ public class FullBodyBipedGaitController : MonoBehaviour
         return Vector3.SmoothDamp(current, target, ref velocityRef, smooth);
     }
 
-    private void UpdateFoot(FootState foot, Vector3 anchor, ref Vector3 vel)
+    private void UpdateFoot(FootState foot, FootState otherFoot, Vector3 anchor, ref Vector3 vel)
     {
         if (foot.target == null)
             return;
@@ -174,7 +178,9 @@ public class FullBodyBipedGaitController : MonoBehaviour
         Vector3 targetOnPlane = ProjectToGround(anchor);
         Vector3 current = foot.target.position;
 
-        if (!foot.stepping && Vector3.Distance(ProjectToGround(current), targetOnPlane) > stepThreshold)
+        bool otherFootBlocking = otherFoot != null && otherFoot.stepping && otherFoot.stepTime < minOppositeStepLead;
+
+        if (!foot.stepping && !otherFootBlocking && Vector3.Distance(ProjectToGround(current), targetOnPlane) > stepThreshold)
         {
             BeginStep(foot, targetOnPlane);
         }
