@@ -73,6 +73,10 @@ public class FullBodyBipedGaitController : MonoBehaviour
     [Tooltip("Offset added to the body root's Y position to define the ground plane.")]
     public float groundOffset = 0f;
 
+    [Header("Anchoring")]
+    [Tooltip("Maximum planar distance a desired foot anchor can drift from the body before being clamped closer.")]
+    public float maxAnchorOffset = 0.5f;
+
     [Header("Smoothing")]
     [Tooltip("Time (seconds) used to smooth desired point updates.")]
     public float positionSmoothTime = 0.12f;
@@ -142,18 +146,22 @@ public class FullBodyBipedGaitController : MonoBehaviour
     private void UpdateDesiredAnchors()
     {
         Vector3 forward = GetForwardOnPlane();
+        Vector3 planarVelocity = new Vector3(velocity.x, 0f, velocity.z);
+        Vector3 direction = planarVelocity.sqrMagnitude > 0.0001f ? planarVelocity.normalized : forward;
         Vector3 right = Vector3.Cross(Vector3.up, forward);
 
-        float speed = new Vector3(velocity.x, 0f, velocity.z).magnitude;
+        float speed = planarVelocity.magnitude;
         float t = Mathf.InverseLerp(0f, 4f, speed);
 
         float length = Mathf.Lerp(minStepLength, maxStepLength, t);
         float duration = Mathf.Lerp(maxStepDuration, minStepDuration, t);
 
-        Vector3 predictedMove = forward * (length * velocityPrediction);
+        Vector3 predictedMove = direction * (length * velocityPrediction);
+        Vector3 desiredLeftTarget = ClampAnchor(GetBodyPosition() + predictedMove - right * footSpacing);
+        Vector3 desiredRightTarget = ClampAnchor(GetBodyPosition() + predictedMove + right * footSpacing);
 
-        desiredLeft = SmoothAnchor(desiredLeft, GetBodyPosition() + predictedMove - right * footSpacing, ref desiredLeftVel);
-        desiredRight = SmoothAnchor(desiredRight, GetBodyPosition() + predictedMove + right * footSpacing, ref desiredRightVel);
+        desiredLeft = SmoothAnchor(desiredLeft, desiredLeftTarget, ref desiredLeftVel);
+        desiredRight = SmoothAnchor(desiredRight, desiredRightTarget, ref desiredRightVel);
 
         leftFoot.stepDuration = duration;
         rightFoot.stepDuration = duration;
@@ -254,6 +262,22 @@ public class FullBodyBipedGaitController : MonoBehaviour
     {
         position.y = GetGroundHeight();
         return position;
+    }
+
+    private Vector3 ClampAnchor(Vector3 target)
+    {
+        Vector3 body = GetBodyPosition();
+        Vector3 delta = target - body;
+        delta.y = 0f;
+
+        float limit = Mathf.Max(maxAnchorOffset, 0.001f);
+        if (delta.magnitude > limit)
+        {
+            delta = delta.normalized * limit;
+            target = body + delta;
+        }
+
+        return target;
     }
 
     private float GetGroundHeight()
