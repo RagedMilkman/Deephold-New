@@ -959,7 +959,7 @@ MonoBehaviour:
   stepDynamicsSmoothTime: 0.1
   hipMinOffset: 0
   hipMaxOffset: 0.02
-  adjustHipHeight: 1
+  adjustHipHeight: 0
   restRadius: 0.1
   restDelay: 0.5
   restFootStaggerDelay: 0.2

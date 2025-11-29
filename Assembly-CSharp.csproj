@@ -70,6 +70,7 @@
     <Compile Include="Assets\Scripts\Player\Network\BoneSnapshotDebugUI.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\HumanoidRigAnimator.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\BoneRotator.cs" />
+    <Compile Include="Assets\Scripts\Player\Animation\FullBodyBipedGaitController.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\TopDownMovementInteraction.cs" />
     <Compile Include="Assets\FishNet\Upgrading\MirrorUpgrade.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\BipedGaitController.cs" />
