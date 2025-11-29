@@ -56,6 +56,9 @@ public class FullBodyBipedGaitController : MonoBehaviour
     [Tooltip("Maximum forward distance a step may cover.")]
     public float maxStepLength = 0.6f;
 
+    [Tooltip("Time after completing a step before another can begin (seconds).")]
+    public float stepCooldown = 0.08f;
+
     [Tooltip("Lateral spacing from the body's center.")]
     public float footSpacing = 0.18f;
 
@@ -84,6 +87,10 @@ public class FullBodyBipedGaitController : MonoBehaviour
     [Tooltip("Multiplier applied to body velocity when predicting step locations.")]
     public float velocityPrediction = 0.5f;
 
+    [Header("Orientation")]
+    [Tooltip("How quickly foot targets rotate toward the movement heading (degrees per second).")]
+    public float footRotationSpeed = 540f;
+
     private FootState leftFoot = new FootState { side = FootSide.Left };
     private FootState rightFoot = new FootState { side = FootSide.Right };
 
@@ -93,6 +100,8 @@ public class FullBodyBipedGaitController : MonoBehaviour
     private Vector3 desiredRight;
     private Vector3 desiredLeftVel;
     private Vector3 desiredRightVel;
+    private float leftCooldown;
+    private float rightCooldown;
 
     private void Reset()
     {
@@ -118,6 +127,7 @@ public class FullBodyBipedGaitController : MonoBehaviour
         AutoAssignTargetsFromSolver();
         UpdateVelocity();
         UpdateDesiredAnchors();
+        UpdateCooldowns();
         UpdateFoot(leftFoot, rightFoot, desiredLeft, ref desiredLeftVel);
         UpdateFoot(rightFoot, leftFoot, desiredRight, ref desiredRightVel);
     }
@@ -141,6 +151,12 @@ public class FullBodyBipedGaitController : MonoBehaviour
         float dt = Mathf.Max(Time.deltaTime, 0.0001f);
         velocity = delta / dt;
         lastBodyPos = current;
+    }
+
+    private void UpdateCooldowns()
+    {
+        leftCooldown = Mathf.Max(0f, leftCooldown - Time.deltaTime);
+        rightCooldown = Mathf.Max(0f, rightCooldown - Time.deltaTime);
     }
 
     private void UpdateDesiredAnchors()
@@ -186,9 +202,13 @@ public class FullBodyBipedGaitController : MonoBehaviour
         Vector3 targetOnPlane = ProjectToGround(anchor);
         Vector3 current = foot.target.position;
 
+        float planarSpeed = new Vector3(velocity.x, 0f, velocity.z).magnitude;
+        float dynamicThreshold = Mathf.Lerp(stepThreshold, stepThreshold * 0.35f, Mathf.InverseLerp(0f, 4f, planarSpeed));
+        bool coolingDown = GetCooldownForFoot(foot) > 0f;
+
         bool otherFootBlocking = otherFoot != null && otherFoot.stepping && otherFoot.stepTime < minOppositeStepLead;
 
-        if (!foot.stepping && !otherFootBlocking && Vector3.Distance(ProjectToGround(current), targetOnPlane) > stepThreshold)
+        if (!foot.stepping && !coolingDown && !otherFootBlocking && Vector3.Distance(ProjectToGround(current), targetOnPlane) > dynamicThreshold)
         {
             BeginStep(foot, targetOnPlane);
         }
@@ -197,21 +217,25 @@ public class FullBodyBipedGaitController : MonoBehaviour
         {
             float dt = Time.deltaTime;
             foot.stepTime = Mathf.Clamp01(foot.stepTime + dt / Mathf.Max(foot.stepDuration, 0.0001f));
-            float arc = Mathf.Sin(foot.stepTime * Mathf.PI) * stepHeight;
-            Vector3 interpolated = Vector3.Lerp(foot.startPos, targetOnPlane, foot.stepTime);
+            float eased = EaseInOut(foot.stepTime);
+            float arc = Mathf.Sin(eased * Mathf.PI) * stepHeight;
+            Vector3 interpolated = Vector3.Lerp(foot.startPos, targetOnPlane, eased);
             interpolated.y += arc;
             SetFootPosition(foot, interpolated);
+            SetFootRotation(foot, targetOnPlane - foot.startPos);
 
             if (foot.stepTime >= 1f - 0.0001f)
             {
                 foot.stepping = false;
                 foot.startPos = targetOnPlane;
+                ApplyCooldown(foot);
             }
         }
         else
         {
             Vector3 smoothed = SmoothAnchor(current, targetOnPlane, ref vel);
             SetFootPosition(foot, smoothed);
+            SetFootRotation(foot, targetOnPlane - smoothed);
         }
     }
 
@@ -220,6 +244,16 @@ public class FullBodyBipedGaitController : MonoBehaviour
         foot.stepping = true;
         foot.stepTime = 0f;
         foot.startPos = foot.target.position;
+        foot.startPos = ProjectToGround(foot.startPos);
+        SetFootRotation(foot, target - foot.startPos);
+    }
+
+    private void ApplyCooldown(FootState foot)
+    {
+        if (foot.side == FootSide.Left)
+            leftCooldown = stepCooldown;
+        else
+            rightCooldown = stepCooldown;
     }
 
     private void InitializeFoot(FootState foot, float lateralSign)
@@ -242,6 +276,32 @@ public class FullBodyBipedGaitController : MonoBehaviour
         {
             foot.target.position = pos;
         }
+    }
+
+    private void SetFootRotation(FootState foot, Vector3 direction)
+    {
+        if (foot.target == null)
+            return;
+
+        Vector3 planar = direction;
+        planar.y = 0f;
+
+        if (planar.sqrMagnitude < 0.0001f)
+            planar = GetForwardOnPlane();
+
+        Quaternion desired = Quaternion.LookRotation(planar.normalized, Vector3.up);
+        foot.target.rotation = Quaternion.RotateTowards(foot.target.rotation, desired, footRotationSpeed * Time.deltaTime);
+    }
+
+    private float GetCooldownForFoot(FootState foot)
+    {
+        return foot.side == FootSide.Left ? leftCooldown : rightCooldown;
+    }
+
+    private float EaseInOut(float t)
+    {
+        t = Mathf.Clamp01(t);
+        return t * t * (3f - 2f * t); // smootherstep
     }
 
     private Vector3 GetBodyPosition()
