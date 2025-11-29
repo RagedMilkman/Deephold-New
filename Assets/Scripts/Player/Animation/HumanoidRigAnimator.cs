@@ -175,6 +175,10 @@ public class HumanoidRigAnimator : MonoBehaviour
         currentMovementType == TopDownMotor.MovementType.Moving ||
         currentMovementType == TopDownMotor.MovementType.Sprinting;
 
+    private bool ShouldAlignChestWithHead() =>
+        currentStance == TopDownMotor.Stance.Active ||
+        currentMovementType != TopDownMotor.MovementType.Standing;
+
     public void SetStance(TopDownMotor.Stance stance)
     {
         currentStance = stance;
@@ -399,7 +403,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         else if (hasHeadLookTarget)
         {
             UpdateCurrentHeadLookTarget();
-            UpdateTargetsForActiveStance();
+            UpdateTargetsForAlignedModes();
             ApplyHeadLookAtTarget();
         }
         else
@@ -576,9 +580,9 @@ public class HumanoidRigAnimator : MonoBehaviour
         currentHeadLookTarget = desiredHeadLookTarget;
     }
 
-    private void UpdateTargetsForActiveStance()
+    private void UpdateTargetsForAlignedModes()
     {
-        if (currentStance != TopDownMotor.Stance.Active)
+        if (!ShouldAlignChestWithHead())
         {
             return;
         }
@@ -1172,7 +1176,7 @@ public class HumanoidRigAnimator : MonoBehaviour
 
     private void UpdateChestLookTarget(Vector3 headTarget)
     {
-        desiredChestLookTarget = currentStance == TopDownMotor.Stance.Active
+        desiredChestLookTarget = ShouldAlignChestWithHead()
             ? headTarget
             : GetChestTarget(headTarget);
 
