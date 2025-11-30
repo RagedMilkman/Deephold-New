@@ -37,4 +37,9 @@ public sealed class CharacterData : MonoBehaviour
     {
         _faction = faction;
     }
+
+    private void OnDestroy()
+    {
+        _faction?.RemoveCharacter(this);
+    }
 }
