@@ -147,6 +147,8 @@ public sealed class FactionController : MonoBehaviour
         _nextSpawnIndex++;
 
         GameObject spawned = Instantiate(_characterPrefab, spawnPoint.position, spawnPoint.rotation);
+        if (!spawned.activeSelf)
+            spawned.SetActive(true);
         NetworkObject netObj = spawned.GetComponent<NetworkObject>();
         if (netObj != null && _networkManager != null && _networkManager.IsServer)
             _networkManager.ServerManager.Spawn(spawned);
