@@ -100,7 +100,7 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     }
 
-    public override void OnStartServer()
+    public override void OnStartNetwork()
     {
         if (!humanoidRigAnimator && transform.root)
             humanoidRigAnimator = transform.root.GetComponentInChildren<HumanoidRigAnimator>(true);
