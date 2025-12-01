@@ -127,6 +127,11 @@ public class HumanoidRigAnimator : MonoBehaviour
     [SerializeField] private Transform rightHandTarget;
     [SerializeField] [Range(0f, 1f)] private float handPositionWeight = 1f;
     [SerializeField] [Range(0f, 1f)] private float handRotationWeight = 1f;
+    [Header("Full Body Bend Goals")]
+    [SerializeField] [Min(0f)] private float armBendGoalOffset = 0.15f;
+    [SerializeField] [Range(0f, 1f)] private float armBendGoalWeight = 0.6f;
+    [SerializeField] private Transform leftArmBendGoal;
+    [SerializeField] private Transform rightArmBendGoal;
 
     private Animator humanoidAnimator;
     private bool bonesReady;
@@ -169,6 +174,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     private bool lastCharacterRotationEnabled;
     private bool chestTargetInitialized;
     private bool headExceededComfortLastFrame;
+    private bool bendGoalsDirty = true;
 
     internal float ComfortRangeDebugLength => comfortRangeDebugLength;
     internal bool ShouldForceParentRotation =>
@@ -344,6 +350,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         leftHandTarget = leftWristTarget;
         rightHandTarget = rightWristTarget;
         ApplyHandEffectors();
+        ApplyBendGoals();
     }
 
     private void CacheBipedIk()
@@ -482,6 +489,105 @@ public class HumanoidRigAnimator : MonoBehaviour
 
         ApplyFullBodyHandEffector(fullBodyBipedIk?.solver?.leftHandEffector, resolvedLeftTarget);
         ApplyFullBodyHandEffector(fullBodyBipedIk?.solver?.rightHandEffector, resolvedRightTarget);
+    }
+
+    private void ApplyBendGoals()
+    {
+        if (fullBodyBipedIk == null)
+        {
+            CacheFullBodyBipedIk();
+        }
+
+        if (fullBodyBipedIk?.solver == null)
+        {
+            return;
+        }
+
+        if (bendGoalsDirty)
+        {
+            leftArmBendGoal = EnsureBendGoalTransform(leftArmBendGoal, "Left Arm Bend Goal");
+            rightArmBendGoal = EnsureBendGoalTransform(rightArmBendGoal, "Right Arm Bend Goal");
+            bendGoalsDirty = false;
+        }
+
+        ApplyArmBendGoal(
+            HumanBodyBones.LeftUpperArm,
+            HumanBodyBones.LeftLowerArm,
+            leftHandTarget,
+            true,
+            fullBodyBipedIk.solver.leftArmChain,
+            ref leftArmBendGoal);
+
+        ApplyArmBendGoal(
+            HumanBodyBones.RightUpperArm,
+            HumanBodyBones.RightLowerArm,
+            rightHandTarget,
+            false,
+            fullBodyBipedIk.solver.rightArmChain,
+            ref rightArmBendGoal);
+    }
+
+    private void ApplyArmBendGoal(
+        HumanBodyBones upperArmBone,
+        HumanBodyBones lowerArmBone,
+        Transform handTarget,
+        bool isLeft,
+        IKSolverFullBodyBiped.Chain armChain,
+        ref Transform bendGoalTransform)
+    {
+        if (armChain == null)
+        {
+            return;
+        }
+
+        if (!TryGetBonePose(upperArmBone, out var upperArmPose) || !TryGetBonePose(lowerArmBone, out var lowerArmPose))
+        {
+            return;
+        }
+
+        Vector3 shoulder = upperArmPose.Transform.position;
+        Vector3 elbow = lowerArmPose.Transform.position;
+
+        Vector3 hand = handTarget != null
+            ? handTarget.position
+            : lowerArmPose.Transform.position + lowerArmPose.Transform.forward * armBendGoalOffset;
+
+        Vector3 toHand = hand - shoulder;
+        if (toHand.sqrMagnitude < 0.0001f)
+        {
+            toHand = upperArmPose.Transform.forward;
+        }
+
+        Vector3 bendDirection = Vector3.Cross(Vector3.up, toHand.normalized);
+        if (bendDirection.sqrMagnitude < 0.0001f)
+        {
+            bendDirection = Vector3.Cross(transform.forward, toHand.normalized);
+        }
+
+        if (bendDirection.sqrMagnitude > 0.0001f)
+        {
+            bendDirection = bendDirection.normalized * (isLeft ? -1f : 1f);
+        }
+
+        Vector3 bendGoalPosition = elbow + bendDirection * armBendGoalOffset;
+
+        bendGoalTransform.position = bendGoalPosition;
+        bendGoalTransform.rotation = Quaternion.LookRotation(toHand, Vector3.up);
+
+        armChain.bendConstraint.weight = armBendGoalWeight;
+        armChain.bendConstraint.bendGoal = bendGoalTransform;
+    }
+
+    private Transform EnsureBendGoalTransform(Transform existing, string name)
+    {
+        if (existing != null)
+        {
+            return existing;
+        }
+
+        var bendGoal = new GameObject(name).transform;
+        bendGoal.SetParent(transform, false);
+        return bendGoal;
     }
 
     private void ApplyHandEffector(IKSolverLimb solver, Transform target)
