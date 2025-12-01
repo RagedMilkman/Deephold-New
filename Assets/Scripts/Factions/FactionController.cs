@@ -18,6 +18,7 @@ public sealed class FactionController : MonoBehaviour
     [SerializeField, Tooltip("Spawn points available for this faction.")] private List<Transform> _spawnPoints = new();
     [SerializeField, Min(1), Tooltip("Maximum active characters this faction can maintain.")] private int _maxActiveCharacters = 5;
     [SerializeField, Tooltip("Automatically purchase and spawn characters when affordable.")] private bool _autoPurchase = true;
+    [SerializeField, Tooltip("Force spawned prefabs and their nested children to become active.")] private bool _forceEnableSpawnHierarchy = true;
 
     [Header("Networking")]
     [SerializeField, Tooltip("Network manager used to spawn characters on the server.")] private NetworkManager _networkManager;
@@ -147,8 +148,7 @@ public sealed class FactionController : MonoBehaviour
         _nextSpawnIndex++;
 
         GameObject spawned = Instantiate(_characterPrefab, spawnPoint.position, spawnPoint.rotation);
-        if (!spawned.activeSelf)
-            spawned.SetActive(true);
+        EnsureHierarchyActive(spawned);
         NetworkObject netObj = spawned.GetComponent<NetworkObject>();
         if (netObj != null && _networkManager != null && _networkManager.IsServer)
             _networkManager.ServerManager.Spawn(spawned);
@@ -159,6 +159,18 @@ public sealed class FactionController : MonoBehaviour
 
         AddCharacter(character);
         return character;
+    }
+
+    private void EnsureHierarchyActive(GameObject spawned)
+    {
+        if (!_forceEnableSpawnHierarchy || spawned == null)
+            return;
+
+        foreach (Transform t in spawned.GetComponentsInChildren<Transform>(true))
+        {
+            if (!t.gameObject.activeSelf)
+                t.gameObject.SetActive(true);
+        }
     }
 
     private bool IsServerContext()
