@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4630460447651833272}
   - component: {fileID: -1847501461699843864}
   - component: {fileID: 5858403481333311705}
-  - component: {fileID: 1374642003121399893}
+  - component: {fileID: 5340020552757736216}
   m_Layer: 0
   m_Name: Human
   m_TagString: Untagged
@@ -121,7 +121,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4630460447651833272}
   _networkObjectCache: {fileID: 0}
   _target: {fileID: 6116119404708490174}
---- !u!114 &1374642003121399893
+--- !u!114 &5340020552757736216
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,15 +130,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6116119404708490174}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31af367e1663b5c40a311127a6c66cd1, type: 3}
+  m_Script: {fileID: 11500000, guid: 2398b3c6eb724702936948bfbc21ab5f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TopDownMotorTargetFollower
+  m_EditorClassIdentifier: Assembly-CSharp::TopDownChaseAI
   _motor: {fileID: 5903944542015488180}
   _target: {fileID: 0}
   _stopDistance: 0.5
-  _rotationSpeed: 720
-  _sprintWhileMoving: 0
-  _replicatePosition: 0
 --- !u!1001 &5953492238139108838
 PrefabInstance:
   m_ObjectHideFlags: 0
