@@ -72,7 +72,8 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     private struct ArmBinding
     {
-        public LimbIKSolver solver;
+        public FullBodyBipedIK solver;
+        public IKEffector effector;
         public Transform defaultTarget;
     }
 
@@ -660,37 +661,14 @@ public class ToolbeltNetworked : NetworkBehaviour
 
         foreach (var solver in solvers)
         {
-            if (!TryGetHandSide(solver, out var side))
-                continue;
-
-            seenSides.Add(side);
-
-            if (handIKSolvers.TryGetValue(side, out var binding))
-            {
-                if (binding.solver == solver)
-                    continue;
-
-                var defaultTarget = binding.defaultTarget != null ? binding.defaultTarget : solver.target;
-                handIKSolvers[side] = new ArmBinding
-                {
-                    solver = solver,
-                    defaultTarget = defaultTarget,
-                };
-            }
-            else
-            {
-                handIKSolvers[side] = new ArmBinding
-                {
-                    solver = solver,
-                    defaultTarget = solver.target,
-                };
-            }
+            CacheArmBinding(solver, solver.solver.leftHandEffector, HandMount.HandSide.Left, seenSides);
+            CacheArmBinding(solver, solver.solver.rightHandEffector, HandMount.HandSide.Right, seenSides);
         }
 
         var toRemove = new List<HandMount.HandSide>();
         foreach (var entry in handIKSolvers)
         {
-            if (!entry.Value.solver || !seenSides.Contains(entry.Key))
+            if (!entry.Value.solver || entry.Value.effector == null || !seenSides.Contains(entry.Key))
                 toRemove.Add(entry.Key);
         }
 
@@ -701,25 +679,30 @@ public class ToolbeltNetworked : NetworkBehaviour
             humanoidRigAnimator.RefreshArmAttachments();
     }
 
-    static bool TryGetHandSide(LimbIKSolver solver, out HandMount.HandSide side)
+    void CacheArmBinding(FullBodyBipedIK solver, IKEffector effector, HandMount.HandSide side, HashSet<HandMount.HandSide> seenSides)
     {
-        side = default;
-        if (!solver)
-            return false;
+        if (!solver || effector == null)
+            return;
 
-        return false;
-        /*
-        switch (solver.LimbType)
+        seenSides.Add(side);
+
+        var defaultTarget = effector.target;
+
+        if (handIKSolvers.TryGetValue(side, out var binding))
         {
-            case LimbIKSolver.Limb.LeftArm:
-                side = HandMount.HandSide.Left;
-                return true;
-            case LimbIKSolver.Limb.RightArm:
-                side = HandMount.HandSide.Right;
-                return true;
-            default:
-                return false;
-        }*/
+            if (binding.solver == solver && binding.effector == effector)
+                return;
+
+            if (binding.defaultTarget != null)
+                defaultTarget = binding.defaultTarget;
+        }
+
+        handIKSolvers[side] = new ArmBinding
+        {
+            solver = solver,
+            effector = effector,
+            defaultTarget = defaultTarget,
+        };
     }
 
     void UpdateHandTargetsFromEquippedInstance()
@@ -864,14 +847,15 @@ public class ToolbeltNetworked : NetworkBehaviour
             return;
 
         var solver = binding.solver;
-        if (!solver)
+        var effector = binding.effector;
+        if (!solver || effector == null)
             return;
 
         var resolved = target != null ? target : binding.defaultTarget;
-        if (solver.target == resolved)
+        if (effector.target == resolved)
             return;
 
-        solver.target = resolved;
+        effector.target = resolved;
 
        // if (!Application.isPlaying || solver.isActiveAndEnabled)
        //     solver.solve();
