@@ -40,20 +40,11 @@ public class TopDownMotor : MonoBehaviour
 
     public event Action<Stance> StanceChanged;
 
-    public enum RotationMode
-    {
-        RotateBody,
-        RotateHead
-    }
-
     [Header("Root Rotation")]
-    [SerializeField] bool lockRootYaw = true;   // WASD never rotates player root/camera
-    [SerializeField] RotationMode rotationMode = RotationMode.RotateBody;
     [SerializeField] HumanoidRigAnimator rigAnimator;
     [SerializeField] float headLookFallbackDistance = 5f;
 
     Vector3 moveVel;
-    float initialRootYaw;
     Stance currentStance;
     MovementType currentMovementType = MovementType.Standing;
 
@@ -77,7 +68,6 @@ public class TopDownMotor : MonoBehaviour
         if (!yawReplicator) yawReplicator = GetComponentInChildren<YawReplicator>();
         if (!positionReplicator) positionReplicator = GetComponentInChildren<PositionReplicator>();
         UpdateRigYawTarget();
-        initialRootYaw = transform.eulerAngles.y;
         currentStance = defaultStance;
         currentMovementType = MovementType.Standing;
         UpdateRigAnimatorState();
@@ -182,8 +172,6 @@ public class TopDownMotor : MonoBehaviour
 
         if (controller) controller.Move(moveVel * dt);
 
-        if (lockRootYaw) LockRootYaw();
-
         UpdateMovementType(DetermineMovementType(input, wantsSprint));
 
         if (replicatePosition)
@@ -223,25 +211,17 @@ public class TopDownMotor : MonoBehaviour
 
     public void ApplyYaw(float yawDeg, Vector3? aimPoint = null, bool replicateYaw = true)
     {
-        if (rotationMode != RotationMode.RotateHead || rigAnimator == null)
-        {
-            ApplyYawTo(rotateTarget, yawDeg);
-        }
-
-        if (rotationMode == RotationMode.RotateHead && rigAnimator != null)
+        if (rigAnimator != null)
         {
             Vector3 origin = rotateTarget ? rotateTarget.position : transform.position;
             Vector3 target = aimPoint ?? origin + Quaternion.Euler(0f, yawDeg, 0f) * Vector3.forward * headLookFallbackDistance;
 
             UpdateHeadLook(target);
-            if (replicateYaw)
-            {
-                yawReplicator?.SubmitYaw(yawDeg);
-            }
-            return;
         }
-
-        UpdateHeadLook(aimPoint);
+        else
+        {
+            ApplyYawTo(rotateTarget, yawDeg);
+        }
 
         if (replicateYaw)
         {
@@ -260,12 +240,6 @@ public class TopDownMotor : MonoBehaviour
     public void ApplyReplicatedPosition(Vector3 position)
     {
         transform.position = position;
-    }
-
-    public void LockRootYaw()
-    {
-        var e = transform.eulerAngles;
-        transform.rotation = Quaternion.Euler(0f, initialRootYaw, 0f);
     }
 
     public void SetBody(Transform bodyTransform)
