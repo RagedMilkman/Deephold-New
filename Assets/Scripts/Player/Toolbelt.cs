@@ -796,7 +796,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         ApplyArmTarget(HandMount.HandSide.Right, rightFallback);
 
         if (humanoidRigAnimator)
-            humanoidRigAnimator.ApplyHandTargets(leftWrist, leftPalm, rightWrist, rightPalm);
+            humanoidRigAnimator.ApplyHandTargets(leftWrist, rightWrist, leftPalm, rightPalm);
     }
 
     void EnsureDefaultWristTargets()
