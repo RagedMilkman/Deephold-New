@@ -5288,6 +5288,7 @@ GameObject:
   - component: {fileID: 2650125091823068198}
   - component: {fileID: 7734047683449924906}
   - component: {fileID: 5728044436150630429}
+  - component: {fileID: 2375063280235814730}
   m_Layer: 0
   m_Name: Male_Separate_WIP Root
   m_TagString: Untagged
@@ -5483,6 +5484,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   _characterId: 
   _faction: {fileID: 0}
+  _forceEnableHierarchy: 1
+--- !u!114 &2375063280235814730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7478472528683366501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5562ec83048f3fb44959ad6666b6f51d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BoneSnapshotReplicator
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 7734047683449924906}
+  _networkObjectCache: {fileID: 0}
+  _rigRoot: {fileID: 2301636281318634596}
+  _characterRoot: {fileID: 2995738668064062231}
+  _ghostPrefab: {fileID: 1414821280921427797, guid: 2c9c792d6eea478fb48a0c1be088fdb0, type: 3}
+  _sendRate: 30
+  _debugLogSnapshots: 0
+  _resetDebugCountersOnAttach: 0
 --- !u!1 &7494343199174048900
 GameObject:
   m_ObjectHideFlags: 0

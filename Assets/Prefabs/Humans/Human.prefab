@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5128467609928858133}
   - component: {fileID: 4630460447651833272}
+  - component: {fileID: -1847501461699843864}
   m_Layer: 0
   m_Name: Human
   m_TagString: Untagged
@@ -51,9 +52,11 @@ MonoBehaviour:
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
-  NetworkBehaviours: []
+  NetworkBehaviours:
+  - {fileID: -1847501461699843864}
   InitializedParentNetworkBehaviour: {fileID: 0}
-  InitializedNestedNetworkObjects: []
+  InitializedNestedNetworkObjects:
+  - {fileID: 4164658408687173836}
   RuntimeParentNetworkBehaviour: {fileID: 0}
   RuntimeChildNetworkBehaviours: []
   _isNetworked: 1
@@ -76,15 +79,30 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 65535
+  <PrefabId>k__BackingField: 4
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 6472044054590026665
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 0}
-    Scale: {x: 0, y: 0, z: 0}
-    IsValid: 0
+    Position: {x: -0.62649, y: 0.12178, z: -2.62991}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    Scale: {x: 1, y: 1, z: 1}
+    IsValid: 1
+--- !u!114 &-1847501461699843864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6116119404708490174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a6a39c46bf52104ba8efe3100bce3f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.EmptyNetworkBehaviour
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 4630460447651833272}
+  _networkObjectCache: {fileID: 4630460447651833272}
 --- !u!1001 &5953492238139108838
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -205,6 +223,30 @@ PrefabInstance:
       propertyPath: <SceneId>k__BackingField
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: InitializedParentNetworkBehaviour
+      value: 
+      objectReference: {fileID: -1847501461699843864}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: 1.85583
+      objectReference: {fileID: 0}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: -0.12178
+      objectReference: {fileID: 0}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: SerializedTransformProperties.Position.z
+      value: 2.15478
+      objectReference: {fileID: 0}
     - target: {fileID: 8108832205637750120, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.06823182
@@ -278,6 +320,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+--- !u!114 &4164658408687173836 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+  m_PrefabInstance: {fileID: 5953492238139108838}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
 --- !u!4 &8866476985712350961 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2995738668064062231, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}

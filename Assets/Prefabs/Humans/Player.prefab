@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2758224920450142785}
   - component: {fileID: 6390988891232470549}
   - component: {fileID: 4212338670520547300}
-  - component: {fileID: 5567259644663957134}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -56,8 +55,6 @@ MonoBehaviour:
   _yawReplicator: {fileID: 0}
   _positionReplicator: {fileID: 0}
   _ownerCamera: {fileID: 7750328062498287493}
-  _boneSnapshotReplicator: {fileID: 5567259644663957134}
-  _ghostPrefab: {fileID: 1414821280921427797, guid: 2c9c792d6eea478fb48a0c1be088fdb0, type: 3}
 --- !u!114 &6390988891232470549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,8 +76,10 @@ MonoBehaviour:
   NetworkBehaviours:
   - {fileID: 2758224920450142785}
   - {fileID: 4212338670520547300}
+  - {fileID: 0}
   InitializedParentNetworkBehaviour: {fileID: 0}
-  InitializedNestedNetworkObjects: []
+  InitializedNestedNetworkObjects:
+  - {fileID: 1786119519026138082}
   RuntimeParentNetworkBehaviour: {fileID: 0}
   RuntimeChildNetworkBehaviours: []
   _isNetworked: 1
@@ -105,7 +104,7 @@ MonoBehaviour:
   _teleportThreshold: 1
   <PrefabId>k__BackingField: 0
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 2092870565765373345
+  <AssetPathHash>k__BackingField: 9948716602328937575
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
     Position: {x: 1.86791, y: -0, z: 1.02554}
@@ -124,30 +123,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15b537c46919440c9a149fe5a55c8587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 1
   _addedNetworkObject: {fileID: 6390988891232470549}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 6390988891232470549}
   _target: {fileID: 1414821280921427797}
---- !u!114 &5567259644663957134
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1414821280921427797}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5562ec83048f3fb44959ad6666b6f51d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BoneSnapshotReplicator
-  _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 6390988891232470549}
-  _networkObjectCache: {fileID: 0}
-  _rigRoot: {fileID: 7812697904247935660}
-  _characterRoot: {fileID: 6489204562721431007}
-  _sendRate: 30
-  _debugLogSnapshots: 0
-  _resetDebugCountersOnAttach: 0
 --- !u!1 &1765952574535967925
 GameObject:
   m_ObjectHideFlags: 0
@@ -530,7 +509,7 @@ PrefabInstance:
     - target: {fileID: 2650125091823068198, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: _networkObjectCache
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1786119519026138082}
     - target: {fileID: 2765569997796284300, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -730,6 +709,34 @@ PrefabInstance:
     - target: {fileID: 7482769739127380242, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: _networkObjectCache
       value: 
+      objectReference: {fileID: 1786119519026138082}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: WasActiveDuringEdit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: InitializedParentNetworkBehaviour
+      value: 
+      objectReference: {fileID: 2758224920450142785}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: 5.92304
+      objectReference: {fileID: 0}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: 0.009795655
+      objectReference: {fileID: 0}
+    - target: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: SerializedTransformProperties.Position.z
+      value: 6.87715
       objectReference: {fileID: 0}
     - target: {fileID: 8077484625001399060, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_Layer
@@ -861,6 +868,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8108832205637750120, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
   m_PrefabInstance: {fileID: 8330895534152148680}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1786119519026138082 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+  m_PrefabInstance: {fileID: 8330895534152148680}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
 --- !u!4 &3009186915913556706 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6512080644292543530, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
@@ -874,11 +892,6 @@ Transform:
 --- !u!143 &7230001201633648645 stripped
 CharacterController:
   m_CorrespondingSourceObject: {fileID: 1714559259804665549, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
-  m_PrefabInstance: {fileID: 8330895534152148680}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &7812697904247935660 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2301636281318634596, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
   m_PrefabInstance: {fileID: 8330895534152148680}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &8321704300644507405 stripped

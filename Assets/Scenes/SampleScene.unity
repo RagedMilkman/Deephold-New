@@ -596,6 +596,7 @@ MonoBehaviour:
   - {fileID: 1145503278}
   _maxActiveCharacters: 2
   _autoPurchase: 1
+  _forceEnableSpawnHierarchy: 1
   _networkManager: {fileID: 1637219449}
 --- !u!114 &1247085266
 MonoBehaviour:
