@@ -4742,6 +4742,37 @@ Transform:
   - {fileID: 8771846889329044599}
   m_Father: {fileID: 4926259865974059228}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7021008579736201153
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2733287110205977188}
+  m_Layer: 8
+  m_Name: LeftHandDefaultTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2733287110205977188
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7021008579736201153}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.306, y: 1.082, z: 0.188}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2995738668064062231}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7194571903515100841
 GameObject:
   m_ObjectHideFlags: 0
@@ -5086,6 +5117,37 @@ Transform:
   - {fileID: 4830384041829823720}
   m_Father: {fileID: 1412944811771827846}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7470315960075954748
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4383181461148833860}
+  m_Layer: 8
+  m_Name: RightHandDefaultTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4383181461148833860
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7470315960075954748}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.258, y: 1.168, z: 0.28}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2995738668064062231}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7477841327058202707
 GameObject:
   m_ObjectHideFlags: 0
@@ -5289,6 +5351,7 @@ GameObject:
   - component: {fileID: 7734047683449924906}
   - component: {fileID: 5728044436150630429}
   - component: {fileID: 2375063280235814730}
+  - component: {fileID: 8125184488041465076}
   m_Layer: 0
   m_Name: Male_Separate_WIP Root
   m_TagString: Untagged
@@ -5309,6 +5372,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 4383181461148833860}
+  - {fileID: 2733287110205977188}
   - {fileID: 4106089967696171929}
   - {fileID: 1017987867455751246}
   - {fileID: 6512080644292543530}
@@ -5498,6 +5563,57 @@ MonoBehaviour:
   _debugLogSnapshots: 0
   _resetDebugCountersOnAttach: 0
   _serverDrivesSnapshots: 0
+--- !u!114 &8125184488041465076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7478472528683366501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a12a9fc063de6740983ce8451213c57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolbeltNetworked
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 7734047683449924906}
+  _networkObjectCache: {fileID: 0}
+  itemRegistry: []
+  defaultPrimary: {fileID: 0}
+  defaultSecondary: {fileID: 0}
+  defaultTertiary: {fileID: 0}
+  defaultConsumable: {fileID: 0}
+  stanceSource: {fileID: 247711045251181906}
+  defaultStanceTransitionDuration: 0.1
+  equipPreviewDelayDuration: 0.01
+  enableEquipDebugLogs: 0
+  humanoidRigAnimator: {fileID: 0}
+  defaultLeftWristTarget: {fileID: 2733287110205977188}
+  defaultRightWristTarget: {fileID: 4383181461148833860}
+  slot0Net:
+    NetworkManager: {fileID: 0}
+    NetworkBehaviour: {fileID: 0}
+    _value: -1
+  slot1Net:
+    NetworkManager: {fileID: 0}
+    NetworkBehaviour: {fileID: 0}
+    _value: -1
+  slot2Net:
+    NetworkManager: {fileID: 0}
+    NetworkBehaviour: {fileID: 0}
+    _value: -1
+  slot3Net:
+    NetworkManager: {fileID: 0}
+    NetworkBehaviour: {fileID: 0}
+    _value: -1
+  equippedSlotNet:
+    NetworkManager: {fileID: 0}
+    NetworkBehaviour: {fileID: 0}
+    _value: 4
+  equippedStanceNet:
+    NetworkManager: {fileID: 0}
+    NetworkBehaviour: {fileID: 0}
+    _value: 1
 --- !u!1 &7494343199174048900
 GameObject:
   m_ObjectHideFlags: 0
