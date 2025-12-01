@@ -13,11 +13,6 @@ public class TopDownMovementInteraction : NetworkBehaviour
     [SerializeField] private YawReplicator _yawReplicator;
     [SerializeField] private PositionReplicator _positionReplicator;
     [SerializeField] private Camera _ownerCamera;
-    [SerializeField] private BoneSnapshotReplicator _boneSnapshotReplicator;
-    [SerializeField] private GameObject _ghostPrefab;
-
-    private GameObject _ghostInstance;
-    private GhostFollower _ghostFollower;
 
     private void Awake()
     {
@@ -25,7 +20,6 @@ public class TopDownMovementInteraction : NetworkBehaviour
         if (!_yawReplicator) _yawReplicator = GetComponentInChildren<YawReplicator>();
         if (!_positionReplicator) _positionReplicator = GetComponentInChildren<PositionReplicator>();
         if (!_ownerCamera) _ownerCamera = GetComponentInChildren<Camera>(true);
-        if (!_boneSnapshotReplicator) _boneSnapshotReplicator = GetComponentInChildren<BoneSnapshotReplicator>();
     }
 
     public override void OnStartClient()
@@ -38,15 +32,6 @@ public class TopDownMovementInteraction : NetworkBehaviour
         }
 
         DisablePlayerSystems();
-        SpawnGhost();
-    }
-
-    public override void OnStopClient()
-    {
-        base.OnStopClient();
-
-        if (!IsOwner)
-            DespawnGhost();
     }
 
     private void EnablePlayerSystems()
@@ -111,27 +96,5 @@ public class TopDownMovementInteraction : NetworkBehaviour
             _motor.ApplyYaw(yaw, playerTarget);  // local visual
             _yawReplicator?.SubmitYaw(yaw);      // replicate to others
         }
-    }
-
-    private void SpawnGhost()
-    {
-        if (_ghostPrefab == null || _ghostInstance != null)
-            return;
-
-        _ghostInstance = Instantiate(_ghostPrefab);
-        _ghostFollower = _ghostInstance.GetComponent<GhostFollower>();
-        if (_ghostFollower != null && _boneSnapshotReplicator != null)
-            _boneSnapshotReplicator.SetGhostFollower(_ghostFollower);
-    }
-
-    private void DespawnGhost()
-    {
-        if (_ghostInstance != null)
-            Destroy(_ghostInstance);
-
-        _ghostInstance = null;
-        _ghostFollower = null;
-        if (_boneSnapshotReplicator != null)
-            _boneSnapshotReplicator.SetGhostFollower(null);
     }
 }

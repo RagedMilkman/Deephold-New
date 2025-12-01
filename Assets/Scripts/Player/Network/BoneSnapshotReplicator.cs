@@ -9,7 +9,8 @@ using FishNet.Transporting;
 using UnityEngine;
 
 /// <summary>
-/// Replicates bone snapshots from the owner to remote ghost followers.
+/// Replicates bone snapshots from the owner to remote ghost followers and can
+/// optionally spawn the ghost locally on non-owner clients.
 /// </summary>
 // Run after IK/puppet systems so snapshots include their final pose updates.
 [DefaultExecutionOrder(10000)]
@@ -17,6 +18,9 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 {
     [SerializeField] private Transform _rigRoot;
     [SerializeField] private Transform _characterRoot;
+    [Header("Ghost")]
+    [SerializeField, Tooltip("Optional ghost prefab to spawn on non-owner clients.")]
+    private GameObject _ghostPrefab;
     [SerializeField] private float _sendRate = 30f;
     [SerializeField, Tooltip("Write snapshot send/receive info to the console.")]
     private bool _debugLogSnapshots;
@@ -28,6 +32,8 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private float _sendTimer;
 
     private GhostFollower _ghostFollower;
+    private GameObject _ghostInstance;
+    private bool _spawnedGhostInternally;
     private readonly Queue<BoneSnapshot> _pendingSnapshots = new();
 
     private int _sentSnapshots;
@@ -121,12 +127,16 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
         // client receives snapshots from server
         _client.RegisterBroadcast<BoneSnapshotMessage>(Client_ReceiveSnapshot);
+
+        TrySpawnGhostFollower();
     }
 
     public override void OnStopClient()
     {
         if (_client != null)
             _client.UnregisterBroadcast<BoneSnapshotMessage>(Client_ReceiveSnapshot);
+
+        DespawnGhostFollower();
 
         base.OnStopClient();
     }
@@ -252,6 +262,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     public void SetGhostFollower(GhostFollower follower)
     {
         _ghostFollower = follower;
+        _spawnedGhostInternally &= follower != null;
 
         if (_ghostFollower != null && _resetDebugCountersOnAttach)
         {
@@ -264,6 +275,35 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             while (_pendingSnapshots.Count > 0)
                 _ghostFollower.EnqueueSnapshot(_pendingSnapshots.Dequeue());
         }
+    }
+
+    private void TrySpawnGhostFollower()
+    {
+        if (IsOwner || _ghostPrefab == null || _ghostInstance != null || _ghostFollower != null)
+            return;
+
+        _ghostInstance = Instantiate(_ghostPrefab);
+        _ghostFollower = _ghostInstance.GetComponent<GhostFollower>();
+        _spawnedGhostInternally = _ghostFollower != null;
+
+        if (_ghostFollower == null)
+        {
+            Debug.LogWarning($"[BoneSnapshotReplicator] Ghost prefab '{_ghostPrefab.name}' is missing a GhostFollower component.");
+            return;
+        }
+
+        SetGhostFollower(_ghostFollower);
+    }
+
+    private void DespawnGhostFollower()
+    {
+        if (_spawnedGhostInternally && _ghostInstance != null)
+            Destroy(_ghostInstance);
+
+        _ghostInstance = null;
+        _spawnedGhostInternally = false;
+        if (_ghostFollower != null)
+            SetGhostFollower(null);
     }
 
     private static T[] Clone<T>(T[] source)
