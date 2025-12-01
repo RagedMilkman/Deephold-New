@@ -14,6 +14,12 @@ public class TopDownMovementInteraction : NetworkBehaviour
     [SerializeField] private PositionReplicator _positionReplicator;
     [SerializeField] private Camera _ownerCamera;
 
+    [Header("Aiming")]
+    [SerializeField] private float _aimRayMaxDistance = 1000f;
+    [SerializeField] private bool _useGroundLayerMask = false;
+    [SerializeField] private LayerMask _groundMask = ~0;
+    [SerializeField] private LayerMask _floorMask = 0;
+
     private void Awake()
     {
         if (!_motor) _motor = GetComponentInChildren<TopDownMotor>();
@@ -90,11 +96,96 @@ public class TopDownMovementInteraction : NetworkBehaviour
 
         // Mouse-aim sets facing (and replicates yaw)
         if (mouse != null &&
-            _motor.TryGetAimTargets(mouse.position.ReadValue(), out var cursorTarget, out var playerTarget) &&
+            TryGetAimTargets(mouse.position.ReadValue(), out var cursorTarget, out var playerTarget) &&
             _motor.TryComputeYawFromPoint(cursorTarget, out var yaw))
         {
+            _motor.SetAimTargets(cursorTarget, playerTarget);
             _motor.ApplyYaw(yaw, playerTarget);  // local visual
             _yawReplicator?.SubmitYaw(yaw);      // replicate to others
         }
+        else
+        {
+            _motor.ClearAimTargets();
+        }
     }
+
+    private bool TryGetAimTargets(Vector2 screenPosition, out Vector3 cursorTarget, out Vector3 playerTarget)
+    {
+        cursorTarget = default;
+        playerTarget = default;
+
+        if (!_ownerCamera || !_motor) return false;
+
+        bool floorHit = false;
+
+        bool hasFloorMask = _floorMask.value != 0;
+
+        Ray ray = _ownerCamera.ScreenPointToRay(screenPosition);
+        if (_useGroundLayerMask)
+        {
+            var hits = Physics.RaycastAll(ray, _aimRayMaxDistance, _groundMask, QueryTriggerInteraction.Ignore);
+            if (hits.Length == 0)
+            {
+                return false;
+            }
+
+            RaycastHit? selectedHit = null;
+            foreach (var hit in hits)
+            {
+                var hitTransform = hit.collider ? hit.collider.transform : null;
+                if (!hitTransform)
+                {
+                    continue;
+                }
+
+                if (hitTransform == _motor.transform || hitTransform.IsChildOf(_motor.transform))
+                {
+                    continue;
+                }
+
+                if (!selectedHit.HasValue || hit.distance < selectedHit.Value.distance)
+                {
+                    selectedHit = hit;
+                }
+            }
+
+            if (!selectedHit.HasValue)
+            {
+                return false;
+            }
+
+            var validHit = selectedHit.Value;
+            cursorTarget = validHit.point;
+            if (hasFloorMask && IsLayerInMask(validHit.collider.gameObject.layer, _floorMask))
+            {
+                floorHit = true;
+            }
+        }
+        else
+        {
+            var plane = new Plane(Vector3.up, Vector3.zero); // y=0
+            if (plane.Raycast(ray, out float enter) && enter > 0f)
+            {
+                cursorTarget = ray.GetPoint(enter);
+                floorHit = true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        playerTarget = cursorTarget;
+        if (floorHit)
+        {
+            playerTarget.y += 1.5f;
+        }
+
+        Debug.DrawLine(cursorTarget, playerTarget, Color.wheat);
+
+        return true;
+    }
+
+    private static bool IsLayerInMask(int layer, LayerMask mask)
+        => (mask.value & (1 << layer)) != 0;
 }

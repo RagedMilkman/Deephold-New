@@ -17,11 +17,7 @@ public class TopDownMotor : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float backwardSpeedMultiplier = 0.6f;
     [SerializeField, Range(0f, 1f)] float activeStanceSpeedMultiplier = 0.65f;
 
-    [Header("Mouse Aim")]
-    [SerializeField] float aimRayMaxDistance = 1000f;
-    [SerializeField] bool useGroundLayerMask = false;
-    [SerializeField] LayerMask groundMask = ~0;
-    [SerializeField] LayerMask floorMask = 0;
+    [Header("Aiming")]
     [SerializeField] float minAimDistance = 0.05f;
 
     public enum Stance
@@ -189,91 +185,17 @@ public class TopDownMotor : MonoBehaviour
     public Vector3 PlayerTarget { get; private set; }
     public bool HasCursorTarget { get; private set; }
 
-    public bool TryGetAimTargets(Vector2 screenPosition, out Vector3 cursorTarget, out Vector3 playerTarget)
+    public void SetAimTargets(Vector3 cursorTarget, Vector3 playerTarget)
     {
-        cursorTarget = default;
-        playerTarget = default;
-
-        HasCursorTarget = false;
-
-        if (!cam) return false;
-
-        bool floorHit = false;
-
-        bool hasFloorMask = floorMask.value != 0;
-
-        Ray ray = cam.ScreenPointToRay(screenPosition);
-        if (useGroundLayerMask)
-        {
-            var hits = Physics.RaycastAll(ray, aimRayMaxDistance, groundMask, QueryTriggerInteraction.Ignore);
-            if (hits.Length == 0)
-            {
-                return false;
-            }
-
-            RaycastHit? selectedHit = null;
-            foreach (var hit in hits)
-            {
-                var hitTransform = hit.collider ? hit.collider.transform : null;
-                if (!hitTransform)
-                {
-                    continue;
-                }
-
-                if (hitTransform == transform || hitTransform.IsChildOf(transform))
-                {
-                    continue;
-                }
-
-                if (!selectedHit.HasValue || hit.distance < selectedHit.Value.distance)
-                {
-                    selectedHit = hit;
-                }
-            }
-
-            if (!selectedHit.HasValue)
-            {
-                return false;
-            }
-
-            var validHit = selectedHit.Value;
-            cursorTarget = validHit.point;
-            if (hasFloorMask && IsLayerInMask(validHit.collider.gameObject.layer, floorMask))
-            {
-                floorHit = true;
-            }
-        }
-        else
-        {
-            var plane = new Plane(Vector3.up, Vector3.zero); // y=0
-            if (plane.Raycast(ray, out float enter) && enter > 0f)
-            {
-                cursorTarget = ray.GetPoint(enter);
-                floorHit = true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        playerTarget = cursorTarget;
-        if (floorHit)
-        {
-            playerTarget.y += 1.5f;
-        }
-
         CursorTarget = cursorTarget;
         PlayerTarget = playerTarget;
         HasCursorTarget = true;
-
-        Debug.DrawLine(cursorTarget, playerTarget, Color.wheat);
-
-        return true;
     }
 
-    static bool IsLayerInMask(int layer, LayerMask mask)
-        => (mask.value & (1 << layer)) != 0;
+    public void ClearAimTargets()
+    {
+        HasCursorTarget = false;
+    }
 
     public bool TryComputeYawFromPoint(Vector3 aimPoint, out float yawDegOut)
     {
