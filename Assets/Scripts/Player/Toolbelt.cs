@@ -674,9 +674,6 @@ public class ToolbeltNetworked : NetworkBehaviour
 
         for (int i = 0; i < toRemove.Count; i++)
             handIKSolvers.Remove(toRemove[i]);
-
-        if (humanoidRigAnimator)
-            humanoidRigAnimator.RefreshArmAttachments();
     }
 
     void CacheArmBinding(FullBodyBipedIK solver, IKEffector effector, HandMount.HandSide side, HashSet<HandMount.HandSide> seenSides)
