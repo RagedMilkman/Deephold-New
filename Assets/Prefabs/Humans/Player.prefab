@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2758224920450142785}
   - component: {fileID: 6390988891232470549}
   - component: {fileID: 4212338670520547300}
+  - component: {fileID: 2944773839300257384}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -52,9 +53,15 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 6390988891232470549}
   _networkObjectCache: {fileID: 6390988891232470549}
   _motor: {fileID: 0}
-  _yawReplicator: {fileID: 0}
-  _positionReplicator: {fileID: 0}
   _ownerCamera: {fileID: 7750328062498287493}
+  _aimRayMaxDistance: 1000
+  _useGroundLayerMask: 0
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _floorMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &6390988891232470549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,7 +75,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
   <IsNested>k__BackingField: 0
-  WasActiveDuringEdit: 0
+  WasActiveDuringEdit: 1
   WasActiveDuringEdit_Set1: 1
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
@@ -127,6 +134,25 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 6390988891232470549}
   _networkObjectCache: {fileID: 6390988891232470549}
   _target: {fileID: 1414821280921427797}
+--- !u!114 &2944773839300257384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414821280921427797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 806d2923d5797ae45ba2c498e3d64b79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolbeltInteraction
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6390988891232470549}
+  _networkObjectCache: {fileID: 0}
+  requireOwner: 1
+  requireAlive: 1
+  allowOnServer: 0
+  toolbelt: {fileID: 242980418670764604}
 --- !u!1 &1765952574535967925
 GameObject:
   m_ObjectHideFlags: 0
@@ -758,6 +784,10 @@ PrefabInstance:
       propertyPath: WasActiveDuringEdit
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8125184488041465076, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: enableEquipDebugLogs
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8219493970271211756, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.390448
@@ -868,6 +898,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8108832205637750120, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
   m_PrefabInstance: {fileID: 8330895534152148680}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &242980418670764604 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8125184488041465076, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+  m_PrefabInstance: {fileID: 8330895534152148680}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a12a9fc063de6740983ce8451213c57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolbeltNetworked
 --- !u!114 &1786119519026138082 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}

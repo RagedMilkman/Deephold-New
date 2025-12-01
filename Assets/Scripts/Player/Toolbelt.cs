@@ -6,6 +6,7 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using RootMotion.FinalIK;
 using FishNet.CodeGenerating;
+using UnityEngine.Rendering;
 
 public class ToolbeltNetworked : NetworkBehaviour
 {
@@ -155,8 +156,13 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     public void RequestEquip(int oneBasedSlot)
     {
+        Debug.Log("RequestEquip: " + oneBasedSlot);
+
         if (!IsOwner && !IsServer)
             return;
+
+
+        Debug.Log("Can make change");
 
         oneBasedSlot = Mathf.Clamp(oneBasedSlot, 1, SlotCount);
         DebugLog($"RequestEquip({oneBasedSlot}) equipped={equippedSlot} stance={equippedStance} processing={isProcessingRequest} queue={DescribeQueue()}");
