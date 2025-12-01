@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FishNet.Connection;
 using FishNet.Managing;
 using FishNet.Object;
 using FishNet.Transporting;
@@ -186,6 +187,7 @@ public sealed class FactionController : MonoBehaviour
             return;
 
         _networkManager.ServerManager.OnServerConnectionState += HandleServerConnectionState;
+        _networkManager.ServerManager.OnRemoteConnectionState += HandleRemoteConnectionState;
     }
 
     private void UnsubscribeFromNetworkEvents()
@@ -194,6 +196,7 @@ public sealed class FactionController : MonoBehaviour
             return;
 
         _networkManager.ServerManager.OnServerConnectionState -= HandleServerConnectionState;
+        _networkManager.ServerManager.OnRemoteConnectionState -= HandleRemoteConnectionState;
     }
 
     private void HandleServerConnectionState(ServerConnectionStateArgs args)
@@ -207,6 +210,36 @@ public sealed class FactionController : MonoBehaviour
             case LocalConnectionState.Stopped:
                 UpdateServerActiveState(false);
                 break;
+        }
+    }
+
+    private void HandleRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
+    {
+        if (!_isServerActive)
+            return;
+
+        if (args.ConnectionState == RemoteConnectionState.Started)
+            SyncExistingMembersToConnection(conn);
+    }
+
+    private void SyncExistingMembersToConnection(NetworkConnection conn)
+    {
+        if (conn == null || _networkManager == null || !_networkManager.IsServer)
+            return;
+
+        foreach (CharacterData member in _members)
+        {
+            if (member == null)
+                continue;
+
+            NetworkObject netObj = member.GetComponent<NetworkObject>();
+            if (netObj == null)
+                continue;
+
+            if (!netObj.IsSpawned)
+                _networkManager.ServerManager.Spawn(netObj.gameObject);
+
+            netObj.AddObserver(conn);
         }
     }
 
