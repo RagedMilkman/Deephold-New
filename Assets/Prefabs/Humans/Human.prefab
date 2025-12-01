@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5128467609928858133}
   - component: {fileID: 4630460447651833272}
   - component: {fileID: -1847501461699843864}
+  - component: {fileID: 5858403481333311705}
   m_Layer: 0
   m_Name: Human
   m_TagString: Untagged
@@ -103,6 +104,22 @@ MonoBehaviour:
   _componentIndexCache: 0
   _addedNetworkObject: {fileID: 4630460447651833272}
   _networkObjectCache: {fileID: 4630460447651833272}
+--- !u!114 &5858403481333311705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6116119404708490174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15b537c46919440c9a149fe5a55c8587, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OwnerOnlyVisibility
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 4630460447651833272}
+  _networkObjectCache: {fileID: 0}
+  _target: {fileID: 6116119404708490174}
 --- !u!1001 &5953492238139108838
 PrefabInstance:
   m_ObjectHideFlags: 0
