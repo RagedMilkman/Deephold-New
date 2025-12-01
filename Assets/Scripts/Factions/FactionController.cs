@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using FishNet.Connection;
 using FishNet.Managing;
-using FishNet.Managing.Observing;
 using FishNet.Object;
 using FishNet.Transporting;
 using UnityEngine;
@@ -238,11 +237,8 @@ public sealed class FactionController : MonoBehaviour
                 continue;
 
             if (!netObj.IsSpawned)
-            {
                 _networkManager.ServerManager.Spawn(netObj.gameObject);
-            }
-
-            _networkManager.ServerManager.ObserverManager.AddObserver(conn, netObj);
+            // No manual observer management; FishNet handles observers via conditions.
         }
     }
 
