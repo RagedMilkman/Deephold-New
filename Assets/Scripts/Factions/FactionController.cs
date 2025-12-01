@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FishNet.Managing;
 using FishNet.Object;
+using FishNet.Transporting;
 using UnityEngine;
 
 /// <summary>
@@ -26,6 +27,7 @@ public sealed class FactionController : MonoBehaviour
     private readonly List<CharacterData> _members = new();
     private float _currentFunds;
     private int _nextSpawnIndex;
+    private bool _isServerActive;
 
     public IReadOnlyList<CharacterData> Members => _members;
     public float CurrentFunds => _currentFunds;
@@ -39,17 +41,14 @@ public sealed class FactionController : MonoBehaviour
 
         if (_networkManager == null)
             _networkManager = FindObjectOfType<NetworkManager>();
+
+        SubscribeToNetworkEvents();
+        UpdateServerActiveState(IsServerContext());
     }
 
     private void OnEnable()
     {
-        if (!IsServerContext())
-        {
-            enabled = false;
-            return;
-        }
-
-        FactionsService.Instance?.RegisterFaction(this);
+        UpdateServerActiveState(IsServerContext());
     }
 
     private void OnDisable()
@@ -59,7 +58,7 @@ public sealed class FactionController : MonoBehaviour
 
     private void Update()
     {
-        if (!IsServerContext())
+        if (!_isServerActive)
             return;
 
         AccruePassiveIncome(Time.deltaTime);
@@ -94,7 +93,7 @@ public sealed class FactionController : MonoBehaviour
 
     public bool TryPurchaseAndSpawn()
     {
-        if (!IsServerContext())
+        if (!_isServerActive)
             return false;
 
         if (_maxActiveCharacters > 0 && _members.Count >= _maxActiveCharacters)
@@ -132,7 +131,7 @@ public sealed class FactionController : MonoBehaviour
 
     public CharacterData SpawnCharacter()
     {
-        if (!IsServerContext())
+        if (!_isServerActive)
             return null;
 
         if (_maxActiveCharacters > 0 && _members.Count >= _maxActiveCharacters)
@@ -183,5 +182,57 @@ public sealed class FactionController : MonoBehaviour
     {
         // When no network manager is present, assume single-player and allow spawning.
         return _networkManager == null || _networkManager.IsServer;
+    }
+
+    private void SubscribeToNetworkEvents()
+    {
+        if (_networkManager == null)
+            return;
+
+        _networkManager.ServerManager.OnServerConnectionState += HandleServerConnectionState;
+    }
+
+    private void UnsubscribeFromNetworkEvents()
+    {
+        if (_networkManager == null)
+            return;
+
+        _networkManager.ServerManager.OnServerConnectionState -= HandleServerConnectionState;
+    }
+
+    private void HandleServerConnectionState(ServerConnectionStateArgs args)
+    {
+        switch (args.ConnectionState)
+        {
+            case LocalConnectionState.Started:
+                UpdateServerActiveState(true);
+                break;
+            case LocalConnectionState.Stopping:
+            case LocalConnectionState.Stopped:
+                UpdateServerActiveState(false);
+                break;
+        }
+    }
+
+    private void UpdateServerActiveState(bool isActive)
+    {
+        if (_isServerActive == isActive)
+            return;
+
+        _isServerActive = isActive;
+
+        if (_isServerActive)
+        {
+            FactionsService.Instance?.RegisterFaction(this);
+        }
+        else
+        {
+            FactionsService.Instance?.UnregisterFaction(this);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        UnsubscribeFromNetworkEvents();
     }
 }

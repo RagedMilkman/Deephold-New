@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FishNet.Managing;
+using FishNet.Transporting;
 using UnityEngine;
 
 /// <summary>
@@ -11,37 +12,30 @@ public sealed class FactionsService : MonoBehaviour
 
     private NetworkManager _networkManager;
     private readonly List<FactionController> _factions = new();
+    private bool _isServerActive;
 
     public IReadOnlyList<FactionController> Factions => _factions;
 
     private void Awake()
     {
         _networkManager = FindObjectOfType<NetworkManager>();
-        if (_networkManager != null && !_networkManager.IsServer)
-        {
-            enabled = false;
-            return;
-        }
 
-        if (Instance != null && Instance != this)
-        {
-            Debug.LogWarning($"{nameof(FactionsService)} already exists in the scene. Destroying duplicate on {name}.");
-            Destroy(this);
-            return;
-        }
-
-        Instance = this;
+        SubscribeToNetworkEvents();
+        if (_networkManager == null || _networkManager.IsServer)
+            ActivateService();
     }
 
     private void OnDestroy()
     {
         if (Instance == this)
             Instance = null;
+
+        UnsubscribeFromNetworkEvents();
     }
 
     public void RegisterFaction(FactionController faction)
     {
-        if (faction == null || _factions.Contains(faction))
+        if (!_isServerActive || faction == null || _factions.Contains(faction))
             return;
 
         _factions.Add(faction);
@@ -67,5 +61,63 @@ public sealed class FactionsService : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void HandleServerConnectionState(ServerConnectionStateArgs args)
+    {
+        switch (args.ConnectionState)
+        {
+            case LocalConnectionState.Started:
+                ActivateService();
+                break;
+            case LocalConnectionState.Stopping:
+            case LocalConnectionState.Stopped:
+                DeactivateService();
+                break;
+        }
+    }
+
+    private void ActivateService()
+    {
+        if (_isServerActive)
+            return;
+
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning($"{nameof(FactionsService)} already exists in the scene. Destroying duplicate on {name}.");
+            Destroy(this);
+            return;
+        }
+
+        Instance = this;
+        _isServerActive = true;
+    }
+
+    private void DeactivateService()
+    {
+        if (!_isServerActive)
+            return;
+
+        _isServerActive = false;
+        _factions.Clear();
+
+        if (Instance == this)
+            Instance = null;
+    }
+
+    private void SubscribeToNetworkEvents()
+    {
+        if (_networkManager == null)
+            return;
+
+        _networkManager.ServerManager.OnServerConnectionState += HandleServerConnectionState;
+    }
+
+    private void UnsubscribeFromNetworkEvents()
+    {
+        if (_networkManager == null)
+            return;
+
+        _networkManager.ServerManager.OnServerConnectionState -= HandleServerConnectionState;
     }
 }
