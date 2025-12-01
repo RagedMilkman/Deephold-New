@@ -65,7 +65,7 @@ public class PositionReplicator : NetworkBehaviour
         SendPositionServer(position);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void SendPositionServer(Vector3 position)
     {
         _replicatedPosition = position;

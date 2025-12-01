@@ -64,7 +64,7 @@ public class YawReplicator : NetworkBehaviour
         SendYawServer(yaw);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void SendYawServer(float yaw)
     {
         _replicatedYaw = yaw;
