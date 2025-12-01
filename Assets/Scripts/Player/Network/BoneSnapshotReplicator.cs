@@ -26,6 +26,8 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private bool _debugLogSnapshots;
     [SerializeField, Tooltip("Reset debug counters when a GhostFollower is attached.")]
     private bool _resetDebugCountersOnAttach = true;
+    [SerializeField, Tooltip("If true, the server will generate snapshots for this object when it is the authority (eg. NPCs).")]
+    private bool _serverDrivesSnapshots;
 
     private readonly List<Transform> _bones = new();
     private string[] _bonePaths;
@@ -185,7 +187,9 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     // ---------------------------------------------------------------------
     private void LateUpdate()
     {
-        if (!IsOwner)
+        bool canSend = IsOwner || (IsServer && _serverDrivesSnapshots);
+
+        if (!canSend)
             return;
 
         if (_client == null)
