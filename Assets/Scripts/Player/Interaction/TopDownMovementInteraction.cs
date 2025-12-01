@@ -41,9 +41,6 @@ public class TopDownMovementInteraction : NetworkBehaviour
         enabled = true;
 
         if (!_ownerCamera) _ownerCamera = Camera.main;
-        if (_motor && _ownerCamera)
-            _motor.SetCamera(_ownerCamera);
-
         // Ensure only the player camera contributes audio when it becomes active.
         if (Camera.main && Camera.main != _ownerCamera)
         {
@@ -87,7 +84,25 @@ public class TopDownMovementInteraction : NetworkBehaviour
         bool activeStance = mouse != null && mouse.rightButton.isPressed;
         _motor.SetActiveStance(activeStance);
 
-        _motor.TickMove(input, wantsSprint, Time.deltaTime);
+        Vector3 moveInputWorld = new Vector3(input.x, 0f, input.y);
+        if (_ownerCamera)
+        {
+            Vector3 camForward = _ownerCamera.transform.forward;
+            camForward.y = 0f;
+            if (camForward.sqrMagnitude > 0.0001f)
+            {
+                camForward.Normalize();
+            }
+            else
+            {
+                camForward = Vector3.forward;
+            }
+
+            Vector3 camRight = Vector3.Cross(Vector3.up, camForward);
+            moveInputWorld = (camRight * input.x) + (camForward * input.y);
+        }
+
+        _motor.TickMove(moveInputWorld, wantsSprint, Time.deltaTime);
 
         // Mouse-aim sets facing (and replicates yaw)
         if (mouse != null &&

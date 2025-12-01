@@ -5,7 +5,6 @@ using UnityEngine;
 public class TopDownMotor : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] Camera cam;                      // local-only (owner view)
     [SerializeField] Transform rotateTarget;          // child that rotates (RotatingBody)
     [SerializeField] Transform body;                  // facing reference (Body)
     [SerializeField] CharacterController controller;  // on root Player
@@ -90,11 +89,6 @@ public class TopDownMotor : MonoBehaviour
 
     // ----- Owner-side hooks (called by Interaction) -----
 
-    public void SetCamera(Camera ownerCam)
-    {
-        if (!cam) cam = ownerCam;
-    }
-
     public void SetRigAnimator(HumanoidRigAnimator animator)
     {
         rigAnimator = animator;
@@ -103,36 +97,15 @@ public class TopDownMotor : MonoBehaviour
     }
 
     public void TickMove(Vector2 input, float dt)
-        => TickMove(input, false, dt);
+        => TickMove(new Vector3(input.x, 0f, input.y), false, dt);
 
     public void TickMove(Vector2 input, bool wantsSprint, float dt, bool replicatePosition = true)
+        => TickMove(new Vector3(input.x, 0f, input.y), wantsSprint, dt, replicatePosition);
+
+    public void TickMove(Vector3 moveInputWorld, bool wantsSprint, float dt, bool replicatePosition = true)
     {
-        Vector3 targetVel;
-
+        Vector3 targetVel = new Vector3(moveInputWorld.x, 0f, moveInputWorld.z);
         Vector3 referenceForward = Vector3.forward;
-
-        if (cam)
-        {
-            Vector3 camForward = cam.transform.forward;
-            camForward.y = 0f;
-
-            if (camForward.sqrMagnitude < 0.0001f)
-            {
-                camForward = Vector3.forward;
-            }
-            else
-            {
-                camForward.Normalize();
-            }
-
-            Vector3 camRight = Vector3.Cross(Vector3.up, camForward);
-            targetVel = (camRight * input.x) + (camForward * input.y);
-            referenceForward = camForward;
-        }
-        else
-        {
-            targetVel = new Vector3(input.x, 0f, input.y);
-        }
 
         Transform facingReference = body ? body : rotateTarget;
         if (!facingReference)
@@ -172,7 +145,7 @@ public class TopDownMotor : MonoBehaviour
 
         if (controller) controller.Move(moveVel * dt);
 
-        UpdateMovementType(DetermineMovementType(input, wantsSprint));
+        UpdateMovementType(DetermineMovementType(targetVel, wantsSprint));
 
         if (replicatePosition)
         {
@@ -279,7 +252,7 @@ public class TopDownMotor : MonoBehaviour
     public void SetActiveStance(bool active)
         => SetStance(active ? Stance.Active : Stance.Passive);
 
-    MovementType DetermineMovementType(Vector2 input, bool wantsSprint)
+    MovementType DetermineMovementType(Vector3 input, bool wantsSprint)
     {
         if (input.sqrMagnitude <= 0.0001f)
             return MovementType.Standing;
