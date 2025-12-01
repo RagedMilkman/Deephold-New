@@ -43,6 +43,12 @@ public sealed class FactionController : MonoBehaviour
 
     private void OnEnable()
     {
+        if (!IsServerContext())
+        {
+            enabled = false;
+            return;
+        }
+
         FactionsService.Instance?.RegisterFaction(this);
     }
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FishNet.Managing;
 using UnityEngine;
 
 /// <summary>
@@ -8,12 +9,20 @@ public sealed class FactionsService : MonoBehaviour
 {
     public static FactionsService Instance { get; private set; }
 
+    private NetworkManager _networkManager;
     private readonly List<FactionController> _factions = new();
 
     public IReadOnlyList<FactionController> Factions => _factions;
 
     private void Awake()
     {
+        _networkManager = FindObjectOfType<NetworkManager>();
+        if (_networkManager != null && !_networkManager.IsServer)
+        {
+            enabled = false;
+            return;
+        }
+
         if (Instance != null && Instance != this)
         {
             Debug.LogWarning($"{nameof(FactionsService)} already exists in the scene. Destroying duplicate on {name}.");
