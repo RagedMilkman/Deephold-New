@@ -9,6 +9,8 @@ public class TopDownMotor : MonoBehaviour
     [SerializeField] Transform rotateTarget;          // child that rotates (RotatingBody)
     [SerializeField] Transform body;                  // facing reference (Body)
     [SerializeField] CharacterController controller;  // on root Player
+    [SerializeField] YawReplicator yawReplicator;
+    [SerializeField] PositionReplicator positionReplicator;
 
     [Header("Movement")]
     [SerializeField] float moveSpeed = 4f;
@@ -60,6 +62,8 @@ public class TopDownMotor : MonoBehaviour
         controller = GetComponent<CharacterController>();
         if (!rigAnimator) rigAnimator = GetComponentInChildren<HumanoidRigAnimator>();
         if (!rotateTarget) rotateTarget = body ? body : transform;
+        if (!yawReplicator) yawReplicator = GetComponentInChildren<YawReplicator>();
+        if (!positionReplicator) positionReplicator = GetComponentInChildren<PositionReplicator>();
         UpdateRigYawTarget();
         currentMovementType = MovementType.Standing;
         UpdateRigAnimatorState();
@@ -70,6 +74,8 @@ public class TopDownMotor : MonoBehaviour
         if (!controller) controller = GetComponent<CharacterController>();
         if (!rigAnimator) rigAnimator = GetComponentInChildren<HumanoidRigAnimator>();
         if (!rotateTarget) rotateTarget = body ? body : transform;
+        if (!yawReplicator) yawReplicator = GetComponentInChildren<YawReplicator>();
+        if (!positionReplicator) positionReplicator = GetComponentInChildren<PositionReplicator>();
         UpdateRigYawTarget();
         initialRootYaw = transform.eulerAngles.y;
         currentStance = defaultStance;
@@ -109,7 +115,7 @@ public class TopDownMotor : MonoBehaviour
     public void TickMove(Vector2 input, float dt)
         => TickMove(input, false, dt);
 
-    public void TickMove(Vector2 input, bool wantsSprint, float dt)
+    public void TickMove(Vector2 input, bool wantsSprint, float dt, bool replicatePosition = true)
     {
         Vector3 targetVel;
 
@@ -179,6 +185,11 @@ public class TopDownMotor : MonoBehaviour
         if (lockRootYaw) LockRootYaw();
 
         UpdateMovementType(DetermineMovementType(input, wantsSprint));
+
+        if (replicatePosition)
+        {
+            positionReplicator?.SubmitPosition(transform.position);
+        }
     }
 
     public Vector3 CursorTarget { get; private set; }
@@ -210,7 +221,7 @@ public class TopDownMotor : MonoBehaviour
         return true;
     }
 
-    public void ApplyYaw(float yawDeg, Vector3? aimPoint = null)
+    public void ApplyYaw(float yawDeg, Vector3? aimPoint = null, bool replicateYaw = true)
     {
         if (rotationMode != RotationMode.RotateHead || rigAnimator == null)
         {
@@ -223,10 +234,19 @@ public class TopDownMotor : MonoBehaviour
             Vector3 target = aimPoint ?? origin + Quaternion.Euler(0f, yawDeg, 0f) * Vector3.forward * headLookFallbackDistance;
 
             UpdateHeadLook(target);
+            if (replicateYaw)
+            {
+                yawReplicator?.SubmitYaw(yawDeg);
+            }
             return;
         }
 
         UpdateHeadLook(aimPoint);
+
+        if (replicateYaw)
+        {
+            yawReplicator?.SubmitYaw(yawDeg);
+        }
     }
 
     public static void ApplyYawTo(Transform t, float yawDeg)
@@ -235,7 +255,7 @@ public class TopDownMotor : MonoBehaviour
     }
 
     public void ApplyReplicatedYaw(float yawDeg)
-        => ApplyYaw(yawDeg);
+        => ApplyYaw(yawDeg, null, false);
 
     public void ApplyReplicatedPosition(Vector3 position)
     {
