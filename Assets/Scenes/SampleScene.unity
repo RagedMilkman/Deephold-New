@@ -594,7 +594,7 @@ MonoBehaviour:
   _characterPrefab: {fileID: 6116119404708490174, guid: 59bcf9f393ceaa243af20bbfcb15c203, type: 3}
   _spawnPoints:
   - {fileID: 1145503278}
-  _maxActiveCharacters: 2
+  _maxActiveCharacters: 1
   _autoPurchase: 1
   _forceEnableSpawnHierarchy: 1
   _networkManager: {fileID: 1637219449}

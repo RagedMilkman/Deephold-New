@@ -188,6 +188,10 @@ PrefabInstance:
       propertyPath: m_LocalRotation.y
       value: -0
       objectReference: {fileID: 0}
+    - target: {fileID: 2375063280235814730, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: _serverDrivesSnapshots
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2995738668064062231, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.85583
