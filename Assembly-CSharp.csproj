@@ -62,6 +62,8 @@
     <Analyzer Include="E:\Code\Unity\Deephold\Assets\FishNet\Runtime\Plugins\CodeAnalysis\FishNet.CodeAnalysis.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Factions\FactionsService.cs" />
+    <Compile Include="Assets\Scripts\Factions\FactionController.cs" />
     <Compile Include="Assets\Scripts\NetworkBootstrapper.cs" />
     <Compile Include="Assets\FishNet\Upgrading\UpgradeFromMirrorMenu.cs" />
     <Compile Include="Assets\Scripts\Player\Network\PositionReplicator.cs" />
@@ -73,6 +75,7 @@
     <Compile Include="Assets\Scripts\Player\Animation\FullBodyBipedGaitController.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\TopDownMovementInteraction.cs" />
     <Compile Include="Assets\FishNet\Upgrading\MirrorUpgrade.cs" />
+    <Compile Include="Assets\Scripts\Factions\CharacterData.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\BipedGaitController.cs" />
     <Compile Include="Assets\Scripts\Player\Network\GhostFollower.cs" />
     <Compile Include="Assets\Scripts\NetworkPlayerSpawner.cs" />
