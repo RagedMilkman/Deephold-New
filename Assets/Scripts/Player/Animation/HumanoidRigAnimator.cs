@@ -121,6 +121,7 @@ public class HumanoidRigAnimator : MonoBehaviour
 
     [Header("Final IK Integration")]
     [SerializeField] private BipedIK bipedIk;
+    [SerializeField] private FullBodyBipedIK fullBodyBipedIk;
     [SerializeField] private Transform characterYawTransform;
     [SerializeField] private Transform leftHandTarget;
     [SerializeField] private Transform rightHandTarget;
@@ -230,6 +231,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     {
         CacheAnimator();
         CacheBipedIk();
+        CacheFullBodyBipedIk();
         CacheBones();
         InitializeBoneRotators();
     }
@@ -249,6 +251,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     {
         CacheAnimator();
         CacheBipedIk();
+        CacheFullBodyBipedIk();
         CacheBones();
         InitializeBoneRotators();
         RestoreDefaultPoses();
@@ -349,6 +352,14 @@ public class HumanoidRigAnimator : MonoBehaviour
             return;
 
         bipedIk = GetComponentInChildren<BipedIK>();
+    }
+
+    private void CacheFullBodyBipedIk()
+    {
+        if (fullBodyBipedIk != null)
+            return;
+
+        fullBodyBipedIk = GetComponentInChildren<FullBodyBipedIK>();
     }
 
     private void LateUpdate()
@@ -452,13 +463,25 @@ public class HumanoidRigAnimator : MonoBehaviour
             CacheBipedIk();
         }
 
-        if (bipedIk == null)
+        CacheFullBodyBipedIk();
+
+        if (bipedIk == null && fullBodyBipedIk == null)
         {
             return;
         }
 
-        ApplyHandEffector(bipedIk.solvers.leftHand, leftHandTarget);
-        ApplyHandEffector(bipedIk.solvers.rightHand, rightHandTarget);
+        Transform resolvedLeftTarget = ResolveHandTarget(
+            leftHandTarget,
+            fullBodyBipedIk?.solver?.leftHandEffector?.target);
+        Transform resolvedRightTarget = ResolveHandTarget(
+            rightHandTarget,
+            fullBodyBipedIk?.solver?.rightHandEffector?.target);
+
+        ApplyHandEffector(bipedIk?.solvers.leftHand, resolvedLeftTarget);
+        ApplyHandEffector(bipedIk?.solvers.rightHand, resolvedRightTarget);
+
+        ApplyFullBodyHandEffector(fullBodyBipedIk?.solver?.leftHandEffector, resolvedLeftTarget);
+        ApplyFullBodyHandEffector(fullBodyBipedIk?.solver?.rightHandEffector, resolvedRightTarget);
     }
 
     private void ApplyHandEffector(IKSolverLimb solver, Transform target)
@@ -471,6 +494,23 @@ public class HumanoidRigAnimator : MonoBehaviour
         solver.target = target;
         solver.IKPositionWeight = target && handPositionWeight > 0f ? handPositionWeight : 0f;
         solver.IKRotationWeight = target && handRotationWeight > 0f ? handRotationWeight : 0f;
+    }
+
+    private void ApplyFullBodyHandEffector(IKEffector effector, Transform target)
+    {
+        if (effector == null)
+        {
+            return;
+        }
+
+        effector.target = target;
+        effector.positionWeight = target && handPositionWeight > 0f ? handPositionWeight : 0f;
+        effector.rotationWeight = target && handRotationWeight > 0f ? handRotationWeight : 0f;
+    }
+
+    private static Transform ResolveHandTarget(Transform preferred, Transform fallback)
+    {
+        return preferred != null ? preferred : fallback;
     }
 
     private void ApplyRotation(HumanBodyBones bone, Quaternion offset)
