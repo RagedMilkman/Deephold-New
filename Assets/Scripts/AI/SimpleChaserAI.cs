@@ -1,3 +1,4 @@
+using FishNet.Object;
 using UnityEngine;
 
 /// <summary>
@@ -6,7 +7,7 @@ using UnityEngine;
 /// and always faces the target.
 /// </summary>
 [RequireComponent(typeof(TopDownMotor))]
-public class SimpleChaserAI : MonoBehaviour
+public class SimpleChaserAI : NetworkBehaviour
 {
     [SerializeField] private TopDownMotor _motor;
     [SerializeField] private Transform _target;
@@ -25,7 +26,7 @@ public class SimpleChaserAI : MonoBehaviour
 
     private void Update()
     {
-        if (!_motor || !_target) return;
+        if (!IsServer || !_motor || !_target) return;
 
         Vector3 targetPosition = _target.position;
         Vector3 toTarget = targetPosition - transform.position;
