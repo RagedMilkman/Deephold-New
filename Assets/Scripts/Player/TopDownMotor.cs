@@ -98,6 +98,18 @@ public class TopDownMotor : MonoBehaviour
 
     // ----- Owner-side hooks (called by Interaction) -----
 
+    public Camera Camera
+    {
+        get => cam;
+        set => cam = value;
+    }
+
+    public bool LockRootYawEnabled
+    {
+        get => lockRootYaw;
+        set => lockRootYaw = value;
+    }
+
     public void SetCamera(Camera ownerCam)
     {
         if (!cam) cam = ownerCam;

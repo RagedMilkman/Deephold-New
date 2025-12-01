@@ -8,6 +8,10 @@ public class TopDownAIFollower : MonoBehaviour
     [SerializeField] private TopDownMotor _motor;
     [SerializeField] private Transform _target;
     [SerializeField] private float _stopRange = 1.5f;
+    [Tooltip("Clear any camera set on the motor so AI movement is not camera-relative.")]
+    [SerializeField] private bool _clearMotorCamera = true;
+    [Tooltip("Disable root yaw locking so the AI can freely rotate toward the target.")]
+    [SerializeField] private bool _unlockRootYaw = true;
     [Header("Debug")]
     [SerializeField] private bool _showDebugGizmos = false;
     [SerializeField] private bool _debugOnlyWhenSelected = true;
@@ -23,6 +27,19 @@ public class TopDownAIFollower : MonoBehaviour
     private void Awake()
     {
         if (!_motor) _motor = GetComponent<TopDownMotor>();
+
+        if (_motor)
+        {
+            if (_clearMotorCamera)
+            {
+                _motor.Camera = null;
+            }
+
+            if (_unlockRootYaw)
+            {
+                _motor.LockRootYawEnabled = false;
+            }
+        }
     }
 
     private void Update()
