@@ -336,7 +336,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         bonesReady = bonePoses.Count > 0;
     }
 
-    public void ApplyHandTargets(Transform leftTarget = null, Transform rightTarget = null)
+    public void ApplyHandTargets(Transform leftTarget = null, Transform rightTarget = null, Transform leftPalmTarget = null, Transform rightPalmTarget = null)
     {
         leftHandTarget = leftTarget;
         rightHandTarget = rightTarget;
