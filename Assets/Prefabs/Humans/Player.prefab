@@ -788,6 +788,18 @@ PrefabInstance:
       propertyPath: enableEquipDebugLogs
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8125184488041465076, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: itemRegistry.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8125184488041465076, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: 'itemRegistry.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 6dcae5f7c00c90d44b4bae63a336f6b4, type: 2}
+    - target: {fileID: 8125184488041465076, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: 'itemRegistry.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 8e0a32cba193be746ad40a132d7f33a2, type: 2}
     - target: {fileID: 8219493970271211756, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.390448
@@ -904,7 +916,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 8330895534152148680}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a12a9fc063de6740983ce8451213c57, type: 3}
   m_Name: 
