@@ -38,7 +38,7 @@ public class NoiseGenerationService : MonoBehaviour
 
     public void ApplyNoiseMap(GridDirector gridDirector)
     {
-        if (!gridDirector || !gridDirector.isServer)
+        if (!gridDirector || !gridDirector.IsServer)
             return;
 
         int width = gridDirector.Width;

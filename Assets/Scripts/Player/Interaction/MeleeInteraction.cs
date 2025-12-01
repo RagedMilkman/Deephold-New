@@ -43,7 +43,7 @@ public class MeleeInteraction : PlayerInteraction
                 toolbelt = transform.root.GetComponentInChildren<ToolbeltNetworked>(true);
         }
 
-        if (isOwner)
+        if (IsOwner)
         {
             ownerCam = GetComponentInChildren<Camera>(true);
             if (!ownerCam) ownerCam = Camera.main;

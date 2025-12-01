@@ -33,7 +33,7 @@ public class RangedInteraction : PlayerInteraction
         }
 
         // Resolve camera once for the owner
-        if (isOwner)
+        if (IsOwner)
         {
             ownerCam = GetComponentInChildren<Camera>(true);
             if (!ownerCam) ownerCam = Camera.main;

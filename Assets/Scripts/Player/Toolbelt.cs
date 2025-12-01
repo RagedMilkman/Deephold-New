@@ -5,6 +5,7 @@ using Assets.Scripts.Items.Weapons;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using RootMotion.FinalIK;
+using FishNet.CodeGenerating;
 
 public class ToolbeltNetworked : NetworkBehaviour
 {
@@ -50,11 +51,17 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     private readonly Dictionary<HandMount.HandSide, ArmBinding> handIKSolvers = new();
 
+    [AllowMutableSyncType]
     private SyncVar<int> slot0Net = new(-1);
+    [AllowMutableSyncType]
     private SyncVar<int> slot1Net = new(-1);
+    [AllowMutableSyncType]
     private SyncVar<int> slot2Net = new(-1);
+    [AllowMutableSyncType]
     private SyncVar<int> slot3Net = new(-1);
+    [AllowMutableSyncType]
     private SyncVar<int> equippedSlotNet = new(SlotCount);
+    [AllowMutableSyncType]
     private SyncVar<int> equippedStanceNet = new((int)ToolMountPoint.MountStance.Passive);
 
     ToolMountPoint.MountStance desiredEquippedStance = ToolMountPoint.MountStance.Passive;

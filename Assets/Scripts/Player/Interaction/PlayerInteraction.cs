@@ -33,7 +33,7 @@ public abstract class PlayerInteraction : NetworkBehaviour
         if (playerState != null)
         {
             isAlive = playerState.State != LifeState.Dead;
-            playerState.OnStateChanged += HandleStateChanged;
+          //  playerState.OnStateChanged += HandleStateChanged;
         }
 
         // Template hook
@@ -42,8 +42,8 @@ public abstract class PlayerInteraction : NetworkBehaviour
 
     protected virtual void OnDestroy()
     {
-        if (playerState != null)
-            playerState.OnStateChanged -= HandleStateChanged;
+      //  if (playerState != null)
+     //       playerState.OnStateChanged -= HandleStateChanged;
 
         OnInteractionDestroyed();
     }
