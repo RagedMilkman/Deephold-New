@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4630460447651833272}
   - component: {fileID: -1847501461699843864}
   - component: {fileID: 5858403481333311705}
+  - component: {fileID: 1374642003121399893}
   m_Layer: 0
   m_Name: Human
   m_TagString: Untagged
@@ -120,6 +121,24 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4630460447651833272}
   _networkObjectCache: {fileID: 0}
   _target: {fileID: 6116119404708490174}
+--- !u!114 &1374642003121399893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6116119404708490174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31af367e1663b5c40a311127a6c66cd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TopDownMotorTargetFollower
+  _motor: {fileID: 5903944542015488180}
+  _target: {fileID: 0}
+  _stopDistance: 0.5
+  _rotationSpeed: 720
+  _sprintWhileMoving: 0
+  _replicatePosition: 0
 --- !u!1001 &5953492238139108838
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -464,6 +483,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
+--- !u!114 &5903944542015488180 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 247711045251181906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+  m_PrefabInstance: {fileID: 5953492238139108838}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f7b5a8b1c04b6f4885689a81723d94e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TopDownMotor
 --- !u!4 &8866476985712350961 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2995738668064062231, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
