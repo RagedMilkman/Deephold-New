@@ -17,6 +17,8 @@ public class PositionReplicator : NetworkBehaviour
     private float _lastSendTime;
     private Vector3 _replicatedPosition;
 
+    private bool HasAuthority => IsOwner || IsServer;
+
     private void Awake()
     {
         if (!_target) _target = transform;
@@ -38,7 +40,7 @@ public class PositionReplicator : NetworkBehaviour
 
     private void LateUpdate()
     {
-        if (IsOwner)
+        if (HasAuthority)
             return;
 
         ApplyPosition(_replicatedPosition);
@@ -49,7 +51,7 @@ public class PositionReplicator : NetworkBehaviour
     /// </summary>
     public void SubmitPosition(Vector3 position)
     {
-        if (!IsOwner)
+        if (!HasAuthority)
             return;
 
         _replicatedPosition = position;
@@ -74,7 +76,7 @@ public class PositionReplicator : NetworkBehaviour
     [ObserversRpc(BufferLast = true)]
     private void BroadcastPosition(Vector3 position)
     {
-        if (IsOwner)
+        if (HasAuthority)
             return;
 
         _replicatedPosition = position;

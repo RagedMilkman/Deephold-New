@@ -17,6 +17,8 @@ public class YawReplicator : NetworkBehaviour
     private float _lastSendTime;
     private float _replicatedYaw;
 
+    private bool HasAuthority => IsOwner || IsServer;
+
     private void Awake()
     {
         if (!_rotateTarget) _rotateTarget = transform;
@@ -38,7 +40,7 @@ public class YawReplicator : NetworkBehaviour
 
     private void LateUpdate()
     {
-        if (IsOwner)
+        if (HasAuthority)
             return;
 
         ApplyYaw(_replicatedYaw);
@@ -49,7 +51,7 @@ public class YawReplicator : NetworkBehaviour
     /// </summary>
     public void SubmitYaw(float yaw)
     {
-        if (!IsOwner)
+        if (!HasAuthority)
             return;
 
         _replicatedYaw = yaw;
@@ -73,7 +75,7 @@ public class YawReplicator : NetworkBehaviour
     [ObserversRpc(BufferLast = true)]
     private void BroadcastYaw(float yaw)
     {
-        if (IsOwner)
+        if (HasAuthority)
             return;
 
         _replicatedYaw = yaw;
