@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7789705187569321037}
+  - component: {fileID: 7129804460608475887}
   m_Layer: 0
   m_Name: Muzzle
   m_TagString: Untagged
@@ -31,6 +32,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1206547420201133069}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &7129804460608475887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 57851212172282879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f7f1b4a3e2c49c5a0e2f2f4c2b7d1ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProceduralMuzzleFlash
+  minRayCount: 6
+  maxRayCount: 10
+  coneAngle: 25
+  lengthRange: {x: 0.2, y: 0.45}
+  widthRange: {x: 0.008, y: 0.02}
+  flashColor: {r: 1, g: 0.83, b: 0.43, a: 1}
+  visibleDuration: 0.05
+  fadeDuration: 0.05
+  flashLight: {fileID: 0}
+  lightIntensity: 2.5
+  lightRange: 6
+  lineRenderer: {fileID: 0}
 --- !u!1 &4092362727375875049
 GameObject:
   m_ObjectHideFlags: 0
@@ -40,6 +65,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1067824315637774337}
+  - component: {fileID: 6289649010553896336}
   m_Layer: 0
   m_Name: RightWristMount
   m_TagString: Untagged
@@ -62,6 +88,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1206547420201133069}
   m_LocalEulerAnglesHint: {x: -3.685, y: -90, z: 6.063}
+--- !u!114 &6289649010553896336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4092362727375875049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30fadc14659583044a8392056d0845b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HandMount
+  hand: 1
+  part: 1
+  mountTransform: {fileID: 1067824315637774337}
 --- !u!1 &5231436449254210190
 GameObject:
   m_ObjectHideFlags: 0
@@ -71,6 +112,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5159863858505612032}
+  - component: {fileID: 5861617826815943028}
   m_Layer: 0
   m_Name: LeftWristMount
   m_TagString: Untagged
@@ -93,6 +135,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1206547420201133069}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!114 &5861617826815943028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5231436449254210190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30fadc14659583044a8392056d0845b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HandMount
+  hand: 0
+  part: 1
+  mountTransform: {fileID: 5159863858505612032}
 --- !u!1 &7156412846934755968
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,6 +159,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8316057615286956239}
+  - component: {fileID: 6671656385874706362}
   m_Layer: 0
   m_Name: RightHandMount
   m_TagString: Untagged
@@ -124,6 +182,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1206547420201133069}
   m_LocalEulerAnglesHint: {x: 90, y: 180, z: -90}
+--- !u!114 &6671656385874706362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7156412846934755968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30fadc14659583044a8392056d0845b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HandMount
+  hand: 1
+  part: 0
+  mountTransform: {fileID: 8316057615286956239}
 --- !u!1 &9153718697863449100
 GameObject:
   m_ObjectHideFlags: 0
@@ -133,6 +206,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8345875363822685242}
+  - component: {fileID: 7760618404132157122}
   m_Layer: 0
   m_Name: LeftHandMount
   m_TagString: Untagged
@@ -155,6 +229,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1206547420201133069}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: -90}
+--- !u!114 &7760618404132157122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9153718697863449100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30fadc14659583044a8392056d0845b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HandMount
+  hand: 0
+  part: 0
+  mountTransform: {fileID: 8345875363822685242}
 --- !u!1001 &1672028436425458662
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -224,9 +313,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 65724ce3a7c39d24caba20f29e40132e, type: 2}
     - target: {fileID: -158868241145557174, guid: cd19ccb66b786e64b96da24b74160499, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -158868241145557174, guid: cd19ccb66b786e64b96da24b74160499, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 65724ce3a7c39d24caba20f29e40132e, type: 2}
+    - target: {fileID: -158868241145557174, guid: cd19ccb66b786e64b96da24b74160499, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 56aac1b29b45f3145a5c5c4fc2c7a62f, type: 2}
     - target: {fileID: 919132149155446097, guid: cd19ccb66b786e64b96da24b74160499, type: 3}
       propertyPath: m_Name
       value: M4_8
@@ -253,10 +350,147 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: cd19ccb66b786e64b96da24b74160499, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7789705187569321037}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cd19ccb66b786e64b96da24b74160499, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8604753472806505048}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cd19ccb66b786e64b96da24b74160499, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5225359115930824498}
   m_SourcePrefab: {fileID: 100100000, guid: cd19ccb66b786e64b96da24b74160499, type: 3}
 --- !u!4 &1206547420201133069 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: cd19ccb66b786e64b96da24b74160499, type: 3}
   m_PrefabInstance: {fileID: 1672028436425458662}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2014609664598146743 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: cd19ccb66b786e64b96da24b74160499, type: 3}
+  m_PrefabInstance: {fileID: 1672028436425458662}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8604753472806505048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014609664598146743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 253f5cd5bacb45fd8511b00bebab46c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RifleWeapon
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
+  muzzle: {fileID: 7789705187569321037}
+  mountPoint: {fileID: 0}
+  cam: {fileID: 0}
+  aimBeam: {fileID: 0}
+  fireFeedback: {fileID: 5225359115930824498}
+  bulletSpeed: 25
+  damage: 20
+  fireCooldown: 0.1
+  bulletRadius: 0.06
+  bulletRange: 75
+  bulletHitMask:
+    serializedVersion: 2
+    m_Bits: 0
+  tracerColor: {r: 1, g: 1, b: 1, a: 0.4}
+  tracerDuration: 0.05
+  tracerWidth: 0.01
+  tracerMaterial: {fileID: 0}
+  magSize: 25
+  reloadTime: 1.2
+  isAutomatic: 1
+  aimMask:
+    serializedVersion: 2
+    m_Bits: 64
+  aimMaxDistance: 1000
+  fallbackAimDistance: 50
+  aimBeamWidth: 0.002
+  aimBeamImpactSize: 5
+  aimBeamImpactColor: {r: 1, g: 0.25, b: 0.25, a: 1}
+  aimBeamImpactMisalignedColor: {r: 0.7660377, g: 0.7660377, b: 0.7660377, a: 1}
+  aimMuzzleMaxAngle: 40
+  aimBeamAlignedColor: {r: 1, g: 0.25, b: 0.25, a: 1}
+  aimBeamMisalignedColor: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
+  driveByInteraction: 1
+  equipDuration: 0.3
+  unequipDuration: 0.25
+  stanceTransitionDuration: 0.1
+--- !u!114 &5225359115930824498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014609664598146743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0846338eb4e14841a63f9371e3e53622, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponFireFeedback
+  muzzle: {fileID: 7789705187569321037}
+  recoilRoot: {fileID: 1206547420201133069}
+  mountPoint: {fileID: 0}
+  muzzleFlashPrefab: {fileID: 0}
+  proceduralMuzzleFlashPrefab: {fileID: 1930300433728745382, guid: 61308cedcba396f41966d16727eed96d, type: 3}
+  parentFlashToMuzzle: 1
+  recoilMode: 1
+  recoilKickbackDistance: 0.01
+  recoilKickDuration: 0.01
+  recoilReturnDuration: 0.1
+  recoilUpRotation: 3
+  recoilLateralJitter: 0.8
+  recoilCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  mountpointKickbackDistance: 0.02
+  mountpointRotation: 1.5
+  mountpointDuration: 0.12
+  mountpointCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
