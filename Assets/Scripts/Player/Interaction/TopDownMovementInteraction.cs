@@ -107,10 +107,8 @@ public class TopDownMovementInteraction : NetworkBehaviour
         // Mouse-aim sets facing (and replicates yaw)
         if (mouse != null &&
             TryGetAimTargets(mouse.position.ReadValue(), out var cursorTarget, out var playerTarget) &&
-            _motor.TryComputeYawFromPoint(cursorTarget, out var yaw))
+            _motor.TickAim(cursorTarget, playerTarget))
         {
-            _motor.SetAimTargets(cursorTarget, playerTarget);
-            _motor.ApplyYaw(yaw, playerTarget);  // local visual + replicate
         }
         else
         {

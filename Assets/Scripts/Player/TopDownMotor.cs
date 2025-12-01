@@ -169,6 +169,19 @@ public class TopDownMotor : MonoBehaviour
         HasCursorTarget = false;
     }
 
+    public bool TickAim(Vector3 cursorTarget, Vector3 playerTarget, bool replicateYaw = true)
+    {
+        if (TryComputeYawFromPoint(cursorTarget, out var yaw))
+        {
+            SetAimTargets(cursorTarget, playerTarget);
+            ApplyYaw(yaw, playerTarget, replicateYaw);
+            return true;
+        }
+
+        ClearAimTargets();
+        return false;
+    }
+
     public bool TryComputeYawFromPoint(Vector3 aimPoint, out float yawDegOut)
     {
         yawDegOut = 0f;
