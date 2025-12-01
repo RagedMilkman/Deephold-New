@@ -8,6 +8,8 @@ public sealed class CharacterData : MonoBehaviour
 {
     [SerializeField, Tooltip("Optional identifier for the character.")] private string _characterId;
     [SerializeField, Tooltip("Faction this character currently belongs to.")] private FactionController _faction;
+    [SerializeField, Tooltip("Force this character prefab hierarchy to activate on spawn (useful if the prefab is saved inactive).")]
+    private bool _forceEnableHierarchy = true;
 
     /// <summary>
     /// Optional identifier for the character instance.
@@ -18,6 +20,12 @@ public sealed class CharacterData : MonoBehaviour
     /// Faction this character is a member of, if any.
     /// </summary>
     public FactionController Faction => _faction;
+
+    private void Awake()
+    {
+        if (_forceEnableHierarchy)
+            EnsureHierarchyActive(gameObject);
+    }
 
     /// <summary>
     /// Assigns the character to the provided faction.
@@ -36,6 +44,18 @@ public sealed class CharacterData : MonoBehaviour
     internal void SetFactionInternal(FactionController faction)
     {
         _faction = faction;
+    }
+
+    internal static void EnsureHierarchyActive(GameObject root)
+    {
+        if (root == null)
+            return;
+
+        foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
+        {
+            if (!t.gameObject.activeSelf)
+                t.gameObject.SetActive(true);
+        }
     }
 
     private void OnDestroy()

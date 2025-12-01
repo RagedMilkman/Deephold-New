@@ -171,11 +171,7 @@ public sealed class FactionController : MonoBehaviour
         if (!_forceEnableSpawnHierarchy || spawned == null)
             return;
 
-        foreach (Transform t in spawned.GetComponentsInChildren<Transform>(true))
-        {
-            if (!t.gameObject.activeSelf)
-                t.gameObject.SetActive(true);
-        }
+        CharacterData.EnsureHierarchyActive(spawned);
     }
 
     private bool IsServerContext()
