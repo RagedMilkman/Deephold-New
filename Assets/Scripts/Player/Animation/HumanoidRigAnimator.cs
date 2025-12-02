@@ -129,6 +129,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     [SerializeField] [Range(0f, 1f)] private float handRotationWeight = 1f;
     [Header("Full Body Bend Goals")]
     [SerializeField] [Min(0f)] private float armBendGoalOffset = 0.15f;
+    [SerializeField] [Min(0f)] private float armBendGoalVerticalOffset = 0.05f;
     [SerializeField] [Range(0f, 1f)] private float armBendGoalWeight = 0.6f;
     [SerializeField] private Transform leftArmBendGoal;
     [SerializeField] private Transform rightArmBendGoal;
@@ -569,7 +570,9 @@ public class HumanoidRigAnimator : MonoBehaviour
             bendDirection = bendDirection.normalized * (isLeft ? -1f : 1f);
         }
 
-        Vector3 bendGoalPosition = elbow + bendDirection * armBendGoalOffset;
+        Vector3 bendGoalPosition = elbow
+            + bendDirection * armBendGoalOffset
+            + Vector3.down * armBendGoalVerticalOffset;
 
         bendGoalTransform.position = bendGoalPosition;
         bendGoalTransform.rotation = Quaternion.LookRotation(toHand, Vector3.up);
