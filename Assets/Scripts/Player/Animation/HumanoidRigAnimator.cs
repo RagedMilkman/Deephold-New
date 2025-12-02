@@ -125,6 +125,8 @@ public class HumanoidRigAnimator : MonoBehaviour
     [SerializeField] private Transform characterYawTransform;
     [SerializeField] private Transform leftHandTarget;
     [SerializeField] private Transform rightHandTarget;
+    [SerializeField] private HandGripAlign leftHandGripAlign;
+    [SerializeField] private HandGripAlign rightHandGripAlign;
     [SerializeField] [Range(0f, 1f)] private float handPositionWeight = 1f;
     [SerializeField] [Range(0f, 1f)] private float handRotationWeight = 1f;
     [Header("Full Body Bend Goals")]
@@ -352,6 +354,9 @@ public class HumanoidRigAnimator : MonoBehaviour
         rightHandTarget = rightWristTarget;
         ApplyHandEffectors();
         ApplyBendGoals();
+
+        ApplyHandGripTarget(leftHandGripAlign, leftPalmTarget != null ? leftPalmTarget : leftWristTarget);
+        ApplyHandGripTarget(rightHandGripAlign, rightPalmTarget != null ? rightPalmTarget : rightWristTarget);
     }
 
     private void CacheBipedIk()
@@ -620,6 +625,17 @@ public class HumanoidRigAnimator : MonoBehaviour
     private static Transform ResolveHandTarget(Transform preferred, Transform fallback)
     {
         return preferred != null ? preferred : fallback;
+    }
+
+    private static void ApplyHandGripTarget(HandGripAlign aligner, Transform mount)
+    {
+        if (aligner == null)
+        {
+            return;
+        }
+
+        aligner.itemHandMount = mount;
+        aligner.AlignImmediate();
     }
 
     private void ApplyRotation(HumanBodyBones bone, Quaternion offset)
