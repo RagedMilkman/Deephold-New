@@ -533,7 +533,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         HumanBodyBones lowerArmBone,
         Transform handTarget,
         bool isLeft,
-        IKSolverFullBodyBiped.Chain armChain,
+        FBIKChain armChain,
         ref Transform bendGoalTransform)
     {
         if (armChain == null)

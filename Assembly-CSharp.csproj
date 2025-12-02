@@ -100,6 +100,7 @@
     <Compile Include="Assets\Scripts\Player\Animation\FullBodyBipedGaitController.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\TopDownMovementInteraction.cs" />
     <Compile Include="Assets\FishNet\Upgrading\MirrorUpgrade.cs" />
+    <Compile Include="Assets\Scripts\Player\Animation\HandGripAlign.cs" />
     <Compile Include="Assets\Scripts\World\LocationServices\PlayerLocationService.cs" />
     <Compile Include="Assets\Scripts\Factions\CharacterData.cs" />
     <Compile Include="Assets\Scripts\World\Generation\IslandNoiseGenerator.cs" />
