@@ -39,6 +39,7 @@ public sealed class ToolBeltSlot
         public Vector3 TargetLocalPosition;
         public Quaternion TargetLocalRotation = Quaternion.identity;
         public Vector3 TargetLocalScale = Vector3.one;
+        public Action<GameObject> OnDestroyed;
     }
 
     public ToolBeltSlot(ToolbeltSlotName slot, ItemDefinition defaultItem)
@@ -60,21 +61,23 @@ public sealed class ToolBeltSlot
         Func<ItemDefinition, ToolMountPoint.MountType, ToolMountPoint.MountStance, Transform> resolveMountTarget,
         Action<Transform, ItemDefinition> applyDefinitionTransform,
         Action<GameObject, bool> assignOwnerToolbelt,
+        Action<GameObject> onInstanceCreated,
+        Action<GameObject> onInstanceDestroyed,
         UnityEngine.Object context)
     {
         if (!mountRoot || RegistryIndex < 0 || definition?.prefab == null)
         {
-            DestroyVisual(assignOwnerToolbelt);
+            DestroyVisual(assignOwnerToolbelt, onInstanceDestroyed);
             return;
         }
 
         if (visual != null && visual.Instance != null && visual.RegistryIndex == RegistryIndex)
         {
-            UpdateVisual(definition, determineMountType, resolveMountTarget);
+            UpdateVisual(definition, determineMountType, resolveMountTarget, onInstanceDestroyed);
             return;
         }
 
-        DestroyVisual(assignOwnerToolbelt);
+        DestroyVisual(assignOwnerToolbelt, onInstanceDestroyed);
 
         var instance = UnityEngine.Object.Instantiate(definition.prefab, mountRoot);
         assignOwnerToolbelt?.Invoke(instance, true);
@@ -87,8 +90,10 @@ public sealed class ToolBeltSlot
             MountType = determineMountType != null ? determineMountType(definition) : ToolMountPoint.MountType.Fallback,
             CurrentStance = ToolMountPoint.MountStance.Away,
             MountRoot = mountRoot,
+            OnDestroyed = onInstanceDestroyed,
         };
 
+        onInstanceCreated?.Invoke(instance);
         UpdateMountTargets(definition, resolveMountTarget);
         ApplyStance(ToolMountPoint.MountStance.Away, mountRoot, applyDefinitionTransform, context, 0f, Time.time);
     }
@@ -138,7 +143,7 @@ public sealed class ToolBeltSlot
         return visual.Instance;
     }
 
-    public GameObject DestroyVisual(Action<GameObject, bool> assignOwnerToolbelt)
+    public GameObject DestroyVisual(Action<GameObject, bool> assignOwnerToolbelt, Action<GameObject> onInstanceDestroyed = null)
     {
         if (visual == null)
             return null;
@@ -146,6 +151,7 @@ public sealed class ToolBeltSlot
         var instance = visual.Instance;
         if (instance)
         {
+            (onInstanceDestroyed ?? visual.OnDestroyed)?.Invoke(instance);
             assignOwnerToolbelt?.Invoke(instance, false);
             UnityEngine.Object.Destroy(instance);
         }
@@ -157,7 +163,8 @@ public sealed class ToolBeltSlot
     private void UpdateVisual(
         ItemDefinition definition,
         Func<ItemDefinition, ToolMountPoint.MountType> determineMountType,
-        Func<ItemDefinition, ToolMountPoint.MountType, ToolMountPoint.MountStance, Transform> resolveMountTarget)
+        Func<ItemDefinition, ToolMountPoint.MountType, ToolMountPoint.MountStance, Transform> resolveMountTarget,
+        Action<GameObject> onInstanceDestroyed)
     {
         if (visual == null)
             return;
@@ -166,6 +173,9 @@ public sealed class ToolBeltSlot
         visual.Definition = definition;
         if (determineMountType != null)
             visual.MountType = determineMountType(definition);
+
+        if (onInstanceDestroyed != null)
+            visual.OnDestroyed = onInstanceDestroyed;
 
         UpdateMountTargets(definition, resolveMountTarget);
     }

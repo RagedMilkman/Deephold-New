@@ -44,6 +44,10 @@ public class ToolbeltNetworked : NetworkBehaviour
     private bool defaultLeftWristErrorLogged;
     private bool defaultRightWristErrorLogged;
 
+    private Component puppetMasterPropRoot;
+    private Type puppetMasterPropType;
+    private Type puppetMasterPropRootType;
+
     private ToolMountPoint[] mountPoints = System.Array.Empty<ToolMountPoint>();
     private GameObject equippedInstance;
     private KineticProjectileWeapon equippedWeapon;
@@ -98,6 +102,8 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (!humanoidRigAnimator && transform.root)
             humanoidRigAnimator = transform.root.GetComponentInChildren<HumanoidRigAnimator>(true);
 
+        ResolvePuppetMasterPropRoot();
+
     }
 
     public override void OnStartNetwork()
@@ -111,6 +117,8 @@ public class ToolbeltNetworked : NetworkBehaviour
             Debug.LogError("Toolbelt: unable to resolve mount root", this);
             return;
         }
+
+        ResolvePuppetMasterPropRoot();
 
         AttachStanceSource();
         RefreshMountPoints();
@@ -542,6 +550,8 @@ public class ToolbeltNetworked : NetworkBehaviour
             ResolveMountTarget,
             ApplyDefinitionTransform,
             AssignOwnerToolbelt,
+            RegisterInstanceWithPuppetMaster,
+            UnregisterInstanceFromPuppetMaster,
             this);
     }
 
@@ -603,7 +613,7 @@ public class ToolbeltNetworked : NetworkBehaviour
     void ClearVisuals()
     {
         foreach (var slot in EnumerateSlots())
-            slot?.DestroyVisual(AssignOwnerToolbelt);
+            slot?.DestroyVisual(AssignOwnerToolbelt, UnregisterInstanceFromPuppetMaster);
 
         equippedInstance = null;
         equippedWeapon = null;
@@ -642,6 +652,43 @@ public class ToolbeltNetworked : NetworkBehaviour
         instanceTransform.localRotation = Quaternion.Euler(def.localEulerAngles);
         var scale = def.localScale;
         instanceTransform.localScale = (scale == Vector3.zero) ? Vector3.one : scale;
+    }
+
+    void ResolvePuppetMasterPropRoot()
+    {
+        puppetMasterPropType ??= Type.GetType("RootMotion.Dynamics.Prop, Assembly-CSharp-firstpass")
+            ?? Type.GetType("RootMotion.Dynamics.Prop");
+        puppetMasterPropRootType ??= Type.GetType("RootMotion.Dynamics.PropRoot, Assembly-CSharp-firstpass")
+            ?? Type.GetType("RootMotion.Dynamics.PropRoot");
+
+        if (puppetMasterPropRootType == null || !transform.root)
+            return;
+
+        puppetMasterPropRoot = transform.root.GetComponentInChildren(puppetMasterPropRootType, true);
+    }
+
+    void RegisterInstanceWithPuppetMaster(GameObject instance)
+    {
+        if (!instance || puppetMasterPropRoot == null || puppetMasterPropType == null)
+            return;
+
+        var prop = instance.GetComponent(puppetMasterPropType);
+        if (prop == null)
+            return;
+
+        puppetMasterPropRoot.SendMessage("AddProp", prop, SendMessageOptions.DontRequireReceiver);
+    }
+
+    void UnregisterInstanceFromPuppetMaster(GameObject instance)
+    {
+        if (!instance || puppetMasterPropRoot == null || puppetMasterPropType == null)
+            return;
+
+        var prop = instance.GetComponent(puppetMasterPropType);
+        if (prop == null)
+            return;
+
+        puppetMasterPropRoot.SendMessage("RemoveProp", prop, SendMessageOptions.DontRequireReceiver);
     }
 
     ToolMountPoint.MountType DetermineMountType(ItemDefinition def)
