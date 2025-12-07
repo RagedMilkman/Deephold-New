@@ -718,6 +718,14 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     bool EnsureMountRoot()
     {
+        return EnsureMountRoot(false, out _);
+    }
+
+    bool EnsureMountRoot(bool refreshMountsIfChanged, out bool mountRootChanged)
+    {
+        var previousMountRoot = mountRoot;
+        mountRootChanged = false;
+
         if (mountRoot && mountRoot.root == transform.root)
             return true;
 
@@ -729,7 +737,10 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (!mountRoot || mountRoot.root != transform.root)
             return false;
 
-        RefreshMountPoints();
+        mountRootChanged = previousMountRoot != mountRoot;
+        if (mountRootChanged && refreshMountsIfChanged)
+            RefreshMountPoints();
+
         return true;
     }
 
@@ -1418,6 +1429,18 @@ public class ToolbeltNetworked : NetworkBehaviour
             ProcessQueue();
 
         bool needsRebuild = false;
+        bool mountRootChanged = false;
+
+        if (IsClient)
+        {
+            if (!EnsureMountRoot(true, out mountRootChanged))
+            {
+                if (equippedInstance)
+                    ClearVisuals();
+
+                return;
+            }
+        }
 
         if (!IsServer)
             needsRebuild |= UpdateSlotsFromSyncVars();
@@ -1427,6 +1450,8 @@ public class ToolbeltNetworked : NetworkBehaviour
 
         if (IsClient && !IsOwner)
             needsRebuild |= ApplyEquippedStanceFromSyncVar();
+
+        needsRebuild |= mountRootChanged;
 
         bool allowVisuals = ShouldRenderVisuals;
         if (!allowVisuals)
