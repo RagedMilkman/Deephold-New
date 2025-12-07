@@ -440,4 +440,31 @@ public class ToolbeltVisualizer : MonoBehaviour
 
         return itemRegistry[registryIndex];
     }
+
+    public void SetSource(ToolbeltNetworked newSource)
+    {
+        if (source == newSource)
+            return;
+
+        source = newSource;
+
+        if (!isActiveAndEnabled)
+            return;
+
+        if (!source)
+        {
+            lastSnapshot = default;
+            ClearVisuals();
+            return;
+        }
+
+        ApplySourceVisualPreference();
+
+        if (copyRegistryFromSource && !HasRegistryEntries())
+            CopyRegistry(source.ItemRegistry);
+
+        ToolbeltSnapshot snapshot = source.CaptureSnapshot();
+        ApplySnapshot(snapshot);
+        lastSnapshot = snapshot;
+    }
 }

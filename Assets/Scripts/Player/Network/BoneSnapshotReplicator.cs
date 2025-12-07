@@ -21,6 +21,8 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     [Header("Ghost")]
     [SerializeField, Tooltip("Optional ghost prefab to spawn on non-owner clients.")]
     private GameObject _ghostPrefab;
+    [SerializeField, Tooltip("Toolbelt to mirror onto spawned ghost visualizers.")]
+    private ToolbeltNetworked _toolbelt;
     [SerializeField] private float _sendRate = 30f;
     [SerializeField, Tooltip("Write snapshot send/receive info to the console.")]
     private bool _debugLogSnapshots;
@@ -50,6 +52,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     {
         if (!_rigRoot) _rigRoot = transform;
         if (!_characterRoot) _characterRoot = transform;
+        if (!_toolbelt) _toolbelt = GetComponentInChildren<ToolbeltNetworked>(true);
         BoneSnapshotUtility.CollectBones(_rigRoot, _bones);
         _bonePaths = BoneSnapshotUtility.CollectBonePaths(_rigRoot);
     }
@@ -278,6 +281,8 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         {
             while (_pendingSnapshots.Count > 0)
                 _ghostFollower.EnqueueSnapshot(_pendingSnapshots.Dequeue());
+
+            AssignToolbeltToGhost(_ghostFollower.gameObject);
         }
     }
 
@@ -297,6 +302,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         }
 
         SetGhostFollower(_ghostFollower);
+        AssignToolbeltToGhost(_ghostInstance);
     }
 
     private void DespawnGhostFollower()
@@ -318,5 +324,23 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         T[] copy = new T[source.Length];
         Array.Copy(source, copy, source.Length);
         return copy;
+    }
+
+    private void AssignToolbeltToGhost(GameObject ghostRoot)
+    {
+        if (ghostRoot == null)
+            return;
+
+        if (_toolbelt == null)
+            _toolbelt = GetComponentInChildren<ToolbeltNetworked>(true);
+
+        if (_toolbelt == null)
+            return;
+
+        foreach (ToolbeltVisualizer visualizer in ghostRoot.GetComponentsInChildren<ToolbeltVisualizer>(true))
+        {
+            if (visualizer != null)
+                visualizer.SetSource(_toolbelt);
+        }
     }
 }
