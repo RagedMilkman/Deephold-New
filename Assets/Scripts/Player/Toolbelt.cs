@@ -36,6 +36,9 @@ public class ToolbeltNetworked : NetworkBehaviour
     [Header("Debug")]
     [SerializeField] private bool enableEquipDebugLogs = false;
 
+    [Header("Visualization")]
+    [SerializeField] private bool renderVisuals = true;
+
     private Transform mountRoot;
     [Header("Animation")]
     [SerializeField] private HumanoidRigAnimator humanoidRigAnimator;
@@ -523,7 +526,7 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     void RebuildVisual(int oneBasedSlot)
     {
-        if (!IsClient || !mountRoot || mountRoot.root != transform.root)
+        if (!renderVisuals || !IsClient || !mountRoot || mountRoot.root != transform.root)
             return;
 
         RefreshMountPoints();
@@ -1403,10 +1406,10 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (IsClient && !IsOwner)
             needsRebuild |= ApplyEquippedStanceFromSyncVar();
 
-        if (needsRebuild && IsClient)
+        if (needsRebuild && IsClient && renderVisuals)
             RebuildVisual(equippedSlot);
 
-        if (IsClient)
+        if (IsClient && renderVisuals)
         {
             float now = Time.time;
             foreach (var slot in EnumerateSlots())
@@ -1418,6 +1421,27 @@ public class ToolbeltNetworked : NetworkBehaviour
     }
 
     public IReadOnlyList<ItemDefinition> ItemRegistry => itemRegistry;
+
+    public bool VisualsEnabled
+    {
+        get => renderVisuals;
+        set
+        {
+            if (renderVisuals == value)
+                return;
+
+            renderVisuals = value;
+
+            if (!renderVisuals)
+            {
+                ClearVisuals();
+            }
+            else if (IsClient)
+            {
+                RebuildVisual(equippedSlot);
+            }
+        }
+    }
 
     public ToolbeltSnapshot CaptureSnapshot()
     {
@@ -1449,7 +1473,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         equippedSlot = Mathf.Clamp(snapshot.EquippedSlot, 1, SlotCount);
         ApplyEquippedStanceInternal(snapshot.EquippedStance, refreshVisual: false, updateDesired: false);
 
-        if (rebuildVisual && IsClient)
+        if (rebuildVisual && IsClient && renderVisuals)
             RebuildVisual(equippedSlot);
     }
 
