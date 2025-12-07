@@ -1417,6 +1417,40 @@ public class ToolbeltNetworked : NetworkBehaviour
             ResolveReloadTimeout();
     }
 
+    public ToolbeltSnapshot CaptureSnapshot()
+    {
+        return new ToolbeltSnapshot
+        {
+            Slot0 = primarySlot?.RegistryIndex ?? -1,
+            Slot1 = secondarySlot?.RegistryIndex ?? -1,
+            Slot2 = tertiarySlot?.RegistryIndex ?? -1,
+            Slot3 = consumableSlot?.RegistryIndex ?? -1,
+            EquippedSlot = Mathf.Clamp(equippedSlot, 1, SlotCount),
+            EquippedStance = ResolveEquippedStance(),
+        };
+    }
+
+    public void ApplySnapshot(in ToolbeltSnapshot snapshot, bool rebuildVisual = true)
+    {
+        if (primarySlot != null)
+            primarySlot.RegistryIndex = snapshot.Slot0;
+
+        if (secondarySlot != null)
+            secondarySlot.RegistryIndex = snapshot.Slot1;
+
+        if (tertiarySlot != null)
+            tertiarySlot.RegistryIndex = snapshot.Slot2;
+
+        if (consumableSlot != null)
+            consumableSlot.RegistryIndex = snapshot.Slot3;
+
+        equippedSlot = Mathf.Clamp(snapshot.EquippedSlot, 1, SlotCount);
+        ApplyEquippedStanceInternal(snapshot.EquippedStance, refreshVisual: false, updateDesired: false);
+
+        if (rebuildVisual && IsClient)
+            RebuildVisual(equippedSlot);
+    }
+
     void ResolveReloadTimeout()
     {
         reloadStanceEndsAt = 0f;
