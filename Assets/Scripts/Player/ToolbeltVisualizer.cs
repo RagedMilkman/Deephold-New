@@ -219,26 +219,17 @@ public class ToolbeltVisualizer : MonoBehaviour
                 ? equippedStance
                 : ToolMountPoint.MountStance.Away;
 
-            var previousStance = slot.CurrentStance;
-            float duration = 0f;
-
-            if (previousStance != desiredStance)
-            {
-                if (desiredStance == ToolMountPoint.MountStance.Away)
-                {
-                    duration = GetUnequipDurationForSlot((int)slot.Slot);
-                }
-                else if (previousStance == ToolMountPoint.MountStance.Away)
-                {
-                    duration = GetEquipDurationForSlot((int)slot.Slot);
-                }
-                else
-                {
-                    duration = GetStanceTransitionDurationForSlot((int)slot.Slot);
-                }
-            }
-
-            var instance = slot.ApplyStance(desiredStance, mountRoot, ApplyDefinitionTransform, this, duration, now);
+            var instance = ToolbeltVisualHelpers.ApplySlotStance(
+                slot,
+                desiredStance,
+                (int)slot.Slot,
+                mountRoot,
+                GetEquipDurationForSlot,
+                GetUnequipDurationForSlot,
+                GetStanceTransitionDurationForSlot,
+                ApplyDefinitionTransform,
+                this,
+                now);
             if ((desiredStance == ToolMountPoint.MountStance.Passive
                 || desiredStance == ToolMountPoint.MountStance.Active
                 || desiredStance == ToolMountPoint.MountStance.Reloading) && instance)
