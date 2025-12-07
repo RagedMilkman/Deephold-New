@@ -38,6 +38,8 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     [Header("Visualization")]
     [SerializeField] private bool renderVisuals = true;
+    [SerializeField, Tooltip("Only render toolbelt visuals on the owning client.")]
+    private bool renderVisualsIfOwner = true;
 
     private Transform mountRoot;
     [Header("Animation")]
@@ -526,7 +528,7 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     void RebuildVisual(int oneBasedSlot)
     {
-        if (!renderVisuals || !IsClient || !mountRoot || mountRoot.root != transform.root)
+        if (!ShouldRenderVisuals || !IsClient || !mountRoot || mountRoot.root != transform.root)
             return;
 
         RefreshMountPoints();
@@ -1406,14 +1408,23 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (IsClient && !IsOwner)
             needsRebuild |= ApplyEquippedStanceFromSyncVar();
 
-        if (needsRebuild && IsClient && renderVisuals)
-            RebuildVisual(equippedSlot);
-
-        if (IsClient && renderVisuals)
+        bool allowVisuals = ShouldRenderVisuals;
+        if (!allowVisuals)
         {
-            float now = Time.time;
-            foreach (var slot in EnumerateSlots())
-                slot?.UpdateVisual(now);
+            if (equippedInstance)
+                ClearVisuals();
+        }
+        else
+        {
+            if (needsRebuild && IsClient)
+                RebuildVisual(equippedSlot);
+
+            if (IsClient)
+            {
+                float now = Time.time;
+                foreach (var slot in EnumerateSlots())
+                    slot?.UpdateVisual(now);
+            }
         }
 
         if (equippedWeaponReloading && reloadStanceEndsAt > 0f && Time.time >= reloadStanceEndsAt)
@@ -1421,6 +1432,8 @@ public class ToolbeltNetworked : NetworkBehaviour
     }
 
     public IReadOnlyList<ItemDefinition> ItemRegistry => itemRegistry;
+
+    private bool ShouldRenderVisuals => renderVisuals && (!renderVisualsIfOwner || IsOwner);
 
     public bool VisualsEnabled
     {
@@ -1432,7 +1445,7 @@ public class ToolbeltNetworked : NetworkBehaviour
 
             renderVisuals = value;
 
-            if (!renderVisuals)
+            if (!ShouldRenderVisuals)
             {
                 ClearVisuals();
             }
@@ -1473,7 +1486,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         equippedSlot = Mathf.Clamp(snapshot.EquippedSlot, 1, SlotCount);
         ApplyEquippedStanceInternal(snapshot.EquippedStance, refreshVisual: false, updateDesired: false);
 
-        if (rebuildVisual && IsClient && renderVisuals)
+        if (rebuildVisual && IsClient && ShouldRenderVisuals)
             RebuildVisual(equippedSlot);
     }
 
