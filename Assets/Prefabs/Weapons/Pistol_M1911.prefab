@@ -494,6 +494,7 @@ GameObject:
   - component: {fileID: 6235040355960975644}
   - component: {fileID: 7275298162742738551}
   - component: {fileID: 1545795355843966552}
+  - component: {fileID: 8162863542179407918}
   m_Layer: 0
   m_Name: Pistol_M1911
   m_TagString: Untagged
@@ -707,6 +708,37 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &8162863542179407918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7229062074147639232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 437d6ec63157d574988cc83cdc7c2dac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp-firstpass::RootMotion.Dynamics.PuppetMasterProp
+  meshRoot: {fileID: 4281069983963769875}
+  muscleProps:
+    group: 8
+    mappingWeight: 1
+    pinWeight: 1
+    muscleWeight: 1
+    muscleDamper: 1
+    internalCollisionIgnores:
+      ignoreAll: 0
+      muscles: []
+      groups: 
+    animatedTargetChildren: []
+  forceLayers: 1
+  mass: 1
+  propType: 0
+  pickedUpMaterial: {fileID: 0}
+  additionalPinOffsetAdd: {x: 0, y: 0, z: 0}
+  additionalPinWeight: 1
+  additionalPinMass: 1
 --- !u!1 &8621679092173087817
 GameObject:
   m_ObjectHideFlags: 0
