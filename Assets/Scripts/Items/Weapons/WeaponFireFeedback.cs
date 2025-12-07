@@ -27,6 +27,7 @@ public class WeaponFireFeedback : MonoBehaviour
     [SerializeField, Min(0f)] float mountpointKickbackDistance = 0.05f;
     [SerializeField, Min(0f)] float mountpointRotation = 1.5f;
     [SerializeField, Min(0f)] float mountpointDuration = 0.12f;
+    [SerializeField] Vector3 mountpointRecoilDirection = Vector3.back;
     [SerializeField] AnimationCurve mountpointCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
     public enum RecoilMode
@@ -268,7 +269,10 @@ public class WeaponFireFeedback : MonoBehaviour
 
         Vector3 startPos = initialMountLocalPosition;
         Quaternion startRot = initialMountLocalRotation;
-        Vector3 recoilPos = startPos + Vector3.back * mountpointKickbackDistance;
+        Vector3 recoilDir = mountpointRecoilDirection.sqrMagnitude > Mathf.Epsilon
+            ? mountpointRecoilDirection.normalized
+            : Vector3.back;
+        Vector3 recoilPos = startPos + recoilDir * mountpointKickbackDistance;
 
         Vector3 randomEuler = new Vector3(
             -mountpointRotation,
