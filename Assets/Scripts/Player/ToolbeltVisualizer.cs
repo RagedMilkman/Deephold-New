@@ -35,12 +35,19 @@ public struct ToolbeltSnapshot : IEquatable<ToolbeltSnapshot>
 /// Mirrors toolbelt visual state from a source ToolbeltNetworked onto a target ToolbeltNetworked.
 /// Intended for ghost or proxy avatars that should display the owner's equipped items without
 /// needing the full toolbelt gameplay logic.
+///
+/// Usage: place a <see cref="ToolbeltNetworked"/> on the ghost (target) so it can render items, then
+/// add this visualizer to pull snapshots from the owning player's toolbelt (source). The ghost's
+/// toolbelt runs in visual-only mode; it does not need network authority because snapshots are
+/// applied locally.
 /// </summary>
 public class ToolbeltVisualizer : MonoBehaviour
 {
     [Header("Source/Target")]
-    [SerializeField] ToolbeltNetworked source;
-    [SerializeField] ToolbeltNetworked target;
+    [SerializeField, Tooltip("Authoritative toolbelt to mirror (typically the owner/player).")]
+    ToolbeltNetworked source;
+    [SerializeField, Tooltip("Toolbelt on the ghost/proxy used only for rendering visuals.")]
+    ToolbeltNetworked target;
 
     [Header("Syncing")]
     [SerializeField, Min(0.02f)] float syncIntervalSeconds = 0.1f;
