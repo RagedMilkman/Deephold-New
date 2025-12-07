@@ -392,8 +392,36 @@ PrefabInstance:
     - {fileID: 7470315960075954748, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
     - {fileID: 7021008579736201153, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7478472528683366501, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1140415489875394117}
   m_SourcePrefab: {fileID: 100100000, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+--- !u!1 &1465242717540228781 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7478472528683366501, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+  m_PrefabInstance: {fileID: 8330895534152148680}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1140415489875394117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465242717540228781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba4afd1f4e6407e42b0001f0df116aa6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolbeltVisualizer
+  source: {fileID: 0}
+  hideSourceVisuals: 1
+  mountRoot: {fileID: 0}
+  humanoidRigAnimator: {fileID: 0}
+  itemRegistry: []
+  defaultStanceTransitionDuration: 0.1
+  syncIntervalSeconds: 0.1
+  copyRegistryFromSource: 1
 --- !u!4 &6489204562721431007 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2995738668064062231, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
