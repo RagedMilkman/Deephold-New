@@ -198,7 +198,7 @@ public class ToolbeltVisualizer : MonoBehaviour
             ResolveMountTarget,
             ApplyDefinitionTransform,
             null,
-            AssignWeaponMountPoints,
+            instance => AssignWeaponMountPoints(instance, slot.CurrentMount ?? mountRoot),
             null,
             this);
     }
