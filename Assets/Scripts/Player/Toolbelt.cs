@@ -1417,6 +1417,8 @@ public class ToolbeltNetworked : NetworkBehaviour
             ResolveReloadTimeout();
     }
 
+    public IReadOnlyList<ItemDefinition> ItemRegistry => itemRegistry;
+
     public ToolbeltSnapshot CaptureSnapshot()
     {
         return new ToolbeltSnapshot

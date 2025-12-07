@@ -32,25 +32,22 @@ public struct ToolbeltSnapshot : IEquatable<ToolbeltSnapshot>
 }
 
 /// <summary>
-/// Mirrors toolbelt visual state from a source ToolbeltNetworked onto a target ToolbeltNetworked.
+/// Mirrors toolbelt visual state from a source ToolbeltNetworked onto a <see cref="ToolbeltGhostView"/>.
 /// Intended for ghost or proxy avatars that should display the owner's equipped items without
-/// needing the full toolbelt gameplay logic.
-///
-/// Usage: place a <see cref="ToolbeltNetworked"/> on the ghost (target) so it can render items, then
-/// add this visualizer to pull snapshots from the owning player's toolbelt (source). The ghost's
-/// toolbelt runs in visual-only mode; it does not need network authority because snapshots are
-/// applied locally.
+/// needing the full toolbelt gameplay logic or the ToolbeltNetworked component.
 /// </summary>
 public class ToolbeltVisualizer : MonoBehaviour
 {
     [Header("Source/Target")]
     [SerializeField, Tooltip("Authoritative toolbelt to mirror (typically the owner/player).")]
     ToolbeltNetworked source;
-    [SerializeField, Tooltip("Toolbelt on the ghost/proxy used only for rendering visuals.")]
-    ToolbeltNetworked target;
+    [SerializeField, Tooltip("Visual-only toolbelt view on the ghost/proxy.")]
+    ToolbeltGhostView target;
 
     [Header("Syncing")]
     [SerializeField, Min(0.02f)] float syncIntervalSeconds = 0.1f;
+    [SerializeField, Tooltip("Copy the source's item registry into the target view each tick if it is empty.")]
+    bool copyRegistryFromSource = true;
 
     ToolbeltSnapshot lastSnapshot;
     float nextAllowedSyncTime;
@@ -58,7 +55,7 @@ public class ToolbeltVisualizer : MonoBehaviour
     void Awake()
     {
         if (!target)
-            target = GetComponent<ToolbeltNetworked>();
+            target = GetComponent<ToolbeltGhostView>();
     }
 
     void Update()
@@ -72,6 +69,10 @@ public class ToolbeltVisualizer : MonoBehaviour
         nextAllowedSyncTime = Time.time + syncIntervalSeconds;
 
         ToolbeltSnapshot snapshot = source.CaptureSnapshot();
+
+        if (copyRegistryFromSource && !target.HasRegistryEntries)
+            target.CopyRegistry(source.ItemRegistry);
+
         if (!lastSnapshot.Equals(snapshot))
         {
             target.ApplySnapshot(snapshot);
