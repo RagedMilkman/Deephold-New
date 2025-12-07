@@ -723,21 +723,22 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     bool EnsureMountRoot(bool refreshMountsIfChanged, out bool mountRootChanged)
     {
-        var previousMountRoot = mountRoot;
         mountRootChanged = false;
-
-        if (mountRoot && mountRoot.root == transform.root)
-            return true;
 
         if (!humanoidRigAnimator && transform.root)
             humanoidRigAnimator = transform.root.GetComponentInChildren<HumanoidRigAnimator>(true);
 
-        mountRoot = humanoidRigAnimator ? humanoidRigAnimator.transform : transform.root;
-
-        if (!mountRoot || mountRoot.root != transform.root)
+        var desiredMountRoot = humanoidRigAnimator ? humanoidRigAnimator.transform : transform.root;
+        if (!desiredMountRoot || desiredMountRoot.root != transform.root)
             return false;
 
+        if (mountRoot == desiredMountRoot && mountRoot && mountRoot.root == transform.root)
+            return true;
+
+        var previousMountRoot = mountRoot;
+        mountRoot = desiredMountRoot;
         mountRootChanged = previousMountRoot != mountRoot;
+
         if (mountRootChanged && refreshMountsIfChanged)
             RefreshMountPoints();
 
