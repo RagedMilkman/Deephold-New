@@ -331,7 +331,7 @@ PrefabInstance:
     - target: {fileID: 3866969347374146049, guid: cd19ccb66b786e64b96da24b74160499, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 56aac1b29b45f3145a5c5c4fc2c7a62f, type: 2}
+      objectReference: {fileID: 2100000, guid: 65724ce3a7c39d24caba20f29e40132e, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -470,6 +470,7 @@ MonoBehaviour:
   mountpointKickbackDistance: 0.02
   mountpointRotation: 1.5
   mountpointDuration: 0.12
+  mountpointRecoilDirection: {x: 0, y: 0, z: -1}
   mountpointCurve:
     serializedVersion: 2
     m_Curve:
