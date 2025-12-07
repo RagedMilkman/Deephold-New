@@ -528,7 +528,10 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     void RebuildVisual(int oneBasedSlot)
     {
-        if (!ShouldRenderVisuals || !IsClient || !mountRoot || mountRoot.root != transform.root)
+        if (!ShouldRenderVisuals || !IsClient)
+            return;
+
+        if (!EnsureMountRoot())
             return;
 
         RefreshMountPoints();
@@ -711,6 +714,23 @@ public class ToolbeltNetworked : NetworkBehaviour
     void RefreshMountPoints()
     {
         mountPoints = mountRoot ? mountRoot.GetComponentsInChildren<ToolMountPoint>(true) : System.Array.Empty<ToolMountPoint>();
+    }
+
+    bool EnsureMountRoot()
+    {
+        if (mountRoot && mountRoot.root == transform.root)
+            return true;
+
+        if (!humanoidRigAnimator && transform.root)
+            humanoidRigAnimator = transform.root.GetComponentInChildren<HumanoidRigAnimator>(true);
+
+        mountRoot = humanoidRigAnimator ? humanoidRigAnimator.transform : transform.root;
+
+        if (!mountRoot || mountRoot.root != transform.root)
+            return false;
+
+        RefreshMountPoints();
+        return true;
     }
 
     void CacheArmSolvers()
