@@ -10,6 +10,7 @@ public sealed class CharacterData : MonoBehaviour
     [SerializeField, Tooltip("Faction this character currently belongs to.")] private FactionController _faction;
     [SerializeField, Tooltip("Force this character prefab hierarchy to activate on spawn (useful if the prefab is saved inactive).")]
     private bool _forceEnableHierarchy = true;
+    [SerializeField, Tooltip("Health component responsible for routing damage from hitboxes.")] private CharacterHealth _health;
 
     /// <summary>
     /// Optional identifier for the character instance.
@@ -21,10 +22,17 @@ public sealed class CharacterData : MonoBehaviour
     /// </summary>
     public FactionController Faction => _faction;
 
+    /// <summary>
+    /// Health handler for this character, if present.
+    /// </summary>
+    public CharacterHealth Health => _health;
+
     private void Awake()
     {
         if (_forceEnableHierarchy)
             EnsureHierarchyActive(gameObject);
+
+        CacheHealth();
     }
 
     /// <summary>
@@ -61,5 +69,13 @@ public sealed class CharacterData : MonoBehaviour
     private void OnDestroy()
     {
         _faction?.RemoveCharacter(this);
+    }
+
+    private void CacheHealth()
+    {
+        if (!_health)
+            _health = GetComponent<CharacterHealth>();
+
+        _health?.RefreshHitBoxes();
     }
 }

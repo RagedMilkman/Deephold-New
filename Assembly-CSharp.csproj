@@ -96,6 +96,7 @@
     <Compile Include="Assets\Scripts\World\Navigation\INavFieldSolver.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\MeleeInteraction.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\PlayerShootable.cs" />
+    <Compile Include="Assets\Scripts\Items\Weapons\Shootable\HitBox.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\BoneRotator.cs" />
     <Compile Include="Assets\Scripts\World\LocationServices\EnemySpawnLocationService.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\FullBodyBipedGaitController.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Assets\Scripts\Player\Animation\HandGripAlign.cs" />
     <Compile Include="Assets\Scripts\World\LocationServices\PlayerLocationService.cs" />
     <Compile Include="Assets\Scripts\Factions\CharacterData.cs" />
+    <Compile Include="Assets\Scripts\Factions\CharacterHealth.cs" />
     <Compile Include="Assets\Scripts\World\Generation\IslandNoiseGenerator.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\BipedGaitController.cs" />
     <Compile Include="Assets\Scripts\Player\Toolbelt.cs" />
