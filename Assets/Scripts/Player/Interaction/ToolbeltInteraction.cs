@@ -28,6 +28,13 @@ public class ToolbeltInteraction : PlayerInteraction
         CacheInitialSlot();
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        EnsureToolbeltAssigned();
+        CacheInitialSlot();
+    }
+
     protected override void OnActiveUpdate()
     {
         EnsureToolbeltAssigned();
