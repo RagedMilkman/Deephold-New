@@ -593,8 +593,7 @@ public class HumanoidRigAnimator : MonoBehaviour
         bendGoalTransform.position = bendGoalPosition;
         bendGoalTransform.rotation = Quaternion.LookRotation(toHand, Vector3.up);
 
-        solver.bendGoalWeight = armBendGoalWeight;
-        solver.bendGoal = bendGoalTransform;
+        solver.bendGoal = armBendGoalWeight > 0f ? bendGoalTransform : null;
     }
 
     private Transform EnsureBendGoalTransform(Transform existing, string name)
