@@ -1406,6 +1406,7 @@ public class ToolbeltNetworked : NetworkBehaviour
 
         bool suppressLocalFeedback = IsOwner && !IsServer;
         equippedWeapon?.OnServerFired(origin, endPoint, hitNormal, hitSomething, suppressLocalFeedback);
+        ToolbeltVisualizer.PlayFireFeedbackForSource(this, slot, registryIndex, origin, endPoint, hitNormal, hitSomething);
     }
 
     void LateUpdate()

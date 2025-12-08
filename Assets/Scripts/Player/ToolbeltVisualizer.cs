@@ -38,6 +38,8 @@ public struct ToolbeltSnapshot : IEquatable<ToolbeltSnapshot>
 /// </summary>
 public class ToolbeltVisualizer : MonoBehaviour
 {
+    private static readonly List<ToolbeltVisualizer> ActiveVisualizers = new();
+
     [Header("Source")]
     [SerializeField, Tooltip("Authoritative toolbelt to mirror (typically on the player/server).")]
     private ToolbeltNetworked source;
@@ -73,6 +75,8 @@ public class ToolbeltVisualizer : MonoBehaviour
     private ToolMountPoint.MountStance equippedStance = ToolMountPoint.MountStance.Passive;
     private int equippedSlot = ToolbeltNetworked.SlotCount;
 
+    public ToolbeltNetworked Source => source;
+
     private void Awake()
     {
         primarySlot = new ToolBeltSlot(ToolbeltSlotName.Primary, null);
@@ -91,7 +95,15 @@ public class ToolbeltVisualizer : MonoBehaviour
 
     private void OnEnable()
     {
+        if (!ActiveVisualizers.Contains(this))
+            ActiveVisualizers.Add(this);
+
         ApplySourceVisualPreference();
+    }
+
+    private void OnDisable()
+    {
+        ActiveVisualizers.Remove(this);
     }
 
     private void OnDestroy()
@@ -339,6 +351,18 @@ public class ToolbeltVisualizer : MonoBehaviour
         yield return consumableSlot;
     }
 
+    private ToolBeltSlot GetSlotByIndex(int slot)
+    {
+        return slot switch
+        {
+            (int)ToolbeltSlotName.Primary => primarySlot,
+            (int)ToolbeltSlotName.Secondary => secondarySlot,
+            (int)ToolbeltSlotName.Tertiary => tertiarySlot,
+            (int)ToolbeltSlotName.Consumable => consumableSlot,
+            _ => null,
+        };
+    }
+
     private ItemDefinition GetSlot(int oneBasedSlot)
     {
         var slot = GetSlotState(oneBasedSlot);
@@ -457,5 +481,41 @@ public class ToolbeltVisualizer : MonoBehaviour
         ToolbeltSnapshot snapshot = source.CaptureSnapshot();
         ApplySnapshot(snapshot);
         lastSnapshot = snapshot;
+    }
+
+    public static void PlayFireFeedbackForSource(
+        ToolbeltNetworked source,
+        int slot,
+        int registryIndex,
+        Vector3 origin,
+        Vector3 endPoint,
+        Vector3 hitNormal,
+        bool hitSomething)
+    {
+        if (source == null)
+            return;
+
+        for (int i = 0; i < ActiveVisualizers.Count; i++)
+        {
+            var visualizer = ActiveVisualizers[i];
+            if (visualizer == null || visualizer.Source != source)
+                continue;
+
+            visualizer.PlayFireFeedback(slot, registryIndex, origin, endPoint, hitNormal, hitSomething);
+        }
+    }
+
+    private void PlayFireFeedback(int slot, int registryIndex, Vector3 origin, Vector3 endPoint, Vector3 hitNormal, bool hitSomething)
+    {
+        var targetSlot = GetSlotByIndex(slot);
+        if (targetSlot == null || targetSlot.RegistryIndex != registryIndex)
+            return;
+
+        var instance = targetSlot.Instance;
+        if (!instance)
+            return;
+
+        foreach (var weapon in instance.GetComponentsInChildren<KineticProjectileWeapon>(true))
+            weapon.OnServerFired(origin, endPoint, hitNormal, hitSomething, suppressLocalFeedback: false);
     }
 }
