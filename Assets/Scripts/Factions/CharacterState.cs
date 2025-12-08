@@ -1,5 +1,6 @@
 using FishNet.Object;
 using UnityEngine;
+using RootMotion.Dynamics;
 
 public enum LifeState { Alive = 0, Dead = 1 }
 
@@ -8,10 +9,17 @@ public class CharacterState : NetworkBehaviour
     [SerializeField] int maxHealth = 30;
     [SerializeField] bool despawnOnDeath = true;
     [SerializeField] float despawnDelay = 2f;
+    [SerializeField, Tooltip("Optional PuppetMaster to activate on death.")] PuppetMaster puppetMaster;
 
     public int Health { get; private set; }
     public int MaxHealth => maxHealth;
     public LifeState State { get; private set; } = LifeState.Alive;
+
+    void Awake()
+    {
+        if (!puppetMaster)
+            puppetMaster = GetComponentInChildren<PuppetMaster>(true);
+    }
 
     public override void OnStartServer()
     {
@@ -31,6 +39,7 @@ public class CharacterState : NetworkBehaviour
         if (Health == 0)
         {
             State = LifeState.Dead;
+            ApplyPuppetMasterDeathState();
             RPC_State(Health, maxHealth, (int)State);
             if (despawnOnDeath) Invoke(nameof(ServerDespawn), Mathf.Max(0f, despawnDelay));
         }
@@ -50,5 +59,18 @@ public class CharacterState : NetworkBehaviour
     void RPC_State(int hp, int maxHp, int st)
     {
         Health = hp; maxHealth = maxHp; State = (LifeState)st;
+        if (State == LifeState.Dead)
+            ApplyPuppetMasterDeathState();
+    }
+
+    void ApplyPuppetMasterDeathState()
+    {
+        if (!puppetMaster)
+            return;
+
+        puppetMaster.gameObject.SetActive(true);
+        puppetMaster.enabled = true;
+        puppetMaster.mode = PuppetMaster.Mode.Active;
+        puppetMaster.state = PuppetMaster.State.Dead;
     }
 }
