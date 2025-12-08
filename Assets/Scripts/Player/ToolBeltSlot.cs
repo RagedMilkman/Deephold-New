@@ -41,6 +41,8 @@ public sealed class ToolBeltSlot
         public Vector3 TargetLocalScale = Vector3.one;
         public Vector3 TargetWorldPosition;
         public Quaternion TargetWorldRotation = Quaternion.identity;
+        public Vector3 TargetMountLocalPosition;
+        public Quaternion TargetMountLocalRotation = Quaternion.identity;
         public Action<GameObject> OnDestroyed;
     }
 
@@ -121,6 +123,7 @@ public sealed class ToolBeltSlot
         visual.CurrentStance = stance;
         visual.TargetStance = stance;
         visual.TargetMount = ResolveTargetMount(stance, mountRoot, context);
+        CacheTargetMountPose(mountRoot);
         RefreshTargetPose();
 
         var instanceTransform = visual.Instance.transform;
@@ -265,6 +268,32 @@ public sealed class ToolBeltSlot
         return null;
     }
 
+    private void CacheTargetMountPose(Transform mountRoot)
+    {
+        if (visual == null)
+            return;
+
+        Transform root = mountRoot ? mountRoot : visual.MountRoot;
+        if (!root)
+        {
+            visual.TargetMountLocalPosition = Vector3.zero;
+            visual.TargetMountLocalRotation = Quaternion.identity;
+            return;
+        }
+
+        Transform target = visual.TargetMount;
+        if (target)
+        {
+            visual.TargetMountLocalPosition = root.InverseTransformPoint(target.position);
+            visual.TargetMountLocalRotation = Quaternion.Inverse(root.rotation) * target.rotation;
+        }
+        else
+        {
+            visual.TargetMountLocalPosition = Vector3.zero;
+            visual.TargetMountLocalRotation = Quaternion.identity;
+        }
+    }
+
     private void RefreshTargetPose()
     {
         if (visual == null)
@@ -274,7 +303,8 @@ public sealed class ToolBeltSlot
         if (!root)
             return;
 
-        Transform target = visual.TargetMount ? visual.TargetMount : root;
+        Vector3 mountWorldPos = root.TransformPoint(visual.TargetMountLocalPosition);
+        Quaternion mountWorldRot = root.rotation * visual.TargetMountLocalRotation;
 
         Vector3 offsetPos = visual.Definition ? visual.Definition.localPosition : Vector3.zero;
         Quaternion offsetRot = visual.Definition ? Quaternion.Euler(visual.Definition.localEulerAngles) : Quaternion.identity;
@@ -282,8 +312,8 @@ public sealed class ToolBeltSlot
         if (offsetScale == Vector3.zero)
             offsetScale = Vector3.one;
 
-        Vector3 worldPos = target ? target.TransformPoint(offsetPos) : root.TransformPoint(offsetPos);
-        Quaternion worldRot = target ? target.rotation * offsetRot : root.rotation * offsetRot;
+        Vector3 worldPos = mountWorldPos + mountWorldRot * offsetPos;
+        Quaternion worldRot = mountWorldRot * offsetRot;
 
         visual.TargetLocalPosition = root.InverseTransformPoint(worldPos);
         visual.TargetLocalRotation = Quaternion.Inverse(root.rotation) * worldRot;
