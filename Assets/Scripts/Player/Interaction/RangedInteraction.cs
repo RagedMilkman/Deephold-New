@@ -24,13 +24,7 @@ public class RangedInteraction : PlayerInteraction
 
     protected override void OnInteractionSpawned(bool asServer)
     {
-        // Resolve toolbelt
-        if (!toolbelt || toolbelt.transform.root != transform.root)
-        {
-            toolbelt = transform.root.GetComponentInChildren<ToolbeltNetworked>(true);
-            if (!toolbelt)
-                Debug.LogWarning($"RangedInteraction: couldn't find Toolbelt on {transform.root.name}", this);
-        }
+        EnsureToolbeltAssigned();
 
         // Resolve camera once for the owner
         if (IsOwner)
@@ -39,6 +33,13 @@ public class RangedInteraction : PlayerInteraction
             if (!ownerCam) ownerCam = Camera.main;
         }
 
+        RefreshCurrentWeapon();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        EnsureToolbeltAssigned();
         RefreshCurrentWeapon();
     }
 
@@ -71,6 +72,16 @@ public class RangedInteraction : PlayerInteraction
     }
 
     public void NotifyEquippedChanged() => RefreshCurrentWeapon();
+
+    void EnsureToolbeltAssigned()
+    {
+        if (toolbelt && toolbelt.transform.root == transform.root)
+            return;
+
+        toolbelt = transform.root.GetComponentInChildren<ToolbeltNetworked>(true);
+        if (!toolbelt)
+            Debug.LogWarning($"RangedInteraction: couldn't find Toolbelt on {transform.root.name}", this);
+    }
 
     void RefreshCurrentWeapon()
     {
