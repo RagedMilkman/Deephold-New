@@ -10,6 +10,18 @@ public struct ToolbeltSnapshot : IEquatable<ToolbeltSnapshot>
     public int Slot3;
     public int EquippedSlot;
     public ToolMountPoint.MountStance EquippedStance;
+    public bool Slot0HasMountPose;
+    public Vector3 Slot0MountPosition;
+    public Quaternion Slot0MountRotation;
+    public bool Slot1HasMountPose;
+    public Vector3 Slot1MountPosition;
+    public Quaternion Slot1MountRotation;
+    public bool Slot2HasMountPose;
+    public Vector3 Slot2MountPosition;
+    public Quaternion Slot2MountRotation;
+    public bool Slot3HasMountPose;
+    public Vector3 Slot3MountPosition;
+    public Quaternion Slot3MountRotation;
 
     public bool Equals(ToolbeltSnapshot other)
     {
@@ -18,7 +30,19 @@ public struct ToolbeltSnapshot : IEquatable<ToolbeltSnapshot>
             && Slot2 == other.Slot2
             && Slot3 == other.Slot3
             && EquippedSlot == other.EquippedSlot
-            && EquippedStance == other.EquippedStance;
+            && EquippedStance == other.EquippedStance
+            && Slot0HasMountPose == other.Slot0HasMountPose
+            && Slot1HasMountPose == other.Slot1HasMountPose
+            && Slot2HasMountPose == other.Slot2HasMountPose
+            && Slot3HasMountPose == other.Slot3HasMountPose
+            && Slot0MountPosition == other.Slot0MountPosition
+            && Slot1MountPosition == other.Slot1MountPosition
+            && Slot2MountPosition == other.Slot2MountPosition
+            && Slot3MountPosition == other.Slot3MountPosition
+            && Slot0MountRotation == other.Slot0MountRotation
+            && Slot1MountRotation == other.Slot1MountRotation
+            && Slot2MountRotation == other.Slot2MountRotation
+            && Slot3MountRotation == other.Slot3MountRotation;
     }
 
     public override bool Equals(object obj)
@@ -28,7 +52,26 @@ public struct ToolbeltSnapshot : IEquatable<ToolbeltSnapshot>
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Slot0, Slot1, Slot2, Slot3, EquippedSlot, (int)EquippedStance);
+        HashCode hash = new HashCode();
+        hash.Add(Slot0);
+        hash.Add(Slot1);
+        hash.Add(Slot2);
+        hash.Add(Slot3);
+        hash.Add(EquippedSlot);
+        hash.Add((int)EquippedStance);
+        hash.Add(Slot0HasMountPose);
+        hash.Add(Slot1HasMountPose);
+        hash.Add(Slot2HasMountPose);
+        hash.Add(Slot3HasMountPose);
+        hash.Add(Slot0MountPosition);
+        hash.Add(Slot1MountPosition);
+        hash.Add(Slot2MountPosition);
+        hash.Add(Slot3MountPosition);
+        hash.Add(Slot0MountRotation);
+        hash.Add(Slot1MountRotation);
+        hash.Add(Slot2MountRotation);
+        hash.Add(Slot3MountRotation);
+        return hash.ToHashCode();
     }
 }
 
@@ -149,6 +192,11 @@ public class ToolbeltVisualizer : MonoBehaviour
         tertiarySlot.RegistryIndex = snapshot.Slot2;
         consumableSlot.RegistryIndex = snapshot.Slot3;
 
+        ApplyMountPoseOverride(primarySlot, snapshot.Slot0HasMountPose, snapshot.Slot0MountPosition, snapshot.Slot0MountRotation);
+        ApplyMountPoseOverride(secondarySlot, snapshot.Slot1HasMountPose, snapshot.Slot1MountPosition, snapshot.Slot1MountRotation);
+        ApplyMountPoseOverride(tertiarySlot, snapshot.Slot2HasMountPose, snapshot.Slot2MountPosition, snapshot.Slot2MountRotation);
+        ApplyMountPoseOverride(consumableSlot, snapshot.Slot3HasMountPose, snapshot.Slot3MountPosition, snapshot.Slot3MountRotation);
+
         equippedSlot = Mathf.Clamp(snapshot.EquippedSlot, 1, ToolbeltNetworked.SlotCount);
         equippedStance = snapshot.EquippedStance;
 
@@ -195,6 +243,11 @@ public class ToolbeltVisualizer : MonoBehaviour
         EnsureSlotVisual(consumableSlot);
 
         ApplyEquippedVisual(equippedSlot);
+    }
+
+    private void ApplyMountPoseOverride(ToolBeltSlot slot, bool hasPose, Vector3 position, Quaternion rotation)
+    {
+        slot?.SetExternalMountPose(hasPose, position, rotation);
     }
 
     private void EnsureSlotVisual(ToolBeltSlot slot)

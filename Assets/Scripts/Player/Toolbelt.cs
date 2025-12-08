@@ -1497,7 +1497,7 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     public ToolbeltSnapshot CaptureSnapshot()
     {
-        return new ToolbeltSnapshot
+        var snapshot = new ToolbeltSnapshot
         {
             Slot0 = primarySlot?.RegistryIndex ?? -1,
             Slot1 = secondarySlot?.RegistryIndex ?? -1,
@@ -1506,6 +1506,13 @@ public class ToolbeltNetworked : NetworkBehaviour
             EquippedSlot = Mathf.Clamp(equippedSlot, 1, SlotCount),
             EquippedStance = ResolveEquippedStance(),
         };
+
+        snapshot.Slot0HasMountPose = primarySlot?.TryGetTargetMountPose(out snapshot.Slot0MountPosition, out snapshot.Slot0MountRotation, mountRoot) ?? false;
+        snapshot.Slot1HasMountPose = secondarySlot?.TryGetTargetMountPose(out snapshot.Slot1MountPosition, out snapshot.Slot1MountRotation, mountRoot) ?? false;
+        snapshot.Slot2HasMountPose = tertiarySlot?.TryGetTargetMountPose(out snapshot.Slot2MountPosition, out snapshot.Slot2MountRotation, mountRoot) ?? false;
+        snapshot.Slot3HasMountPose = consumableSlot?.TryGetTargetMountPose(out snapshot.Slot3MountPosition, out snapshot.Slot3MountRotation, mountRoot) ?? false;
+
+        return snapshot;
     }
 
     public void ApplySnapshot(in ToolbeltSnapshot snapshot, bool rebuildVisual = true)
@@ -1521,6 +1528,11 @@ public class ToolbeltNetworked : NetworkBehaviour
 
         if (consumableSlot != null)
             consumableSlot.RegistryIndex = snapshot.Slot3;
+
+        primarySlot?.SetExternalMountPose(snapshot.Slot0HasMountPose, snapshot.Slot0MountPosition, snapshot.Slot0MountRotation);
+        secondarySlot?.SetExternalMountPose(snapshot.Slot1HasMountPose, snapshot.Slot1MountPosition, snapshot.Slot1MountRotation);
+        tertiarySlot?.SetExternalMountPose(snapshot.Slot2HasMountPose, snapshot.Slot2MountPosition, snapshot.Slot2MountRotation);
+        consumableSlot?.SetExternalMountPose(snapshot.Slot3HasMountPose, snapshot.Slot3MountPosition, snapshot.Slot3MountRotation);
 
         equippedSlot = Mathf.Clamp(snapshot.EquippedSlot, 1, SlotCount);
         ApplyEquippedStanceInternal(snapshot.EquippedStance, refreshVisual: false, updateDesired: false);
