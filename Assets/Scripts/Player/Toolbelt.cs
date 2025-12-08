@@ -1404,7 +1404,8 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (state == null || state.RegistryIndex != registryIndex)
             return;
 
-        bool suppressLocalFeedback = IsOwner && !IsServer;
+        // Suppress local feedback on the owner, even when running as host, since it was already played locally
+        bool suppressLocalFeedback = IsOwner;
         equippedWeapon?.OnServerFired(origin, endPoint, hitNormal, hitSomething, suppressLocalFeedback);
         ToolbeltVisualizer.PlayFireFeedbackForSource(this, slot, registryIndex, origin, endPoint, hitNormal, hitSomething);
     }
