@@ -115,6 +115,7 @@
     <Compile Include="Assets\Scripts\Items\ItemDefinition.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\BlockShootable.cs" />
     <Compile Include="Assets\Scripts\Items\ItemMountType.cs" />
+    <Compile Include="Assets\Scripts\Player\ToolbeltVisualHelpers.cs" />
     <Compile Include="Assets\Scripts\Player\OwnerOnlyVisibility.cs" />
     <Compile Include="Assets\Scripts\World\WorldGenerationDirector.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\HumanoidRigDebugVisualizer.cs" />
