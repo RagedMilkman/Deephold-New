@@ -12,7 +12,7 @@ public class ToolbeltInteraction : PlayerInteraction
     protected override void Awake()
     {
         base.Awake();
-        if (!toolbelt) toolbelt = GetComponent<ToolbeltNetworked>();
+        EnsureToolbeltAssigned();
         // This script is just input; ensure gating happens here:
         requireOwner = true;
         requireAlive = true;
@@ -24,11 +24,13 @@ public class ToolbeltInteraction : PlayerInteraction
     protected override void OnInteractionSpawned(bool asServer)
     {
         base.OnInteractionSpawned(asServer);
+        EnsureToolbeltAssigned();
         CacheInitialSlot();
     }
 
     protected override void OnActiveUpdate()
     {
+        EnsureToolbeltAssigned();
         if (!toolbelt) return;
 
         var kb = Keyboard.current;
@@ -78,5 +80,13 @@ public class ToolbeltInteraction : PlayerInteraction
     public void OnScrollWheel(InputValue _)
     {
         MaintainLastSelection();
+    }
+
+    void EnsureToolbeltAssigned()
+    {
+        if (toolbelt) return;
+        toolbelt = GetComponent<ToolbeltNetworked>();
+        if (!toolbelt)
+            toolbelt = GetComponentInParent<ToolbeltNetworked>(true);
     }
 }
