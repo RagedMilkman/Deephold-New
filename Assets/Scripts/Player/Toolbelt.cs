@@ -8,6 +8,8 @@ using RootMotion.FinalIK;
 using FishNet.CodeGenerating;
 using UnityEngine.Rendering;
 
+// Run late so weapon mounts use final bone poses from IK/replication.
+[DefaultExecutionOrder(10500)]
 public class ToolbeltNetworked : NetworkBehaviour
 {
     public const int SlotCount = 4;
