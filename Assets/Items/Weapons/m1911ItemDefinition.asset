@@ -16,4 +16,4 @@ MonoBehaviour:
   prefab: {fileID: 7229062074147639232, guid: 52065015772666943a8ce27e6063ef27, type: 3}
   localPosition: {x: 0, y: 0, z: 0}
   localEulerAngles: {x: 0, y: 180, z: 0}
-  localScale: {x: 0.13, y: 0.13, z: 0.13}
+  localScale: {x: 0.11, y: 0.11, z: 0.11}

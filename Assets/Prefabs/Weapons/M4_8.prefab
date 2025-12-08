@@ -129,7 +129,7 @@ Transform:
   m_GameObject: {fileID: 5231436449254210190}
   serializedVersion: 2
   m_LocalRotation: {x: -0.08204359, y: 0.70649374, z: -0.036043122, w: 0.70202315}
-  m_LocalPosition: {x: 0.181, y: 0.286, z: 0.331}
+  m_LocalPosition: {x: 0.45, y: 0.3, z: 0.33}
   m_LocalScale: {x: 9.090908, y: 9.090909, z: 9.090909}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -175,13 +175,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7156412846934755968}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.50278443, y: 0.49719995, z: -0.49719995, w: 0.50278443}
-  m_LocalPosition: {x: 0.087, y: -0.185, z: 1.793}
+  m_LocalRotation: {x: -0.0040667783, y: 0.70313543, z: 0.004021569, w: 0.7110329}
+  m_LocalPosition: {x: 0.09099999, y: -0.185, z: 1.4}
   m_LocalScale: {x: 9.090909, y: 9.090909, z: 9.090909}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1206547420201133069}
-  m_LocalEulerAnglesHint: {x: 90.01999, y: 180, z: 90.64}
+  m_LocalEulerAnglesHint: {x: 180.655, y: 269.36, z: 180}
 --- !u!114 &6671656385874706362
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,13 +222,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9153718697863449100}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.5082823, y: 0.49157822, z: 0.49157822, w: 0.5082823}
-  m_LocalPosition: {x: 0.16399999, y: 0.389, z: -1.015}
+  m_LocalRotation: {x: 0.34883073, y: 0.6029062, z: 0.25893036, w: -0.6691609}
+  m_LocalPosition: {x: -0.04, y: 0.29999995, z: -1.02}
   m_LocalScale: {x: 9.090909, y: 9.090909, z: 9.090909}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1206547420201133069}
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 88.086}
+  m_LocalEulerAnglesHint: {x: -51.175, y: 272.71, z: 6.787}
 --- !u!114 &7760618404132157122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -470,7 +470,7 @@ MonoBehaviour:
   mountpointKickbackDistance: 0.02
   mountpointRotation: 1.5
   mountpointDuration: 0.12
-  mountpointRecoilDirection: {x: 0, y: 0, z: -1}
+  mountpointRecoilDirection: {x: -1, y: 0, z: 0}
   mountpointCurve:
     serializedVersion: 2
     m_Curve:
