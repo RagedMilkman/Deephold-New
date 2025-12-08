@@ -15,6 +15,11 @@ public sealed class ToolBeltSlot
     public ItemDefinition DefaultItem { get; }
     public int RegistryIndex { get; set; } = -1;
 
+    private bool pendingExternalMountPose;
+    private bool pendingHasExternalMountPose;
+    private Vector3 pendingExternalMountPosition;
+    private Quaternion pendingExternalMountRotation = Quaternion.identity;
+
     private ItemVisual visual;
 
     private sealed class ItemVisual
@@ -96,7 +101,13 @@ public sealed class ToolBeltSlot
             CurrentStance = ToolMountPoint.MountStance.Away,
             MountRoot = mountRoot,
             OnDestroyed = onInstanceDestroyed,
+            HasExternalMountPose = pendingHasExternalMountPose,
+            ExternalMountPosition = pendingExternalMountPosition,
+            ExternalMountRotation = pendingExternalMountRotation,
         };
+
+        if (pendingExternalMountPose)
+            visual.HasExternalMountPose = pendingHasExternalMountPose;
 
         onInstanceCreated?.Invoke(instance);
         UpdateMountTargets(definition, resolveMountTarget);
@@ -291,14 +302,19 @@ public sealed class ToolBeltSlot
 
     public void SetExternalMountPose(bool hasPose, Vector3 position, Quaternion rotation)
     {
-        if (visual == null)
-            return;
+        pendingExternalMountPose = true;
+        pendingHasExternalMountPose = hasPose;
+        pendingExternalMountPosition = position;
+        pendingExternalMountRotation = rotation;
 
-        visual.HasExternalMountPose = hasPose;
-        if (hasPose)
+        if (visual != null)
         {
-            visual.ExternalMountPosition = position;
-            visual.ExternalMountRotation = rotation;
+            visual.HasExternalMountPose = hasPose;
+            if (hasPose)
+            {
+                visual.ExternalMountPosition = position;
+                visual.ExternalMountRotation = rotation;
+            }
         }
     }
 
