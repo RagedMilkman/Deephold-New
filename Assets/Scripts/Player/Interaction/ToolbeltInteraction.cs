@@ -87,6 +87,6 @@ public class ToolbeltInteraction : PlayerInteraction
         if (toolbelt) return;
         toolbelt = GetComponent<ToolbeltNetworked>();
         if (!toolbelt)
-            toolbelt = GetComponentInParent<ToolbeltNetworked>(true);
+            toolbelt = GetComponentInChildren<ToolbeltNetworked>(true);
     }
 }
