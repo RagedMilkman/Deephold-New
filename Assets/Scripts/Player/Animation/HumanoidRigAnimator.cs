@@ -121,7 +121,8 @@ public class HumanoidRigAnimator : MonoBehaviour
 
     [Header("Final IK Integration")]
     [SerializeField] private BipedIK bipedIk;
-    [SerializeField] private FullBodyBipedIK fullBodyBipedIk;
+    [SerializeField] private LimbIK leftArmIk;
+    [SerializeField] private LimbIK rightArmIk;
     [SerializeField] private Transform characterYawTransform;
     [SerializeField] private Transform leftHandTarget;
     [SerializeField] private Transform rightHandTarget;
@@ -240,7 +241,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     {
         CacheAnimator();
         CacheBipedIk();
-        CacheFullBodyBipedIk();
+        CacheLimbIks();
         CacheBones();
         InitializeBoneRotators();
     }
@@ -260,7 +261,7 @@ public class HumanoidRigAnimator : MonoBehaviour
     {
         CacheAnimator();
         CacheBipedIk();
-        CacheFullBodyBipedIk();
+        CacheLimbIks();
         CacheBones();
         InitializeBoneRotators();
         RestoreDefaultPoses();
@@ -367,12 +368,23 @@ public class HumanoidRigAnimator : MonoBehaviour
         bipedIk = GetComponentInChildren<BipedIK>();
     }
 
-    private void CacheFullBodyBipedIk()
+    private void CacheLimbIks()
     {
-        if (fullBodyBipedIk != null)
+        if (leftArmIk != null && rightArmIk != null)
             return;
 
-        fullBodyBipedIk = GetComponentInChildren<FullBodyBipedIK>();
+        foreach (var limbIk in GetComponentsInChildren<LimbIK>())
+        {
+            string nameLower = limbIk.name.ToLowerInvariant();
+            if (leftArmIk == null && nameLower.Contains("left"))
+            {
+                leftArmIk = limbIk;
+            }
+            else if (rightArmIk == null && nameLower.Contains("right"))
+            {
+                rightArmIk = limbIk;
+            }
+        }
     }
 
     private void LateUpdate()
@@ -476,35 +488,34 @@ public class HumanoidRigAnimator : MonoBehaviour
             CacheBipedIk();
         }
 
-        CacheFullBodyBipedIk();
+        CacheLimbIks();
 
-        if (bipedIk == null && fullBodyBipedIk == null)
+        if (bipedIk == null && leftArmIk == null && rightArmIk == null)
         {
             return;
         }
 
         Transform resolvedLeftTarget = ResolveHandTarget(
             leftHandTarget,
-            fullBodyBipedIk?.solver?.leftHandEffector?.target);
+            leftArmIk?.solver?.target ?? bipedIk?.solvers.leftHand?.target);
         Transform resolvedRightTarget = ResolveHandTarget(
             rightHandTarget,
-            fullBodyBipedIk?.solver?.rightHandEffector?.target);
+            rightArmIk?.solver?.target ?? bipedIk?.solvers.rightHand?.target);
 
         ApplyHandEffector(bipedIk?.solvers.leftHand, resolvedLeftTarget);
         ApplyHandEffector(bipedIk?.solvers.rightHand, resolvedRightTarget);
-
-        ApplyFullBodyHandEffector(fullBodyBipedIk?.solver?.leftHandEffector, resolvedLeftTarget);
-        ApplyFullBodyHandEffector(fullBodyBipedIk?.solver?.rightHandEffector, resolvedRightTarget);
+        ApplyHandEffector(leftArmIk?.solver, resolvedLeftTarget);
+        ApplyHandEffector(rightArmIk?.solver, resolvedRightTarget);
     }
 
     private void ApplyBendGoals()
     {
-        if (fullBodyBipedIk == null)
-        {
-            CacheFullBodyBipedIk();
-        }
+        CacheLimbIks();
 
-        if (fullBodyBipedIk?.solver == null)
+        IKSolverLimb leftSolver = bipedIk?.solvers.leftHand ?? leftArmIk?.solver;
+        IKSolverLimb rightSolver = bipedIk?.solvers.rightHand ?? rightArmIk?.solver;
+
+        if (leftSolver == null && rightSolver == null)
         {
             return;
         }
@@ -521,7 +532,7 @@ public class HumanoidRigAnimator : MonoBehaviour
             HumanBodyBones.LeftLowerArm,
             leftHandTarget,
             true,
-            fullBodyBipedIk.solver.leftArmChain,
+            leftSolver,
             ref leftArmBendGoal);
 
         ApplyArmBendGoal(
@@ -529,7 +540,7 @@ public class HumanoidRigAnimator : MonoBehaviour
             HumanBodyBones.RightLowerArm,
             rightHandTarget,
             false,
-            fullBodyBipedIk.solver.rightArmChain,
+            rightSolver,
             ref rightArmBendGoal);
     }
 
@@ -538,10 +549,10 @@ public class HumanoidRigAnimator : MonoBehaviour
         HumanBodyBones lowerArmBone,
         Transform handTarget,
         bool isLeft,
-        FBIKChain armChain,
+        IKSolverLimb solver,
         ref Transform bendGoalTransform)
     {
-        if (armChain == null)
+        if (solver == null)
         {
             return;
         }
@@ -582,8 +593,8 @@ public class HumanoidRigAnimator : MonoBehaviour
         bendGoalTransform.position = bendGoalPosition;
         bendGoalTransform.rotation = Quaternion.LookRotation(toHand, Vector3.up);
 
-        armChain.bendConstraint.weight = armBendGoalWeight;
-        armChain.bendConstraint.bendGoal = bendGoalTransform;
+        solver.bendGoalWeight = armBendGoalWeight;
+        solver.bendGoal = bendGoalTransform;
     }
 
     private Transform EnsureBendGoalTransform(Transform existing, string name)
@@ -608,18 +619,6 @@ public class HumanoidRigAnimator : MonoBehaviour
         solver.target = target;
         solver.IKPositionWeight = target && handPositionWeight > 0f ? handPositionWeight : 0f;
         solver.IKRotationWeight = target && handRotationWeight > 0f ? handRotationWeight : 0f;
-    }
-
-    private void ApplyFullBodyHandEffector(IKEffector effector, Transform target)
-    {
-        if (effector == null)
-        {
-            return;
-        }
-
-        effector.target = target;
-        effector.positionWeight = target && handPositionWeight > 0f ? handPositionWeight : 0f;
-        effector.rotationWeight = target && handRotationWeight > 0f ? handRotationWeight : 0f;
     }
 
     private static Transform ResolveHandTarget(Transform preferred, Transform fallback)
