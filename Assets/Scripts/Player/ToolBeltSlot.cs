@@ -39,6 +39,8 @@ public sealed class ToolBeltSlot
         public Vector3 TargetLocalPosition;
         public Quaternion TargetLocalRotation = Quaternion.identity;
         public Vector3 TargetLocalScale = Vector3.one;
+        public Vector3 TargetWorldPosition;
+        public Quaternion TargetWorldRotation = Quaternion.identity;
         public Action<GameObject> OnDestroyed;
     }
 
@@ -286,12 +288,17 @@ public sealed class ToolBeltSlot
         visual.TargetLocalPosition = root.InverseTransformPoint(worldPos);
         visual.TargetLocalRotation = Quaternion.Inverse(root.rotation) * worldRot;
         visual.TargetLocalScale = offsetScale;
+
+        visual.TargetWorldPosition = worldPos;
+        visual.TargetWorldRotation = worldRot;
     }
 
     private void ApplyTargetPose(Transform instanceTransform)
     {
-        instanceTransform.localPosition = visual.TargetLocalPosition;
-        instanceTransform.localRotation = visual.TargetLocalRotation;
+        if (visual.MountRoot && instanceTransform.parent != visual.MountRoot)
+            instanceTransform.SetParent(visual.MountRoot, true);
+
+        instanceTransform.SetPositionAndRotation(visual.TargetWorldPosition, visual.TargetWorldRotation);
         instanceTransform.localScale = visual.TargetLocalScale;
     }
 }
