@@ -36,6 +36,7 @@ public struct ToolbeltSnapshot : IEquatable<ToolbeltSnapshot>
 /// Mirrors toolbelt visual state from a source ToolbeltNetworked onto a target avatar (local or ghost).
 /// No gameplay logic is required on the target; this component simply renders items based on snapshots.
 /// </summary>
+[DefaultExecutionOrder(11000)]
 public class ToolbeltVisualizer : MonoBehaviour
 {
     [Header("Source")]
