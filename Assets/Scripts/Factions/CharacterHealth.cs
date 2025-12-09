@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FishNet.Object;
+using RootMotion.Dynamics;
 using UnityEngine;
 
 /// <summary>
@@ -10,6 +11,15 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField] CharacterState _state;
     [SerializeField] Transform _ownerRoot;
     [SerializeField] List<HitBox> _hitBoxes = new();
+    [SerializeField, Tooltip("Optional PuppetMaster to briefly enable when hit.")] PuppetMaster _puppetMaster;
+    [SerializeField, Tooltip("How long to keep PuppetMaster active after an impact.")] float _puppetMasterHitDuration = 0.75f;
+    [SerializeField, Tooltip("Multiplier for forces applied to PuppetMaster muscles on hit.")] float _puppetMasterForceMultiplier = 1f;
+
+    Coroutine _puppetMasterResetRoutine;
+    PuppetMaster.Mode _cachedPuppetMode;
+    PuppetMaster.State _cachedPuppetState;
+    bool _cachedPuppetEnabled;
+    bool _cachedPuppetActiveSelf;
 
     public Transform OwnerRoot => _ownerRoot ? _ownerRoot : transform.root;
     public IReadOnlyList<HitBox> HitBoxes => _hitBoxes;
@@ -18,6 +28,7 @@ public class CharacterHealth : NetworkBehaviour
     {
         if (!_state) _state = GetComponent<CharacterState>();
         if (!_ownerRoot) _ownerRoot = transform.root;
+        if (!_puppetMaster) _puppetMaster = GetComponentInChildren<PuppetMaster>(true);
 
         RefreshHitBoxes();
     }
@@ -46,6 +57,62 @@ public class CharacterHealth : NetworkBehaviour
         if (finalDamage <= 0)
             return;
 
+        ApplyPuppetMasterImpact(hitPoint, hitDir, force, puppetMasterMuscleIndex);
         _state.ServerDamage(finalDamage, shooter);
+    }
+
+    void ApplyPuppetMasterImpact(Vector3 hitPoint, Vector3 hitDir, float force, int puppetMasterMuscleIndex)
+    {
+        if (_state != null && _state.State == LifeState.Dead)
+            return;
+
+        if (_puppetMaster == null)
+            return;
+
+        var muscles = _puppetMaster.muscles;
+        if (muscles == null || muscles.Length == 0)
+            return;
+
+        CachePuppetMasterState();
+
+        _puppetMaster.gameObject.SetActive(true);
+        _puppetMaster.enabled = true;
+        _puppetMaster.mode = PuppetMaster.Mode.Active;
+        _puppetMaster.state = PuppetMaster.State.Alive;
+
+        var impactForce = hitDir.normalized * force * _puppetMasterForceMultiplier;
+        if (puppetMasterMuscleIndex >= 0 && puppetMasterMuscleIndex < muscles.Length)
+            muscles[puppetMasterMuscleIndex].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
+        else
+            muscles[0].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
+
+        if (_puppetMasterResetRoutine != null)
+            StopCoroutine(_puppetMasterResetRoutine);
+
+        _puppetMasterResetRoutine = StartCoroutine(ResetPuppetMasterAfterHit());
+    }
+
+    void CachePuppetMasterState()
+    {
+        _cachedPuppetMode = _puppetMaster.mode;
+        _cachedPuppetState = _puppetMaster.state;
+        _cachedPuppetEnabled = _puppetMaster.enabled;
+        _cachedPuppetActiveSelf = _puppetMaster.gameObject.activeSelf;
+    }
+
+    System.Collections.IEnumerator ResetPuppetMasterAfterHit()
+    {
+        yield return new WaitForSeconds(_puppetMasterHitDuration);
+
+        if (_puppetMaster == null)
+            yield break;
+
+        if (_state != null && _state.State == LifeState.Dead)
+            yield break;
+
+        _puppetMaster.mode = _cachedPuppetMode;
+        _puppetMaster.state = _cachedPuppetState;
+        _puppetMaster.enabled = _cachedPuppetEnabled;
+        _puppetMaster.gameObject.SetActive(_cachedPuppetActiveSelf);
     }
 }
