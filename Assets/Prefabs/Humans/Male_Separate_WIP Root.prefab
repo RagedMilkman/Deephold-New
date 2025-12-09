@@ -6380,8 +6380,25 @@ MonoBehaviour:
   _animator: {fileID: 801833631192838038}
   _ikSolvers: []
   _puppetMasterForceMultiplier: 1
+  _instantDeath:
+    killDuration: 0
+    deadMuscleWeight: 0.1
+    deadMuscleDamper: 0.25
+    forceMultiplier: 1.2
+  _quickDeath:
+    killDuration: 0.3
+    deadMuscleWeight: 0.25
+    deadMuscleDamper: 0.35
+    forceMultiplier: 0.8
+  _slowDeath:
+    killDuration: 0.5
+    deadMuscleWeight: 0.2
+    deadMuscleDamper: 0.3
+    forceMultiplier: 0.6
   _hitImpulseDuration: 0.2
   _hitImpulseDelay: 0.02
+  _hitImpulseForceMultiplier: 0.2
+  _hitImpulseMaxForce: 5
 --- !u!114 &3403907483884108976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6744,7 +6761,7 @@ MonoBehaviour:
   knockOutDistance: 10
   unpinnedMuscleWeightMlp: 0.3
   maxRigidbodyVelocity: 10
-  pinWeightThreshold: 0.218
+  pinWeightThreshold: 0
   unpinnedMuscleKnockout: 0
   dropProps: 0
   canGetUp: 1
