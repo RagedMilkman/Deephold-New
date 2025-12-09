@@ -116,6 +116,7 @@
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\Items\ItemDefinition.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\BlockShootable.cs" />
+    <Compile Include="Assets\Scripts\Player\Animation\PuppetMasterExtensions.cs" />
     <Compile Include="Assets\Scripts\Items\ItemMountType.cs" />
     <Compile Include="Assets\Scripts\Player\ToolbeltVisualHelpers.cs" />
     <Compile Include="Assets\Scripts\Player\OwnerOnlyVisibility.cs" />

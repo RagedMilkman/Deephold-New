@@ -16,6 +16,8 @@ public class CharacterHealth : NetworkBehaviour
     [Header("PuppetMaster / Death")]
     [SerializeField, Tooltip("Optional PuppetMaster to activate on death.")]
     PuppetMaster _puppetMaster;
+    public PuppetMaster PuppetMaster => _puppetMaster;
+
 
     [SerializeField, Tooltip("Base state settings used when killing the PuppetMaster on death.")]
     PuppetMaster.StateSettings _deathStateSettings;

@@ -5373,7 +5373,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013655204, y: 0.70536864, z: 0.033097137, w: 0.707936}
+  m_LocalRotation: {x: 0.013655306, y: 0.70536864, z: 0.03309703, w: 0.7079359}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -6119,6 +6119,7 @@ GameObject:
   - component: {fileID: 1096597542071489722}
   - component: {fileID: 2180070194542969441}
   - component: {fileID: 3101949350058614432}
+  - component: {fileID: 8009552304572337181}
   m_Layer: 6
   m_Name: B-hips
   m_TagString: Untagged
@@ -6294,6 +6295,22 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &8009552304572337181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7477841327058202707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 1
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &7478472528683366501
 GameObject:
   m_ObjectHideFlags: 0

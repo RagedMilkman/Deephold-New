@@ -10,7 +10,6 @@ public enum BodyPart
     ArmR,
     LegL,
     LegR
-    // Or one per muscle if you want it that granular
 }
 
 public class HitBox : MonoBehaviour, IShootable
@@ -19,8 +18,9 @@ public class HitBox : MonoBehaviour, IShootable
     [SerializeField] BodyPart bodyPart;
     [SerializeField] float damageMultiplier = 1f;
 
-    // Optional: link to PM muscle index if you want per-muscle forces
-    [SerializeField] int puppetMasterMuscleIndex = -1;
+    // Now private – auto-populated from PuppetMaster
+    [SerializeField, Tooltip("Debug only – auto-assigned at runtime")]
+    int puppetMasterMuscleIndex = -1;
 
     public Transform OwnerRoot => owner ? owner.OwnerRoot : transform.root;
 
@@ -33,11 +33,22 @@ public class HitBox : MonoBehaviour, IShootable
     {
         if (!owner)
             owner = GetComponentInParent<CharacterHealth>(true);
+
+        if (owner)
+            SetOwner(owner);
     }
 
     public void SetOwner(CharacterHealth newOwner)
     {
         owner = newOwner;
+
+        puppetMasterMuscleIndex = -1;
+
+        if (owner != null && owner.PuppetMaster != null)
+        {
+            // Automatically find the closest PuppetMaster muscle
+            puppetMasterMuscleIndex = owner.PuppetMaster.GetClosestMuscleIndex(transform);
+        }
     }
 
     public void ApplyHit(float baseDamage, Vector3 hitPoint, Vector3 hitDir, float force, NetworkObject shooter = null)
@@ -59,6 +70,7 @@ public class HitBox : MonoBehaviour, IShootable
         if (owner != null && !owner.IsServer)
             return;
 
+        // normal points *out* of the surface, so incoming dir is -normal
         ApplyHit(damage, point, -normal, damage, shooter);
     }
 }
