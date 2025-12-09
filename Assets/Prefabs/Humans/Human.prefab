@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -1847501461699843864}
   - component: {fileID: 5858403481333311705}
   - component: {fileID: 5340020552757736216}
+  - component: {fileID: 2555694571077031807}
   m_Layer: 0
   m_Name: Human
   m_TagString: Untagged
@@ -136,6 +137,22 @@ MonoBehaviour:
   _motor: {fileID: 5903944542015488180}
   _target: {fileID: 0}
   _stopDistance: 0.5
+--- !u!114 &2555694571077031807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6116119404708490174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90897d064eb91f948a0f2993e3870145, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  _characterId: 
+  _faction: {fileID: 0}
+  _forceEnableHierarchy: 1
+  _health: {fileID: 1459772520429387606}
 --- !u!1001 &5953492238139108838
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -211,6 +228,18 @@ PrefabInstance:
     - target: {fileID: 1420793014882160652, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
       value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766185643451243340, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.00000007835012
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766185643451243340, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.000000052667993
+      objectReference: {fileID: 0}
+    - target: {fileID: 1766185643451243340, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5000003
       objectReference: {fileID: 0}
     - target: {fileID: 1937918617829203581, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_Layer
@@ -323,6 +352,18 @@ PrefabInstance:
     - target: {fileID: 6512080644292543530, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7079329
+      objectReference: {fileID: 0}
+    - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.01379765
+      objectReference: {fileID: 0}
+    - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.033239435
       objectReference: {fileID: 0}
     - target: {fileID: 6797074947291448208, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_Layer
@@ -464,11 +505,34 @@ PrefabInstance:
       propertyPath: rightFoot.stepStartPos.z
       value: -0.40385196
       objectReference: {fileID: 0}
+    - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.013654936
+      objectReference: {fileID: 0}
+    - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7053685
+      objectReference: {fileID: 0}
+    - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.03309787
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+--- !u!114 &1459772520429387606 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5106284807051170480, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+  m_PrefabInstance: {fileID: 5953492238139108838}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e9e1253389a9434f90a0be1d35d4a57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterHealth
 --- !u!114 &4164658408687173836 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7734047683449924906, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
