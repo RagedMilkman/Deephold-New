@@ -8,6 +8,7 @@ public class TopDownChaseAI : MonoBehaviour
     [Header("References")]
     [SerializeField] private TopDownMotor _motor;
     [SerializeField] private Transform _target;
+    [SerializeField] private CharacterState state;
 
     [Header("Behavior")]
     [SerializeField, Tooltip("Distance from the target where the AI stops moving.")]
@@ -20,7 +21,7 @@ public class TopDownChaseAI : MonoBehaviour
 
     private void Update()
     {
-        if (!_motor || !_target)
+        if (!_motor || !_target || state.State == LifeState.Dead)
             return;
 
         Vector3 toTarget = _target.position - _motor.transform.position;
