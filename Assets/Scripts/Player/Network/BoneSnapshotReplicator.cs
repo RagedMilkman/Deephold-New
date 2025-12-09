@@ -292,6 +292,8 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             return;
 
         _ghostInstance = Instantiate(_ghostPrefab);
+        if (!_ghostInstance.activeSelf)
+            _ghostInstance.SetActive(true);
         _ghostFollower = _ghostInstance.GetComponent<GhostFollower>();
         _spawnedGhostInternally = _ghostFollower != null;
 
