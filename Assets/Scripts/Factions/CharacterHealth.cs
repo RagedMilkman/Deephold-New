@@ -13,6 +13,7 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField] Transform _ownerRoot;
     [SerializeField] List<HitBox> _hitBoxes = new();
     [SerializeField, Tooltip("Optional PuppetMaster to activate on death.")] PuppetMaster _puppetMaster;
+    [SerializeField, Tooltip("State settings to use when killing the PuppetMaster on death.")] PuppetMaster.StateSettings _deathStateSettings;
     [SerializeField, Tooltip("Animator controlling the character's death poses.")] Animator _animator;
     [SerializeField, Tooltip("IK solvers to disable when transitioning to ragdoll.")] IK[] _ikSolvers;
     [SerializeField, Tooltip("Multiplier for forces applied to PuppetMaster muscles on hit.")] float _puppetMasterForceMultiplier = 1f;
@@ -126,7 +127,9 @@ public class CharacterHealth : NetworkBehaviour
         _puppetMaster.enabled = true;
         _puppetMaster.mode = PuppetMaster.Mode.Active;
         _puppetMaster.state = PuppetMaster.State.Alive;
-        _puppetMaster.Kill(killDuration);
+        var killSettings = _deathStateSettings;
+        killSettings.killDuration = killDuration;
+        _puppetMaster.Kill(killSettings);
 
         ApplyPuppetMasterImpulse(hitPoint, hitDir, force, puppetMasterMuscleIndex);
     }
