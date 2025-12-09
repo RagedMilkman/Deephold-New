@@ -5271,7 +5271,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013654995, y: 0.7053686, z: 0.033097416, w: 0.707936}
+  m_LocalRotation: {x: 0.013655152, y: 0.7053686, z: 0.033097196, w: 0.707936}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -6369,9 +6369,19 @@ MonoBehaviour:
   _ownerRoot: {fileID: 0}
   _hitBoxes: []
   _puppetMaster: {fileID: 0}
-  _puppetMasterHitDuration: 0.75
-  _puppetMasterForceDelay: 0.05
+  _deathStateSettings:
+    killDuration: 0
+    deadMuscleWeight: 0.2
+    deadMuscleDamper: 0.3
+    maxFreezeSqrVelocity: 0.05
+    freezePermanently: 0
+    enableAngularLimitsOnKill: 1
+    enableInternalCollisionsOnKill: 1
+  _animator: {fileID: 801833631192838038}
+  _ikSolvers: []
   _puppetMasterForceMultiplier: 1
+  _hitImpulseDuration: 0.2
+  _hitImpulseDelay: 0.02
 --- !u!114 &3403907483884108976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6734,7 +6744,7 @@ MonoBehaviour:
   knockOutDistance: 10
   unpinnedMuscleWeightMlp: 0.3
   maxRigidbodyVelocity: 10
-  pinWeightThreshold: 1
+  pinWeightThreshold: 0.218
   unpinnedMuscleKnockout: 0
   dropProps: 0
   canGetUp: 1
@@ -7105,7 +7115,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8237888801687684240}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.01379764, y: -0.70536196, z: -0.033239212, w: 0.7079331}
+  m_LocalRotation: {x: 0.013797601, y: -0.70536196, z: -0.033239167, w: 0.7079331}
   m_LocalPosition: {x: -0.0000001874566, y: 0.19596389, z: -0.0000020730495}
   m_LocalScale: {x: 0.9999998, y: 0.99999976, z: 1}
   m_ConstrainProportionsScale: 0
