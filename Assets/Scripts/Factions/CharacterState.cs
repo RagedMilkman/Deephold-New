@@ -15,10 +15,10 @@ public enum DeathType
 [System.Serializable]
 public class PuppetMasterDeathSettings
 {
-    public bool activateObject = true;
-    public bool enableComponent = true;
-    public PuppetMaster.Mode mode = PuppetMaster.Mode.Active;
-    public PuppetMaster.State state = PuppetMaster.State.Dead;
+    public float killDuration = 1f;
+    public float deadMuscleWeight = 0.01f;
+    public float deadMuscleDamper = 2f;
+    public float maxFreezeSqrVelocity = 0.02f;
 }
 
 [System.Serializable]
@@ -124,10 +124,10 @@ public class CharacterState : NetworkBehaviour
 
         var settings = ResolveDeathConfig(deathType).puppetMaster;
 
-        puppetMaster.gameObject.SetActive(settings.activateObject);
-        puppetMaster.enabled = settings.enableComponent;
-        puppetMaster.mode = settings.mode;
-        puppetMaster.state = settings.state;
+        puppetMaster.killDuration = settings.killDuration;
+        puppetMaster.deadMuscleWeight = settings.deadMuscleWeight;
+        puppetMaster.deadMuscleDamper = settings.deadMuscleDamper;
+        puppetMaster.maxFreezeSqrVelocity = settings.maxFreezeSqrVelocity;
     }
 
     void ApplyLimbIkSettings(DeathType deathType)
