@@ -70,6 +70,7 @@
     <Compile Include="Assets\Scripts\Items\Weapons\ProceduralMuzzleFlash.cs" />
     <Compile Include="Assets\Scripts\Factions\FactionsService.cs" />
     <Compile Include="Assets\Scripts\World\ReportingServices\HitReportingService.cs" />
+    <Compile Include="Assets\Scripts\Factions\CharacterHealth.cs" />
     <Compile Include="Assets\Scripts\World\Generation\NoiseGenerationService.cs" />
     <Compile Include="Assets\Scripts\Items\ToolbeltItemCategory.cs" />
     <Compile Include="Assets\Scripts\Factions\FactionController.cs" />
@@ -96,7 +97,6 @@
     <Compile Include="Assets\Scripts\World\Navigation\INavFieldSolver.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\MeleeInteraction.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\PlayerShootable.cs" />
-    <Compile Include="Assets\Scripts\Items\Weapons\Shootable\HitBox.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\BoneRotator.cs" />
     <Compile Include="Assets\Scripts\World\LocationServices\EnemySpawnLocationService.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\FullBodyBipedGaitController.cs" />
@@ -105,7 +105,6 @@
     <Compile Include="Assets\Scripts\Player\Animation\HandGripAlign.cs" />
     <Compile Include="Assets\Scripts\World\LocationServices\PlayerLocationService.cs" />
     <Compile Include="Assets\Scripts\Factions\CharacterData.cs" />
-    <Compile Include="Assets\Scripts\Factions\CharacterHealth.cs" />
     <Compile Include="Assets\Scripts\World\Generation\IslandNoiseGenerator.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\BipedGaitController.cs" />
     <Compile Include="Assets\Scripts\Player\Toolbelt.cs" />
@@ -121,6 +120,7 @@
     <Compile Include="Assets\Scripts\Player\OwnerOnlyVisibility.cs" />
     <Compile Include="Assets\Scripts\World\WorldGenerationDirector.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\HumanoidRigDebugVisualizer.cs" />
+    <Compile Include="Assets\Scripts\Items\Weapons\Shootable\HitBox.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerCameraOrbit.cs" />
     <Compile Include="Assets\Scripts\World\LocationServices\PlayerSpawnLocationService.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerData.cs" />

@@ -4945,6 +4945,7 @@ GameObject:
   - component: {fileID: 337513332488499530}
   - component: {fileID: 9067979320223101955}
   - component: {fileID: 4079084493753062084}
+  - component: {fileID: 5277954716613311555}
   m_Layer: 9
   m_Name: B-spine
   m_TagString: Untagged
@@ -5120,6 +5121,22 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &5277954716613311555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6267655807985359499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 1
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &6270518400529239564
 GameObject:
   m_ObjectHideFlags: 0
@@ -5254,7 +5271,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013654899, y: 0.7053685, z: 0.033098195, w: 0.707936}
+  m_LocalRotation: {x: 0.013654933, y: 0.7053686, z: 0.03309804, w: 0.707936}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -6156,6 +6173,8 @@ GameObject:
   - component: {fileID: 2650125091823068198}
   - component: {fileID: 7734047683449924906}
   - component: {fileID: 5728044436150630429}
+  - component: {fileID: 5106284807051170480}
+  - component: {fileID: 3403907483884108976}
   - component: {fileID: 2375063280235814730}
   - component: {fileID: 8125184488041465076}
   m_Layer: 0
@@ -6347,6 +6366,44 @@ MonoBehaviour:
   _characterId: 
   _faction: {fileID: 0}
   _forceEnableHierarchy: 1
+  _health: {fileID: 5106284807051170480}
+--- !u!114 &5106284807051170480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7478472528683366501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e9e1253389a9434f90a0be1d35d4a57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterHealth
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 7734047683449924906}
+  _networkObjectCache: {fileID: 0}
+  _state: {fileID: 3403907483884108976}
+  _ownerRoot: {fileID: 0}
+  _hitBoxes: []
+--- !u!114 &3403907483884108976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7478472528683366501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa65422615c39f74a849d493ffa15146, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterState
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 7734047683449924906}
+  _networkObjectCache: {fileID: 0}
+  maxHealth: 30
+  despawnOnDeath: 1
+  despawnDelay: 5
+  puppetMaster: {fileID: 4984505607652927022}
 --- !u!114 &2375063280235814730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6690,6 +6747,7 @@ GameObject:
   - component: {fileID: 1198910265774925931}
   - component: {fileID: 8601688280802774288}
   - component: {fileID: 7412719404032405382}
+  - component: {fileID: 4817708195286884801}
   m_Layer: 9
   m_Name: B-head
   m_TagString: Untagged
@@ -6862,6 +6920,22 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &4817708195286884801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8077484625001399060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 0
+  damageMultiplier: 2
+  puppetMasterMuscleIndex: -1
 --- !u!1 &8170930508393627006
 GameObject:
   m_ObjectHideFlags: 0
@@ -6917,7 +6991,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8237888801687684240}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013797637, y: -0.70536226, z: -0.033239674, w: 0.7079329}
+  m_LocalRotation: {x: 0.013797653, y: -0.70536226, z: -0.03323953, w: 0.70793283}
   m_LocalPosition: {x: -0.0000001874566, y: 0.19596389, z: -0.0000020730495}
   m_LocalScale: {x: 0.9999998, y: 0.99999976, z: 1}
   m_ConstrainProportionsScale: 0
