@@ -13,6 +13,7 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField] List<HitBox> _hitBoxes = new();
     [SerializeField, Tooltip("Optional PuppetMaster to briefly enable when hit.")] PuppetMaster _puppetMaster;
     [SerializeField, Tooltip("How long to keep PuppetMaster active after an impact.")] float _puppetMasterHitDuration = 0.75f;
+    [SerializeField, Tooltip("Delay before applying force so PuppetMaster can fully activate.")] float _puppetMasterForceDelay = 0.05f;
     [SerializeField, Tooltip("Multiplier for forces applied to PuppetMaster muscles on hit.")] float _puppetMasterForceMultiplier = 1f;
 
     Coroutine _puppetMasterResetRoutine;
@@ -77,16 +78,10 @@ public class CharacterHealth : NetworkBehaviour
 
         ActivatePuppetMasterForImpact();
 
-        var impactForce = hitDir.normalized * force * _puppetMasterForceMultiplier;
-        if (puppetMasterMuscleIndex >= 0 && puppetMasterMuscleIndex < muscles.Length)
-            muscles[puppetMasterMuscleIndex].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
-        else
-            muscles[0].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
-
         if (_puppetMasterResetRoutine != null)
             StopCoroutine(_puppetMasterResetRoutine);
 
-        _puppetMasterResetRoutine = StartCoroutine(ResetPuppetMasterAfterHit());
+        _puppetMasterResetRoutine = StartCoroutine(ApplyPuppetForceAndReset(hitPoint, hitDir, force, puppetMasterMuscleIndex));
     }
 
     void ActivatePuppetMasterForImpact()
@@ -113,8 +108,33 @@ public class CharacterHealth : NetworkBehaviour
         _cachedPuppetActiveSelf = _puppetMaster.gameObject.activeSelf;
     }
 
-    System.Collections.IEnumerator ResetPuppetMasterAfterHit()
+    System.Collections.IEnumerator ApplyPuppetForceAndReset(Vector3 hitPoint, Vector3 hitDir, float force, int puppetMasterMuscleIndex)
     {
+        if (_puppetMasterForceDelay > 0f)
+            yield return new WaitForSeconds(_puppetMasterForceDelay);
+
+        if (_puppetMaster == null)
+        {
+            yield break;
+        }
+
+        var muscles = _puppetMaster.muscles;
+        if (muscles == null || muscles.Length == 0)
+        {
+            yield break;
+        }
+
+        if (_state != null && _state.State == LifeState.Dead)
+        {
+            yield break;
+        }
+
+        var impactForce = hitDir.normalized * force * _puppetMasterForceMultiplier;
+        if (puppetMasterMuscleIndex >= 0 && puppetMasterMuscleIndex < muscles.Length)
+            muscles[puppetMasterMuscleIndex].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
+        else
+            muscles[0].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
+
         yield return new WaitForSeconds(_puppetMasterHitDuration);
 
         if (_puppetMaster == null)
@@ -127,5 +147,7 @@ public class CharacterHealth : NetworkBehaviour
         _puppetMaster.state = _cachedPuppetState;
         _puppetMaster.enabled = _cachedPuppetEnabled;
         _puppetMaster.gameObject.SetActive(_cachedPuppetActiveSelf);
+
+        _puppetMasterResetRoutine = null;
     }
 }
