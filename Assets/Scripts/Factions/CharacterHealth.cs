@@ -59,7 +59,7 @@ public class CharacterHealth : NetworkBehaviour
             return;
 
         ApplyPuppetMasterImpact(hitPoint, hitDir, force, puppetMasterMuscleIndex);
-        _state.ServerDamage(finalDamage, shooter);
+        _state.ServerDamage(finalDamage, shooter, bodyPart);
     }
 
     void ApplyPuppetMasterImpact(Vector3 hitPoint, Vector3 hitDir, float force, int puppetMasterMuscleIndex)

@@ -39,7 +39,7 @@ public class EnemyShootable : MonoBehaviour, IShootable
 
         Debug.Log("ServerOnShot!");
 
-        state.ServerDamage(Mathf.RoundToInt(Mathf.Max(0f, damage)), shooter);
+        state.ServerDamage(Mathf.RoundToInt(Mathf.Max(0f, damage)), shooter, BodyPart.Torso);
         // Optional: trigger observers FX here later
     }
 }

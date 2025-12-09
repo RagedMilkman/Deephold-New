@@ -28,7 +28,7 @@ public class PlayerShootable : MonoBehaviour, IShootable
 
         Debug.Log("SHOT");
 
-        state.ServerDamage(Mathf.RoundToInt(damage), shooter);
+        state.ServerDamage(Mathf.RoundToInt(damage), shooter, BodyPart.Torso);
         // FX hooks (server -> ObserversRpc) can live here later
     }
 }
