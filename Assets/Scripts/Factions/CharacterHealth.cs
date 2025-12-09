@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FishNet.Object;
+using RootMotion.FinalIK;
 using RootMotion.Dynamics;
 using UnityEngine;
 
@@ -11,16 +12,16 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField] CharacterState _state;
     [SerializeField] Transform _ownerRoot;
     [SerializeField] List<HitBox> _hitBoxes = new();
-    [SerializeField, Tooltip("Optional PuppetMaster to briefly enable when hit.")] PuppetMaster _puppetMaster;
-    [SerializeField, Tooltip("How long to keep PuppetMaster active after an impact.")] float _puppetMasterHitDuration = 0.75f;
-    [SerializeField, Tooltip("Delay before applying force so PuppetMaster can fully activate.")] float _puppetMasterForceDelay = 0.05f;
+    [SerializeField, Tooltip("Optional PuppetMaster to activate on death.")] PuppetMaster _puppetMaster;
+    [SerializeField, Tooltip("Animator controlling the character's death poses.")] Animator _animator;
+    [SerializeField, Tooltip("IK solvers to disable when transitioning to ragdoll.")] IK[] _ikSolvers;
     [SerializeField, Tooltip("Multiplier for forces applied to PuppetMaster muscles on hit.")] float _puppetMasterForceMultiplier = 1f;
 
-    Coroutine _puppetMasterResetRoutine;
-    PuppetMaster.Mode _cachedPuppetMode;
-    PuppetMaster.State _cachedPuppetState;
-    bool _cachedPuppetEnabled;
-    bool _cachedPuppetActiveSelf;
+    Vector3 _pendingHitPoint;
+    Vector3 _pendingHitDir;
+    float _pendingForce;
+    int _pendingMuscleIndex;
+    bool _waitingForTorsoRagdoll;
 
     public Transform OwnerRoot => _ownerRoot ? _ownerRoot : transform.root;
     public IReadOnlyList<HitBox> HitBoxes => _hitBoxes;
@@ -30,6 +31,8 @@ public class CharacterHealth : NetworkBehaviour
         if (!_state) _state = GetComponent<CharacterState>();
         if (!_ownerRoot) _ownerRoot = transform.root;
         if (!_puppetMaster) _puppetMaster = GetComponentInChildren<PuppetMaster>(true);
+        if (!_animator) _animator = GetComponentInChildren<Animator>(true);
+        if (_ikSolvers == null || _ikSolvers.Length == 0) _ikSolvers = GetComponentsInChildren<IK>(true);
 
         RefreshHitBoxes();
     }
@@ -58,96 +61,102 @@ public class CharacterHealth : NetworkBehaviour
         if (finalDamage <= 0)
             return;
 
-        ApplyPuppetMasterImpact(hitPoint, hitDir, force, puppetMasterMuscleIndex);
+        bool wasAlive = _state.State == LifeState.Alive;
         _state.ServerDamage(finalDamage, shooter);
+
+        if (wasAlive && _state.State == LifeState.Dead)
+        {
+            HandleDeath(bodyPart, hitPoint, hitDir, force, puppetMasterMuscleIndex);
+        }
     }
 
-    void ApplyPuppetMasterImpact(Vector3 hitPoint, Vector3 hitDir, float force, int puppetMasterMuscleIndex)
+    void HandleDeath(BodyPart bodyPart, Vector3 hitPoint, Vector3 hitDir, float force, int puppetMasterMuscleIndex)
     {
-        if (_state != null && _state.State == LifeState.Dead)
+        _waitingForTorsoRagdoll = false;
+
+        switch (bodyPart)
+        {
+            case BodyPart.Head:
+                ActivateImmediateRagdoll(hitPoint, hitDir, force, puppetMasterMuscleIndex, 0.1f);
+                break;
+            case BodyPart.Torso:
+                BeginTorsoDeath(hitPoint, hitDir, force, puppetMasterMuscleIndex);
+                break;
+            default:
+                ActivateImmediateRagdoll(hitPoint, hitDir, force, puppetMasterMuscleIndex, 0.1f);
+                break;
+        }
+    }
+
+    void BeginTorsoDeath(Vector3 hitPoint, Vector3 hitDir, float force, int puppetMasterMuscleIndex)
+    {
+        _pendingHitPoint = hitPoint;
+        _pendingHitDir = hitDir;
+        _pendingForce = force;
+        _pendingMuscleIndex = puppetMasterMuscleIndex;
+        _waitingForTorsoRagdoll = true;
+
+        if (_puppetMaster != null)
+        {
+            _puppetMaster.gameObject.SetActive(false);
+            _puppetMaster.enabled = false;
+        }
+
+        if (_animator)
+            _animator.SetTrigger("Die_Torso");
+    }
+
+    public void OnTorsoDeathHitGround()
+    {
+        if (!_waitingForTorsoRagdoll)
             return;
+
+        _waitingForTorsoRagdoll = false;
+        ActivateImmediateRagdoll(_pendingHitPoint, _pendingHitDir, _pendingForce, _pendingMuscleIndex, 0.3f);
+    }
+
+    void ActivateImmediateRagdoll(Vector3 hitPoint, Vector3 hitDir, float force, int puppetMasterMuscleIndex, float killDuration)
+    {
+        DisableAnimationSystems();
 
         if (_puppetMaster == null)
             return;
 
-        var muscles = _puppetMaster.muscles;
-        if (muscles == null || muscles.Length == 0)
-            return;
-
-        CachePuppetMasterState();
-
-        ActivatePuppetMasterForImpact();
-
-        if (_puppetMasterResetRoutine != null)
-            StopCoroutine(_puppetMasterResetRoutine);
-
-        _puppetMasterResetRoutine = StartCoroutine(ApplyPuppetForceAndReset(hitPoint, hitDir, force, puppetMasterMuscleIndex));
-    }
-
-    void ActivatePuppetMasterForImpact()
-    {
         _puppetMaster.gameObject.SetActive(true);
         _puppetMaster.enabled = true;
         _puppetMaster.mode = PuppetMaster.Mode.Active;
         _puppetMaster.state = PuppetMaster.State.Alive;
+        _puppetMaster.Kill(killDuration);
 
-        var muscles = _puppetMaster.muscles;
-        for (int i = 0; i < muscles.Length; i++)
+        ApplyPuppetMasterImpulse(hitPoint, hitDir, force, puppetMasterMuscleIndex);
+    }
+
+    void DisableAnimationSystems()
+    {
+        if (_animator)
+            _animator.enabled = false;
+
+        if (_ikSolvers == null)
+            return;
+
+        for (int i = 0; i < _ikSolvers.Length; i++)
         {
-            muscles[i].rigidbody.WakeUp();
+            if (_ikSolvers[i] != null)
+                _ikSolvers[i].enabled = false;
         }
-
-        Physics.SyncTransforms();
     }
 
-    void CachePuppetMasterState()
+    void ApplyPuppetMasterImpulse(Vector3 hitPoint, Vector3 hitDir, float force, int puppetMasterMuscleIndex)
     {
-        _cachedPuppetMode = _puppetMaster.mode;
-        _cachedPuppetState = _puppetMaster.state;
-        _cachedPuppetEnabled = _puppetMaster.enabled;
-        _cachedPuppetActiveSelf = _puppetMaster.gameObject.activeSelf;
-    }
-
-    System.Collections.IEnumerator ApplyPuppetForceAndReset(Vector3 hitPoint, Vector3 hitDir, float force, int puppetMasterMuscleIndex)
-    {
-        if (_puppetMasterForceDelay > 0f)
-            yield return new WaitForSeconds(_puppetMasterForceDelay);
-
         if (_puppetMaster == null)
-        {
-            yield break;
-        }
+            return;
 
         var muscles = _puppetMaster.muscles;
         if (muscles == null || muscles.Length == 0)
-        {
-            yield break;
-        }
-
-        if (_state != null && _state.State == LifeState.Dead)
-        {
-            yield break;
-        }
+            return;
 
         var impactForce = hitDir.normalized * force * _puppetMasterForceMultiplier;
-        if (puppetMasterMuscleIndex >= 0 && puppetMasterMuscleIndex < muscles.Length)
-            muscles[puppetMasterMuscleIndex].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
-        else
-            muscles[0].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
-
-        yield return new WaitForSeconds(_puppetMasterHitDuration);
-
-        if (_puppetMaster == null)
-            yield break;
-
-        if (_state != null && _state.State == LifeState.Dead)
-            yield break;
-
-        _puppetMaster.mode = _cachedPuppetMode;
-        _puppetMaster.state = _cachedPuppetState;
-        _puppetMaster.enabled = _cachedPuppetEnabled;
-        _puppetMaster.gameObject.SetActive(_cachedPuppetActiveSelf);
-
-        _puppetMasterResetRoutine = null;
+        var targetIndex = (puppetMasterMuscleIndex >= 0 && puppetMasterMuscleIndex < muscles.Length) ? puppetMasterMuscleIndex : 0;
+        muscles[targetIndex].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
     }
 }
