@@ -75,10 +75,7 @@ public class CharacterHealth : NetworkBehaviour
 
         CachePuppetMasterState();
 
-        _puppetMaster.gameObject.SetActive(true);
-        _puppetMaster.enabled = true;
-        _puppetMaster.mode = PuppetMaster.Mode.Active;
-        _puppetMaster.state = PuppetMaster.State.Alive;
+        ActivatePuppetMasterForImpact();
 
         var impactForce = hitDir.normalized * force * _puppetMasterForceMultiplier;
         if (puppetMasterMuscleIndex >= 0 && puppetMasterMuscleIndex < muscles.Length)
@@ -90,6 +87,22 @@ public class CharacterHealth : NetworkBehaviour
             StopCoroutine(_puppetMasterResetRoutine);
 
         _puppetMasterResetRoutine = StartCoroutine(ResetPuppetMasterAfterHit());
+    }
+
+    void ActivatePuppetMasterForImpact()
+    {
+        _puppetMaster.gameObject.SetActive(true);
+        _puppetMaster.enabled = true;
+        _puppetMaster.mode = PuppetMaster.Mode.Active;
+        _puppetMaster.state = PuppetMaster.State.Alive;
+
+        var muscles = _puppetMaster.muscles;
+        for (int i = 0; i < muscles.Length; i++)
+        {
+            muscles[i].rigidbody.WakeUp();
+        }
+
+        Physics.SyncTransforms();
     }
 
     void CachePuppetMasterState()
