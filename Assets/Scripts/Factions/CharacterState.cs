@@ -52,6 +52,13 @@ public class CharacterState : NetworkBehaviour
     void ServerDespawn()
     {
         if (!IsServer) return;
+
+        if (puppetMaster)
+        {
+            var puppetRoot = puppetMaster.transform.root.gameObject;
+            if (puppetRoot != gameObject)
+                Destroy(puppetRoot);
+        }
         Destroy(gameObject); // or your PurrNet despawn
     }
 
