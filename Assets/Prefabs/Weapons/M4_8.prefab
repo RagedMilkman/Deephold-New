@@ -390,6 +390,7 @@ MonoBehaviour:
   fireFeedback: {fileID: 5225359115930824498}
   bulletSpeed: 25
   damage: 20
+  force: 70
   fireCooldown: 0.1
   bulletRadius: 0.06
   bulletRange: 75

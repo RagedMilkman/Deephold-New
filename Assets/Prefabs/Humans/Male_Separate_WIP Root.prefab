@@ -5373,7 +5373,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013655306, y: 0.70536864, z: 0.03309703, w: 0.7079359}
+  m_LocalRotation: {x: 0.013655397, y: 0.7053687, z: 0.033096842, w: 0.7079359}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -6537,21 +6537,21 @@ MonoBehaviour:
     killDuration: 0
     deadMuscleWeight: 0.1
     deadMuscleDamper: 0.25
-    forceMultiplier: 1.2
+    forceMultiplier: 0.5
   _quickDeath:
-    killDuration: 1
+    killDuration: 0
     deadMuscleWeight: 0.25
     deadMuscleDamper: 0.35
-    forceMultiplier: 0.8
+    forceMultiplier: 0.5
   _slowDeath:
-    killDuration: 2
-    deadMuscleWeight: 0.2
+    killDuration: 0
+    deadMuscleWeight: 0.45
     deadMuscleDamper: 0.3
-    forceMultiplier: 0.6
-  _hitImpulseDuration: 0.2
-  _hitImpulseDelay: 0.02
-  _hitImpulseForceMultiplier: 0.2
-  _hitImpulseMaxForce: 5
+    forceMultiplier: 0.5
+  _hitImpulseDuration: 0.08
+  _hitImpulseDelay: 0.01
+  _hitImpulseForceMultiplier: 0.3
+  _hitImpulseMaxForce: 60
 --- !u!114 &3403907483884108976
 MonoBehaviour:
   m_ObjectHideFlags: 0
