@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 9023139530781010839}
   - component: {fileID: 8133593829575410955}
   - component: {fileID: 3975131556503430263}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: B-forearm.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -467,7 +467,7 @@ GameObject:
   - component: {fileID: 2454569896729901998}
   - component: {fileID: 2004303996357207939}
   - component: {fileID: 3307778107152541232}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: B-thigh.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -847,7 +847,7 @@ GameObject:
   - component: {fileID: 8585220257302826407}
   - component: {fileID: 736014698206206743}
   - component: {fileID: 6018056103568353724}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Male_Separate_WIP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1674,7 +1674,7 @@ GameObject:
   - component: {fileID: 4433895248138161478}
   - component: {fileID: 6203795543513881940}
   - component: {fileID: 98242588270166285}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: B-upperArm.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1908,7 +1908,7 @@ GameObject:
   - component: {fileID: 7792467624724458809}
   - component: {fileID: 7010370353462063840}
   - component: {fileID: 7575628987161195861}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: B-forearm.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2125,7 +2125,7 @@ GameObject:
   - component: {fileID: 1202930169692121925}
   - component: {fileID: 5829703606770123275}
   - component: {fileID: 1053956384645080685}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: B-upperArm.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2390,7 +2390,7 @@ GameObject:
   - component: {fileID: 490738565176348985}
   - component: {fileID: 6504918161998806998}
   - component: {fileID: 8033874285002782935}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Prop Muscle B-upperArm.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2741,7 +2741,7 @@ GameObject:
   - component: {fileID: 5693267385622212466}
   - component: {fileID: 7376478174092554261}
   - component: {fileID: 8613336265529833870}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Additional Pin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2902,7 +2902,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1017987867455751246}
   - component: {fileID: 4984505607652927022}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: PuppetMaster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3410,7 +3410,7 @@ GameObject:
   - component: {fileID: 7898724271804054432}
   - component: {fileID: 3920883775786645790}
   - component: {fileID: 4033741690462091286}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: B-thigh.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4946,7 +4946,7 @@ GameObject:
   - component: {fileID: 9067979320223101955}
   - component: {fileID: 4079084493753062084}
   - component: {fileID: 5277954716613311555}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: B-spine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5271,7 +5271,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013654976, y: 0.7053685, z: 0.03309779, w: 0.70793605}
+  m_LocalRotation: {x: 0.013654995, y: 0.7053686, z: 0.033097416, w: 0.707936}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -5328,7 +5328,7 @@ GameObject:
   - component: {fileID: 9179225436277783449}
   - component: {fileID: 8268413365225386077}
   - component: {fileID: 3754831009205288449}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: B-shin.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5734,7 +5734,7 @@ GameObject:
   - component: {fileID: 5930410930013443604}
   - component: {fileID: 6350999521219244601}
   - component: {fileID: 7273132201309330060}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: B-shin.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5983,7 +5983,7 @@ GameObject:
   - component: {fileID: 1096597542071489722}
   - component: {fileID: 2180070194542969441}
   - component: {fileID: 3101949350058614432}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: B-hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6370,6 +6370,7 @@ MonoBehaviour:
   _hitBoxes: []
   _puppetMaster: {fileID: 0}
   _puppetMasterHitDuration: 0.75
+  _puppetMasterForceDelay: 0.05
   _puppetMasterForceMultiplier: 1
 --- !u!114 &3403907483884108976
 MonoBehaviour:
@@ -6618,6 +6619,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4106089967696171929}
   - component: {fileID: 2267344847606447903}
+  - component: {fileID: 1501184271424857822}
   m_Layer: 0
   m_Name: Behaviours
   m_TagString: Untagged
@@ -6657,6 +6659,132 @@ MonoBehaviour:
     so that they could be simply copied from one character to another without changing
     any references. It is important because they contain a lot of parameters and
     would be otherwise tedious to set up and tweak.
+--- !u!114 &1501184271424857822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7839918641680929499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1efacf79ab4214e85aeebfd07064c20f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp-firstpass::RootMotion.Dynamics.BehaviourPuppet
+  puppetMaster: {fileID: 0}
+  deactivated: 0
+  masterProps:
+    normalMode: 0
+    mappingBlendSpeed: 10
+    activateOnStaticCollisions: 0
+    activateOnImpulse: 0
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  collisionThreshold: 0
+  collisionResistance:
+    mode: 0
+    floatValue: 3
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    tooltip: Smaller value means more unpinning from collisions so the characters
+      get knocked out more easily. If using a curve, the value will be evaluated
+      by each muscle's target velocity magnitude. This can be used to make collision
+      resistance higher while the character moves or animates faster.
+  collisionResistanceMultipliers: []
+  maxCollisions: 30
+  regainPinSpeed: 1
+  boostFalloff: 1
+  defaults:
+    unpinParents: 0
+    unpinChildren: 0
+    unpinGroup: 0
+    minMappingWeight: 0
+    maxMappingWeight: 0
+    minPinWeight: 0
+    disableColliders: 0
+    regainPinSpeed: 0
+    collisionResistance: 0
+    knockOutDistance: 0
+    puppetMaterial: {fileID: 0}
+    unpinnedMaterial: {fileID: 0}
+  groupOverrides:
+  - name: 
+    groups: 
+    props:
+      unpinParents: 0
+      unpinChildren: 0
+      unpinGroup: 0
+      minMappingWeight: 0
+      maxMappingWeight: 0
+      minPinWeight: 0
+      disableColliders: 0
+      regainPinSpeed: 0
+      collisionResistance: 0
+      knockOutDistance: 0
+      puppetMaterial: {fileID: 0}
+      unpinnedMaterial: {fileID: 0}
+  knockOutDistance: 10
+  unpinnedMuscleWeightMlp: 0.3
+  maxRigidbodyVelocity: 10
+  pinWeightThreshold: 1
+  unpinnedMuscleKnockout: 0
+  dropProps: 0
+  canGetUp: 1
+  getUpDelay: 5
+  blendToAnimationTime: 0.2
+  maxGetUpVelocity: 0.3
+  minGetUpDuration: 1
+  getUpCollisionResistanceMlp: 2
+  getUpRegainPinSpeedMlp: 2
+  getUpKnockOutDistanceMlp: 10
+  getUpOffsetProne: {x: 0, y: 0, z: 0}
+  getUpOffsetSupine: {x: 0, y: 0, z: 0}
+  isQuadruped: 0
+  onGetUpProne:
+    switchToBehaviour: 
+    animations: []
+    unityEvent:
+      m_PersistentCalls:
+        m_Calls: []
+  onGetUpSupine:
+    switchToBehaviour: 
+    animations: []
+    unityEvent:
+      m_PersistentCalls:
+        m_Calls: []
+  onLoseBalance:
+    switchToBehaviour: 
+    animations: []
+    unityEvent:
+      m_PersistentCalls:
+        m_Calls: []
+  onLoseBalanceFromPuppet:
+    switchToBehaviour: 
+    animations: []
+    unityEvent:
+      m_PersistentCalls:
+        m_Calls: []
+  onLoseBalanceFromGetUp:
+    switchToBehaviour: 
+    animations: []
+    unityEvent:
+      m_PersistentCalls:
+        m_Calls: []
+  onRegainBalance:
+    switchToBehaviour: 
+    animations: []
+    unityEvent:
+      m_PersistentCalls:
+        m_Calls: []
+  canMoveTarget: 1
 --- !u!1 &7859956265890332253
 GameObject:
   m_ObjectHideFlags: 0
@@ -6734,7 +6862,7 @@ GameObject:
   - component: {fileID: 8601688280802774288}
   - component: {fileID: 7412719404032405382}
   - component: {fileID: 4817708195286884801}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: B-head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6977,7 +7105,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8237888801687684240}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013797652, y: -0.7053622, z: -0.033239353, w: 0.7079329}
+  m_LocalRotation: {x: 0.01379764, y: -0.70536196, z: -0.033239212, w: 0.7079331}
   m_LocalPosition: {x: -0.0000001874566, y: 0.19596389, z: -0.0000020730495}
   m_LocalScale: {x: 0.9999998, y: 0.99999976, z: 1}
   m_ConstrainProportionsScale: 0
