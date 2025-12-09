@@ -98,6 +98,7 @@
     <Compile Include="Assets\Scripts\Player\Interaction\MeleeInteraction.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\PlayerShootable.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\BoneRotator.cs" />
+    <Compile Include="Assets\Scripts\InactiveDebugLogger.cs" />
     <Compile Include="Assets\Scripts\World\LocationServices\EnemySpawnLocationService.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\FullBodyBipedGaitController.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\TopDownMovementInteraction.cs" />
