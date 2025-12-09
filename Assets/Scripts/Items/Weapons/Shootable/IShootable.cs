@@ -17,6 +17,6 @@ namespace Assets.Scripts.Items.Weapons
         bool CanBeShot(NetworkObject shooter, Vector3 point, Vector3 normal);
 
         /// Apply the effect of being shot (damage, break, etc.)
-        void ServerOnShot(NetworkObject shooter, float damage, Vector3 point, Vector3 normal);
+        void ServerOnShot(NetworkObject shooter, float damage, float force, Vector3 point, Vector3 normal);
     }
 }

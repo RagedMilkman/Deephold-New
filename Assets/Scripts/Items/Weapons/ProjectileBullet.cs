@@ -17,7 +17,7 @@ public class ProjectileBullet : NetworkBehaviour
     bool inited;
 
     // Called from the weapon's server RPC
-    public void ServerInit(Vector3 direction, float speedUnitsPerSec, float dmg, Transform shooter)
+    public void ServerInit(Vector3 direction, float speedUnitsPerSec, float dmg, float force, Transform shooter)
     {
         if (!IsServer) return;
 
@@ -25,6 +25,7 @@ public class ProjectileBullet : NetworkBehaviour
         speed = speedUnitsPerSec;
         shooterRoot = shooter;   // used to ignore self
         damage = dmg;
+        impactForce = force;
 
         transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
         dieAt = Time.time + lifeSeconds;
@@ -32,6 +33,7 @@ public class ProjectileBullet : NetworkBehaviour
     }
 
     float damage;
+    float impactForce;
 
     void FixedUpdate()
     {
@@ -66,7 +68,7 @@ public class ProjectileBullet : NetworkBehaviour
                 Debug.Log("FixedUpdate");
 
                 if (shootable.CanBeShot(shooterId, hit.point, hit.normal))
-                    shootable.ServerOnShot(shooterId, damage, hit.point, hit.normal);
+                    shootable.ServerOnShot(shooterId, damage, impactForce, hit.point, hit.normal);
 
                 Destroy(gameObject);
                 return;

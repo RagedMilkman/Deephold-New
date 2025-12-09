@@ -32,9 +32,9 @@ public class EnemyShootable : MonoBehaviour, IShootable
         return true;
     }
 
-    public void ServerOnShot(NetworkObject shooter, float damage, Vector3 point, Vector3 normal)
+    public void ServerOnShot(NetworkObject shooter, float damage, float force, Vector3 point, Vector3 normal)
     {
-        if (!state) 
+        if (!state)
             return;
 
         Debug.Log("ServerOnShot!");

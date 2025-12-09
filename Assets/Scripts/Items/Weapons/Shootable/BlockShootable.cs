@@ -16,9 +16,9 @@ public class BlockShootable : MonoBehaviour, IShootable
 
     public bool CanBeShot(NetworkObject shooter, Vector3 point, Vector3 normal) => block != null;
 
-    public void ServerOnShot(NetworkObject shooter, float damage, Vector3 point, Vector3 normal)
+    public void ServerOnShot(NetworkObject shooter, float damage, float force, Vector3 point, Vector3 normal)
     {
-        if (!block) 
+        if (!block)
             return;
 
         block.ReportHit(Mathf.RoundToInt(damage));

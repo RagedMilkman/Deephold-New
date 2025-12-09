@@ -21,9 +21,9 @@ public class PlayerShootable : MonoBehaviour, IShootable
         return state && state.State == LifeState.Alive;
     }
 
-    public void ServerOnShot(NetworkObject shooter, float damage, Vector3 point, Vector3 normal)
+    public void ServerOnShot(NetworkObject shooter, float damage, float force, Vector3 point, Vector3 normal)
     {
-        if (!state || !state.IsServer) 
+        if (!state || !state.IsServer)
             return;
 
         Debug.Log("SHOT");

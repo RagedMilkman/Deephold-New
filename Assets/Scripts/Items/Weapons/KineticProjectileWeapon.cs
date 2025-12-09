@@ -18,6 +18,7 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     [Header("Ballistics")]
     [SerializeField] protected float bulletSpeed = 25f;
     [SerializeField] protected float damage = 1f;
+    [SerializeField] protected float force = 1f;
     [Tooltip("Seconds between shots (e.g. 0.2 = 5 rps)")]
     [SerializeField] protected float fireCooldown = 0.2f;
 
@@ -89,6 +90,7 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     public float ProjectileRadius => Mathf.Max(0f, bulletRadius);
     public float ProjectileRange => bulletRange > 0f ? bulletRange : bulletSpeed * DefaultProjectileTravelTime;
     public LayerMask ProjectileHitMask => bulletHitMask;
+    public float ProjectileForce => Mathf.Max(0f, force);
 
     public void SetMountPoint(Transform mount)
     {
@@ -215,7 +217,7 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
         nextFireTime = Time.time + fireCooldown;
 
         OnLocalFired(origin, dir);
-        ownerToolbelt?.RequestFireProjectile(this, origin, dir, bulletSpeed, damage);
+        ownerToolbelt?.RequestFireProjectile(this, origin, dir, bulletSpeed, damage, ProjectileForce);
 
         if (currentInMag == 0)
             BeginReload();

@@ -18,8 +18,8 @@ public class HitBox : MonoBehaviour, IShootable
     [SerializeField] BodyPart bodyPart;
     [SerializeField] float damageMultiplier = 1f;
 
-    // Now private – auto-populated from PuppetMaster
-    [SerializeField, Tooltip("Debug only – auto-assigned at runtime")]
+    // Now private  auto-populated from PuppetMaster
+    [SerializeField, Tooltip("Debug only  auto-assigned at runtime")]
     int puppetMasterMuscleIndex = -1;
 
     public Transform OwnerRoot => owner ? owner.OwnerRoot : transform.root;
@@ -65,12 +65,12 @@ public class HitBox : MonoBehaviour, IShootable
         return owner == null || owner.CanBeShot(shooter, point, normal);
     }
 
-    public void ServerOnShot(NetworkObject shooter, float damage, Vector3 point, Vector3 normal)
+    public void ServerOnShot(NetworkObject shooter, float damage, float force, Vector3 point, Vector3 normal)
     {
         if (owner != null && !owner.IsServer)
             return;
 
         // normal points *out* of the surface, so incoming dir is -normal
-        ApplyHit(damage, point, -normal, damage, shooter);
+        ApplyHit(damage, point, -normal, force, shooter);
     }
 }

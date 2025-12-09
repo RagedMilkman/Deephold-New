@@ -1235,7 +1235,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         return slot?.RegistryIndex ?? -1;
     }
 
-    public void RequestFireProjectile(KineticProjectileWeapon weapon, Vector3 origin, Vector3 dir, float speed, float damage)
+    public void RequestFireProjectile(KineticProjectileWeapon weapon, Vector3 origin, Vector3 dir, float speed, float damage, float force)
     {
         if (!IsOwner)
             return;
@@ -1249,7 +1249,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (registryIndex < 0)
             return;
 
-        RPC_FireEquippedProjectile(slot, registryIndex, origin, dir, speed, damage);
+        RPC_FireEquippedProjectile(slot, registryIndex, origin, dir, speed, damage, force);
     }
 
     public void NotifyEquippedWeaponReloadState(KineticProjectileWeapon weapon, bool isReloading)
@@ -1328,7 +1328,7 @@ public class ToolbeltNetworked : NetworkBehaviour
     }
 
     [ServerRpc]
-    void RPC_FireEquippedProjectile(int slot, int registryIndex, Vector3 origin, Vector3 dir, float speed, float damage)
+    void RPC_FireEquippedProjectile(int slot, int registryIndex, Vector3 origin, Vector3 dir, float speed, float damage, float force)
     {
         var state = GetSlotState(slot);
         if (state == null)
@@ -1383,7 +1383,7 @@ public class ToolbeltNetworked : NetworkBehaviour
                 hitSomething = true;
 
                 if (shootable.CanBeShot(shooterIdentity, hit.point, hit.normal))
-                    shootable.ServerOnShot(shooterIdentity, damage, hit.point, hit.normal);
+                    shootable.ServerOnShot(shooterIdentity, damage, force, hit.point, hit.normal);
 
                 break;
             }
