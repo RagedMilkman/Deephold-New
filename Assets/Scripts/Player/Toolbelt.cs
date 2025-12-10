@@ -164,6 +164,20 @@ public class ToolbeltNetworked : NetworkBehaviour
             RebuildVisual(equippedSlot);
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        if (!ShouldRenderVisuals)
+            return;
+
+        int slot = equippedSlot;
+        if (slot < 1 || slot > SlotCount)
+            slot = Mathf.Clamp(equippedSlotNet.Value, 1, SlotCount);
+
+        RebuildVisual(slot);
+    }
+
     void OnDestroy()
     {
         DetachStanceSource();
