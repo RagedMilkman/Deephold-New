@@ -159,6 +159,9 @@ public class ToolbeltNetworked : NetworkBehaviour
             var replicatedStance = (ToolMountPoint.MountStance)equippedStanceNet.Value;
             ApplyEquippedStanceInternal(replicatedStance, false);
         }
+
+        if (IsClient && ShouldRenderVisuals)
+            RebuildVisual(equippedSlot);
     }
 
     void OnDestroy()
