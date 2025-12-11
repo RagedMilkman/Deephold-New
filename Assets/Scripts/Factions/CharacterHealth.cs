@@ -13,6 +13,10 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField] Transform _ownerRoot;
     [SerializeField] List<HitBox> _hitBoxes = new();
 
+    [Header("Hit FX")]
+    [SerializeField, Tooltip("One-shot blood burst spawned on hit.")] GameObject _bloodImpactPrefab;
+    [SerializeField, Tooltip("Decal projector spawned at the hit location.")] GameObject _bloodDecalPrefab;
+
     [Header("PuppetMaster / Death")]
     [SerializeField, Tooltip("Optional PuppetMaster to activate on death.")]
     PuppetMaster _puppetMaster;
@@ -114,6 +118,9 @@ public class CharacterHealth : NetworkBehaviour
         var finalDamage = Mathf.RoundToInt(Mathf.Max(0f, damage));
         if (finalDamage <= 0)
             return;
+
+        // Propagate local hit FX to all observers (ghosts + owner).
+        RPC_PlayHitFx(hitPoint, -hitDir);
 
         bool wasAlive = _state.State == LifeState.Alive;
 
@@ -220,6 +227,30 @@ public class CharacterHealth : NetworkBehaviour
             : 0;
 
         muscles[targetIndex].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
+    }
+
+    // -------- FX --------
+
+    [ObserversRpc]
+    void RPC_PlayHitFx(Vector3 hitPoint, Vector3 surfaceNormal)
+    {
+        SpawnBloodFx(hitPoint, surfaceNormal);
+    }
+
+    void SpawnBloodFx(Vector3 hitPoint, Vector3 surfaceNormal)
+    {
+        if (_bloodImpactPrefab == null && _bloodDecalPrefab == null)
+            return;
+
+        Quaternion rotation = surfaceNormal.sqrMagnitude > 0f
+            ? Quaternion.LookRotation(surfaceNormal)
+            : Quaternion.identity;
+
+        if (_bloodImpactPrefab != null)
+            Instantiate(_bloodImpactPrefab, hitPoint, rotation);
+
+        if (_bloodDecalPrefab != null)
+            Instantiate(_bloodDecalPrefab, hitPoint, rotation);
     }
 
     // -------- Non-lethal flinch --------
