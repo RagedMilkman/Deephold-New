@@ -419,6 +419,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7478472528683366501, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1140415489875394117}
+    - targetCorrespondingSourceObject: {fileID: 7478472528683366501, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1929344588787293833}
   m_SourcePrefab: {fileID: 100100000, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
 --- !u!1 &1465242717540228781 stripped
 GameObject:
@@ -445,6 +448,20 @@ MonoBehaviour:
   defaultStanceTransitionDuration: 0.1
   syncIntervalSeconds: 0.1
   copyRegistryFromSource: 1
+--- !u!114 &1929344588787293833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465242717540228781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20c5786d8503cdb4995e610bd86ff057, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BloodHitFxVisualizer
+  _bloodImpactPrefab: {fileID: 0}
+  _bloodDecalPrefab: {fileID: 0}
 --- !u!4 &6489204562721431007 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2995738668064062231, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
