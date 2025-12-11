@@ -38,6 +38,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private GhostFollower _ghostFollower;
     private GameObject _ghostInstance;
     private bool _spawnedGhostInternally;
+    private BloodHitFxVisualizer _ghostHitFx;
     private readonly Queue<BoneSnapshot> _pendingSnapshots = new();
 
     private int _sentSnapshots;
@@ -270,6 +271,9 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     {
         _ghostFollower = follower;
         _spawnedGhostInternally &= follower != null;
+        _ghostHitFx = (_ghostFollower != null)
+            ? _ghostFollower.GetComponentInChildren<BloodHitFxVisualizer>(true)
+            : null;
 
         if (_ghostFollower != null && _resetDebugCountersOnAttach)
         {
@@ -293,6 +297,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
         _ghostInstance = Instantiate(_ghostPrefab);
         _ghostFollower = _ghostInstance.GetComponent<GhostFollower>();
+        _ghostHitFx = _ghostInstance.GetComponentInChildren<BloodHitFxVisualizer>(true);
         _spawnedGhostInternally = _ghostFollower != null;
 
         if (_ghostFollower == null)
@@ -311,9 +316,18 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Destroy(_ghostInstance);
 
         _ghostInstance = null;
+        _ghostHitFx = null;
         _spawnedGhostInternally = false;
         if (_ghostFollower != null)
             SetGhostFollower(null);
+    }
+
+    public void RelayHitFxToGhost(Vector3 hitPoint, Vector3 surfaceNormal)
+    {
+        if (_ghostHitFx == null)
+            return;
+
+        _ghostHitFx.PlayHitFx(hitPoint, surfaceNormal);
     }
 
     private static T[] Clone<T>(T[] source)

@@ -13,6 +13,13 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField] Transform _ownerRoot;
     [SerializeField] List<HitBox> _hitBoxes = new();
 
+    [Header("Hit FX")]
+    [SerializeField, Tooltip("Optional FX spawner used for local and ghost visuals.")]
+    BloodHitFxVisualizer _bloodHitFx;
+
+    [SerializeField, Tooltip("Relays hit FX to a spawned ghost visualizer, if present.")]
+    BoneSnapshotReplicator _boneSnapshotReplicator;
+
     [Header("PuppetMaster / Death")]
     [SerializeField, Tooltip("Optional PuppetMaster to activate on death.")]
     PuppetMaster _puppetMaster;
@@ -80,6 +87,8 @@ public class CharacterHealth : NetworkBehaviour
         if (!_puppetMaster) _puppetMaster = GetComponentInChildren<PuppetMaster>(true);
         if (!_animator) _animator = GetComponentInChildren<Animator>(true);
         if (_ikSolvers == null || _ikSolvers.Length == 0) _ikSolvers = GetComponentsInChildren<IK>(true);
+        if (!_bloodHitFx) _bloodHitFx = GetComponentInChildren<BloodHitFxVisualizer>(true);
+        if (!_boneSnapshotReplicator) _boneSnapshotReplicator = GetComponent<BoneSnapshotReplicator>();
 
         RefreshHitBoxes();
     }
@@ -114,6 +123,9 @@ public class CharacterHealth : NetworkBehaviour
         var finalDamage = Mathf.RoundToInt(Mathf.Max(0f, damage));
         if (finalDamage <= 0)
             return;
+
+        // Propagate local hit FX to all observers (ghosts + owner).
+        RPC_PlayHitFx(hitPoint, -hitDir);
 
         bool wasAlive = _state.State == LifeState.Alive;
 
@@ -220,6 +232,15 @@ public class CharacterHealth : NetworkBehaviour
             : 0;
 
         muscles[targetIndex].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
+    }
+
+    // -------- FX --------
+
+    [ObserversRpc]
+    void RPC_PlayHitFx(Vector3 hitPoint, Vector3 surfaceNormal)
+    {
+        _bloodHitFx?.PlayHitFx(hitPoint, surfaceNormal);
+        _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal);
     }
 
     // -------- Non-lethal flinch --------
