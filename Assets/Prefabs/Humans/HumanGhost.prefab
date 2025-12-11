@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationBackTime: 0.05
-  _skeletonRoot: {fileID: 7812697904247935660}
+  _skeletonRoot: {fileID: 3009186915913556706}
   _characterRoot: {fileID: 6489204562721431007}
   _debugLogSnapshots: 0
 --- !u!114 &5045590215652445572
@@ -466,13 +466,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BloodHitFxVisualizer
   _bloodImpactPrefab: {fileID: 8007369982305464528, guid: 4ae5d2ab9b8c5444498df728275352c8, type: 3}
   _bloodDecalPrefab: {fileID: 8707850840964112949, guid: b1fde64c2a4cb1f4e98ccc1e0ac392f1, type: 3}
+--- !u!4 &3009186915913556706 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6512080644292543530, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+  m_PrefabInstance: {fileID: 8330895534152148680}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6489204562721431007 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2995738668064062231, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
-  m_PrefabInstance: {fileID: 8330895534152148680}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &7812697904247935660 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2301636281318634596, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
   m_PrefabInstance: {fileID: 8330895534152148680}
   m_PrefabAsset: {fileID: 0}

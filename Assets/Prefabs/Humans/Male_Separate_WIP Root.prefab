@@ -5373,7 +5373,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013655397, y: 0.7053687, z: 0.033096842, w: 0.7079359}
+  m_LocalRotation: {x: 0.013655453, y: 0.70536864, z: 0.033096664, w: 0.7079359}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -6521,6 +6521,8 @@ MonoBehaviour:
   _state: {fileID: 3403907483884108976}
   _ownerRoot: {fileID: 0}
   _hitBoxes: []
+  _bloodHitFx: {fileID: 0}
+  _boneSnapshotReplicator: {fileID: 0}
   _puppetMaster: {fileID: 0}
   _deathStateSettings:
     killDuration: 0
@@ -6586,7 +6588,7 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 7734047683449924906}
   _networkObjectCache: {fileID: 0}
-  _rigRoot: {fileID: 2301636281318634596}
+  _rigRoot: {fileID: 6512080644292543530}
   _characterRoot: {fileID: 2995738668064062231}
   _ghostPrefab: {fileID: 1414821280921427797, guid: 2c9c792d6eea478fb48a0c1be088fdb0, type: 3}
   _toolbelt: {fileID: 0}
