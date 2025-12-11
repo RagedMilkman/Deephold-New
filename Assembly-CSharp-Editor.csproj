@@ -62,7 +62,16 @@
     <Analyzer Include="E:\Code\Unity\Deephold\Assets\FishNet\Runtime\Plugins\CodeAnalysis\FishNet.CodeAnalysis.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\BloodEffectsPack\Common\GutEffect\Script\Editor\EffectControllerEditor.cs" />
+    <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\Editor\ProjectorSpawner_URP_Editor.cs" />
+    <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\Editor\ContinuousProjectorSpawner_Editor.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs" />
+    <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Editor\BloodModifierEditor_URP.cs" />
+    <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Editor\BloodModifierEditor.cs" />
+    <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\Editor\TrailProjectorSpawner_URP_Editor.cs" />
+    <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\Editor\ProjectorSpawner_Editor.cs" />
+    <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\Editor\TrailProjectorSpawner_Editor.cs" />
+    <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\Editor\ContinuousProjectorSpawner_URP_Editor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

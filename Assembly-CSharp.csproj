@@ -70,10 +70,14 @@
     <Compile Include="Assets\Scripts\Items\Weapons\ProceduralMuzzleFlash.cs" />
     <Compile Include="Assets\Scripts\Factions\FactionsService.cs" />
     <Compile Include="Assets\Scripts\World\ReportingServices\HitReportingService.cs" />
+    <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\TrailProjectorSpawner_URP.cs" />
+    <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\ProjectorSpriteController_URP.cs" />
+    <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\ContinuousProjectorSpawner.cs" />
     <Compile Include="Assets\Scripts\Factions\CharacterHealth.cs" />
     <Compile Include="Assets\Scripts\World\Generation\NoiseGenerationService.cs" />
     <Compile Include="Assets\Scripts\Items\ToolbeltItemCategory.cs" />
     <Compile Include="Assets\Scripts\Factions\FactionController.cs" />
+    <Compile Include="Assets\BloodEffectsPack\1_URP\Script\BloodModifier_URP.cs" />
     <Compile Include="Assets\Scripts\World\StateServices\WorldStateService.cs" />
     <Compile Include="Assets\Scripts\NetworkBootstrapper.cs" />
     <Compile Include="Assets\Scripts\World\StateServices\IsEarlyGameState.cs" />
@@ -82,15 +86,23 @@
     <Compile Include="Assets\Scripts\Player\ToolBeltSlot.cs" />
     <Compile Include="Assets\FishNet\Upgrading\UpgradeFromMirrorMenu.cs" />
     <Compile Include="Assets\Scripts\Player\Network\PositionReplicator.cs" />
+    <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\BloodModifier.cs" />
     <Compile Include="Assets\Scripts\Player\Network\BoneSnapshot.cs" />
+    <Compile Include="Assets\BloodEffectsPack\Common\GutEffect\Script\EffectController.cs" />
+    <Compile Include="Assets\BloodEffectsPack\Common\Script\Demo\CircularMovement.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\WeaponFireFeedback.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\AIDigService.cs" />
     <Compile Include="Assets\Scripts\World\StateServices\WorldState.cs" />
+    <Compile Include="Assets\BloodEffectsPack\Common\Script\KillEffect_Trail_Projector.cs" />
+    <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\ProjectorSpawner.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\IShootable.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\PlayerInteraction.cs" />
+    <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\TrailProjectorSpawner.cs" />
+    <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\ContinuousProjectorSpawner_URP.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\NavFieldService.cs" />
     <Compile Include="Assets\Scripts\Player\Network\BoneSnapshotReplicator.cs" />
     <Compile Include="Assets\Scripts\Player\Network\BoneSnapshotDebugUI.cs" />
+    <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\ProjectorSpawner_URP.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\HumanoidRigAnimator.cs" />
     <Compile Include="Assets\Scripts\World\Models\CellData.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\DijkstraNavFieldSolver.cs" />
@@ -108,6 +120,7 @@
     <Compile Include="Assets\Scripts\Factions\CharacterData.cs" />
     <Compile Include="Assets\Scripts\World\Generation\IslandNoiseGenerator.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\BipedGaitController.cs" />
+    <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\ProjectorPrioritySetter_URP.cs" />
     <Compile Include="Assets\Scripts\Player\Toolbelt.cs" />
     <Compile Include="Assets\Scripts\VFX\BloodHitFxVisualizer.cs" />
     <Compile Include="Assets\Scripts\Player\AI\TopDownChaseAI.cs" />
@@ -116,10 +129,12 @@
     <Compile Include="Assets\Scripts\Items\Weapons\PistolWeapon.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\Items\ItemDefinition.cs" />
+    <Compile Include="Assets\BloodEffectsPack\Common\Script\KillEffect.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\BlockShootable.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\PuppetMasterExtensions.cs" />
     <Compile Include="Assets\Scripts\Items\ItemMountType.cs" />
     <Compile Include="Assets\Scripts\Player\ToolbeltVisualHelpers.cs" />
+    <Compile Include="Assets\BloodEffectsPack\Common\Script\Scriptable\BloodPreset.cs" />
     <Compile Include="Assets\Scripts\Player\OwnerOnlyVisibility.cs" />
     <Compile Include="Assets\Scripts\World\WorldGenerationDirector.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\HumanoidRigDebugVisualizer.cs" />
@@ -128,6 +143,7 @@
     <Compile Include="Assets\Scripts\World\LocationServices\PlayerSpawnLocationService.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerData.cs" />
     <Compile Include="Assets\Scripts\ServiceExecutionOrder.cs" />
+    <Compile Include="Assets\BloodEffectsPack\Common\Script\Demo\ToggleRepeat.cs" />
     <Compile Include="Assets\Scripts\Items\Tools\IPlayerTool.cs" />
     <Compile Include="Assets\Scripts\Items\MountTypeCategoryMap.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\IAIDigService.cs" />
@@ -150,8 +166,14 @@
     <Compile Include="Assets\Scripts\Items\HandMountPoseAuthoring.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\BloodEffectsPack\0_BuiltIn\Shader\BloodVFX_Shadow.cginc" />
+    <None Include="Assets\BloodEffectsPack\UIEffect\Shader\UI_BloodScreen.shader" />
+    <None Include="Assets\BloodEffectsPack\0_BuiltIn\Shader\BloodFX_PBR_Projector.shader" />
+    <None Include="Assets\BloodEffectsPack\0_BuiltIn\Shader\BloodFX_PBR.shader" />
     <None Include="Assets\FishNet\LICENSE.txt" />
+    <None Include="Assets\BloodEffectsPack\0_BuiltIn\Shader\BloodVFX_Lighting.cginc" />
     <None Include="Assets\FishNet\DOCUMENTATION.txt" />
+    <None Include="Assets\BloodEffectsPack\PleaseRead_URP.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
