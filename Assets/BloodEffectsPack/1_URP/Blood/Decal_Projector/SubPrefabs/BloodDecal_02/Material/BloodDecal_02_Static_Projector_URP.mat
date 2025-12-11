@@ -102,14 +102,14 @@ Material:
     - _AlbedoPower: 1.5
     - _AmbientColorIntensity: 2.15
     - _BumpScale: 2
-    - _ColorIntensity: 0.39
+    - _ColorIntensity: 1
     - _Columns: 6
     - _Cutoff: 0.5
     - _DecalMeshBiasType: 0
     - _DecalMeshDepthBias: 0
     - _DecalMeshViewBias: 0
     - _DetailNormalMapScale: 1
-    - _DrawOrder: -50
+    - _DrawOrder: 28
     - _DstBlend: 10
     - _Frame: 1.2
     - _FrameLength: 36
@@ -129,7 +129,7 @@ Material:
     - _QueueOffset: 0
     - _Rows: 6
     - _SPECULARHIGHLIGHTS_OFF: 0
-    - _Smoothness: 0.8
+    - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5

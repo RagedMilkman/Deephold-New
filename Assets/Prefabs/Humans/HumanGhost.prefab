@@ -465,7 +465,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BloodHitFxVisualizer
   _bloodImpactPrefab: {fileID: 8007369982305464528, guid: 4ae5d2ab9b8c5444498df728275352c8, type: 3}
-  _bloodDecalPrefab: {fileID: 2461062505677081030, guid: 92b05d809d88a334dad0fee227c13708, type: 3}
+  _bloodDecalPrefab: {fileID: 8707850840964112949, guid: b1fde64c2a4cb1f4e98ccc1e0ac392f1, type: 3}
 --- !u!4 &6489204562721431007 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2995738668064062231, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
