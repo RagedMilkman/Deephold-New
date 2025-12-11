@@ -14,8 +14,11 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField] List<HitBox> _hitBoxes = new();
 
     [Header("Hit FX")]
-    [SerializeField, Tooltip("One-shot blood burst spawned on hit.")] GameObject _bloodImpactPrefab;
-    [SerializeField, Tooltip("Decal projector spawned at the hit location.")] GameObject _bloodDecalPrefab;
+    [SerializeField, Tooltip("Optional FX spawner used for local and ghost visuals.")]
+    BloodHitFxVisualizer _bloodHitFx;
+
+    [SerializeField, Tooltip("Relays hit FX to a spawned ghost visualizer, if present.")]
+    BoneSnapshotReplicator _boneSnapshotReplicator;
 
     [Header("PuppetMaster / Death")]
     [SerializeField, Tooltip("Optional PuppetMaster to activate on death.")]
@@ -84,6 +87,8 @@ public class CharacterHealth : NetworkBehaviour
         if (!_puppetMaster) _puppetMaster = GetComponentInChildren<PuppetMaster>(true);
         if (!_animator) _animator = GetComponentInChildren<Animator>(true);
         if (_ikSolvers == null || _ikSolvers.Length == 0) _ikSolvers = GetComponentsInChildren<IK>(true);
+        if (!_bloodHitFx) _bloodHitFx = GetComponentInChildren<BloodHitFxVisualizer>(true);
+        if (!_boneSnapshotReplicator) _boneSnapshotReplicator = GetComponent<BoneSnapshotReplicator>();
 
         RefreshHitBoxes();
     }
@@ -234,23 +239,8 @@ public class CharacterHealth : NetworkBehaviour
     [ObserversRpc]
     void RPC_PlayHitFx(Vector3 hitPoint, Vector3 surfaceNormal)
     {
-        SpawnBloodFx(hitPoint, surfaceNormal);
-    }
-
-    void SpawnBloodFx(Vector3 hitPoint, Vector3 surfaceNormal)
-    {
-        if (_bloodImpactPrefab == null && _bloodDecalPrefab == null)
-            return;
-
-        Quaternion rotation = surfaceNormal.sqrMagnitude > 0f
-            ? Quaternion.LookRotation(surfaceNormal)
-            : Quaternion.identity;
-
-        if (_bloodImpactPrefab != null)
-            Instantiate(_bloodImpactPrefab, hitPoint, rotation);
-
-        if (_bloodDecalPrefab != null)
-            Instantiate(_bloodDecalPrefab, hitPoint, rotation);
+        _bloodHitFx?.PlayHitFx(hitPoint, surfaceNormal);
+        _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal);
     }
 
     // -------- Non-lethal flinch --------
