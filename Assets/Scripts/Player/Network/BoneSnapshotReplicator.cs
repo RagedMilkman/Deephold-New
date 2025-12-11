@@ -39,7 +39,6 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private GameObject _ghostInstance;
     private bool _spawnedGhostInternally;
     private BloodHitFxVisualizer _ghostHitFx;
-    private readonly List<HitBox> _ghostHitBoxes = new();
     private readonly Queue<BoneSnapshot> _pendingSnapshots = new();
 
     private int _sentSnapshots;
@@ -275,7 +274,6 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         _ghostHitFx = (_ghostFollower != null)
             ? _ghostFollower.GetComponentInChildren<BloodHitFxVisualizer>(true)
             : null;
-        RefreshGhostHitBoxes((_ghostFollower != null) ? _ghostFollower.gameObject : null);
 
         if (_ghostFollower != null && _resetDebugCountersOnAttach)
         {
@@ -301,7 +299,6 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         _ghostFollower = _ghostInstance.GetComponent<GhostFollower>();
         _ghostHitFx = _ghostInstance.GetComponentInChildren<BloodHitFxVisualizer>(true);
         _spawnedGhostInternally = _ghostFollower != null;
-        RefreshGhostHitBoxes(_ghostInstance);
 
         if (_ghostFollower == null)
         {
@@ -320,7 +317,6 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
         _ghostInstance = null;
         _ghostHitFx = null;
-        _ghostHitBoxes.Clear();
         _spawnedGhostInternally = false;
         if (_ghostFollower != null)
             SetGhostFollower(null);
@@ -329,36 +325,19 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     public void RelayHitFxToGhost(
         Vector3 hitPoint,
         Vector3 surfaceNormal,
-        Transform hitBoxTransform,
-        int hitBoxIndex)
+        Transform defaultSpawnParent)
     {
         if (_ghostHitFx == null)
             return;
 
-        Transform hitTransform = GetGhostHitBoxTransform(hitBoxIndex);
-        Transform spawnParent = hitTransform != null
-            ? hitTransform
-            : hitBoxTransform;
+        Transform ghostRoot = _ghostFollower != null
+            ? _ghostFollower.transform
+            : (_ghostInstance != null ? _ghostInstance.transform : null);
+        Transform spawnParent = ghostRoot != null
+            ? ghostRoot
+            : defaultSpawnParent;
 
         _ghostHitFx.PlayHitFx(hitPoint, surfaceNormal, spawnParent);
-    }
-
-    private void RefreshGhostHitBoxes(GameObject ghostRoot)
-    {
-        _ghostHitBoxes.Clear();
-
-        if (ghostRoot == null)
-            return;
-
-        _ghostHitBoxes.AddRange(ghostRoot.GetComponentsInChildren<HitBox>(true));
-    }
-
-    private Transform GetGhostHitBoxTransform(int hitBoxIndex)
-    {
-        if (hitBoxIndex < 0 || hitBoxIndex >= _ghostHitBoxes.Count)
-            return null;
-
-        return _ghostHitBoxes[hitBoxIndex].transform;
     }
 
     private static T[] Clone<T>(T[] source)

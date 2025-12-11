@@ -263,9 +263,10 @@ public class CharacterHealth : NetworkBehaviour
     [ObserversRpc]
     void RPC_PlayHitFx(Vector3 hitPoint, Vector3 surfaceNormal, int hitBoxIndex)
     {
-        Transform hitTransform = GetHitBoxTransform(hitBoxIndex);
-        _bloodHitFx?.PlayHitFx(hitPoint, surfaceNormal, hitTransform);
-        _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal, hitTransform, hitBoxIndex);
+        Transform spawnParent = OwnerRoot;
+
+        _bloodHitFx?.PlayHitFx(hitPoint, surfaceNormal, spawnParent);
+        _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal, spawnParent);
     }
 
     // -------- Non-lethal flinch --------
