@@ -265,7 +265,7 @@ public class CharacterHealth : NetworkBehaviour
     {
         Transform hitTransform = GetHitBoxTransform(hitBoxIndex);
         _bloodHitFx?.PlayHitFx(hitPoint, surfaceNormal, hitTransform);
-        _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal, hitBoxIndex);
+        _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal, hitTransform, hitBoxIndex);
     }
 
     // -------- Non-lethal flinch --------

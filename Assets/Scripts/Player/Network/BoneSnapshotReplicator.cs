@@ -326,13 +326,21 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             SetGhostFollower(null);
     }
 
-    public void RelayHitFxToGhost(Vector3 hitPoint, Vector3 surfaceNormal, int hitBoxIndex)
+    public void RelayHitFxToGhost(
+        Vector3 hitPoint,
+        Vector3 surfaceNormal,
+        Transform hitBoxTransform,
+        int hitBoxIndex)
     {
         if (_ghostHitFx == null)
             return;
 
         Transform hitTransform = GetGhostHitBoxTransform(hitBoxIndex);
-        _ghostHitFx.PlayHitFx(hitPoint, surfaceNormal, hitTransform);
+        Transform spawnParent = hitTransform != null
+            ? hitTransform
+            : hitBoxTransform;
+
+        _ghostHitFx.PlayHitFx(hitPoint, surfaceNormal, spawnParent);
     }
 
     private void RefreshGhostHitBoxes(GameObject ghostRoot)
