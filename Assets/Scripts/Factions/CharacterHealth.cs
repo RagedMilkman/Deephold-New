@@ -263,7 +263,12 @@ public class CharacterHealth : NetworkBehaviour
     [ObserversRpc]
     void RPC_PlayHitFx(Vector3 hitPoint, Vector3 surfaceNormal, int hitBoxIndex)
     {
-        Transform spawnParent = OwnerRoot;
+        // Parent FX to the specific hit box (bone) when possible so decals stick to the
+        // moving limb instead of world-space root. Falls back to the owner root when
+        // the hit box cannot be resolved (eg. index out of range).
+        Transform spawnParent = GetHitBoxTransform(hitBoxIndex);
+        if (spawnParent == null)
+            spawnParent = OwnerRoot;
 
         _bloodHitFx?.PlayHitFx(hitPoint, surfaceNormal, spawnParent);
         _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal, spawnParent);
