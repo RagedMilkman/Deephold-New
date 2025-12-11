@@ -99,10 +99,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlbedoPower: 1.5
-    - _AmbientColorIntensity: 2.15
+    - _AlbedoPower: 6.39
+    - _AmbientColorIntensity: 3.42
     - _BumpScale: 2
-    - _ColorIntensity: 0.39
+    - _ColorIntensity: 7.36
     - _Columns: 6
     - _Cutoff: 0.5
     - _DecalAngleFadeSupported: 1
@@ -110,14 +110,14 @@ Material:
     - _DecalMeshDepthBias: 0
     - _DecalMeshViewBias: 0
     - _DetailNormalMapScale: 1
-    - _DrawOrder: 23
+    - _DrawOrder: 48
     - _DstBlend: 10
     - _Frame: 1.2
     - _FrameLength: 36
     - _GlossMapScale: 1
     - _Glossiness: 0.9
     - _GlossyReflections: 0
-    - _HueShift: 0
+    - _HueShift: -154
     - _IsSpriteSheet: 1
     - _Metallic: 0
     - _Mode: 2
@@ -130,7 +130,7 @@ Material:
     - _QueueOffset: 0
     - _Rows: 6
     - _SPECULARHIGHLIGHTS_OFF: 0
-    - _Smoothness: 0.8
+    - _Smoothness: 0.11
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
