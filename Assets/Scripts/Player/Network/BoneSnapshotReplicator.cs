@@ -332,7 +332,18 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
         // Spawn on the provided puppet/bone transform instead of the ghost root so
         // decals stick to the exact hit location reported by the hit box.
-        _ghostHitFx.PlayHitFx(hitPoint, surfaceNormal, defaultSpawnParent);
+        Transform ghostSpawnParent = defaultSpawnParent;
+
+        if (_ghostFollower != null && defaultSpawnParent != null && _rigRoot != null)
+        {
+            string path = BoneSnapshotUtility.GetPath(_rigRoot, defaultSpawnParent);
+            ghostSpawnParent = _ghostFollower.ResolveBone(path);
+        }
+
+        if (ghostSpawnParent == null)
+            ghostSpawnParent = _ghostHitFx.transform;
+
+        _ghostHitFx.PlayHitFx(hitPoint, surfaceNormal, ghostSpawnParent);
     }
 
     private static T[] Clone<T>(T[] source)

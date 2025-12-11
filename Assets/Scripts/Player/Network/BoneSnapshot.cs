@@ -133,8 +133,14 @@ public static class BoneSnapshotUtility
             CollectBonePathRecursive(root, current.GetChild(i), paths);
     }
 
-    private static string GetPath(Transform root, Transform current)
+    public static string GetPath(Transform root, Transform current)
     {
+        if (root == null)
+            throw new ArgumentNullException(nameof(root));
+
+        if (current == null)
+            throw new ArgumentNullException(nameof(current));
+
         if (current == root)
             return current.name;
 

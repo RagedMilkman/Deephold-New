@@ -164,6 +164,24 @@ public class GhostFollower : MonoBehaviour
         }
     }
 
+    private Transform ResolveBoneFromPath(string path)
+    {
+        if (_boneLookup.TryGetValue(path, out Transform resolved) || _boneLookup.TryGetValue(StripRoot(path), out resolved))
+            return resolved;
+
+        if (_boneSuffixLookup.TryGetValue(GetSuffix(path, 2), out resolved) ||
+            _boneSuffixLookup.TryGetValue(GetSuffix(path, 3), out resolved))
+        {
+            return resolved;
+        }
+
+        string terminalName = GetTerminalName(path);
+        if (!string.IsNullOrEmpty(terminalName) && _boneNameLookup.TryGetValue(terminalName, out resolved))
+            return resolved;
+
+        return null;
+    }
+
     private void EnsureBoneOrder(string[] paths)
     {
         if (paths.Length == 0)
@@ -189,26 +207,14 @@ public class GhostFollower : MonoBehaviour
         for (int i = 0; i < paths.Length; i++)
         {
             Transform resolved;
-            if (_boneLookup.TryGetValue(paths[i], out resolved) || _boneLookup.TryGetValue(StripRoot(paths[i]), out resolved))
+            resolved = ResolveBoneFromPath(paths[i]);
+            if (resolved != null)
             {
                 reordered.Add(resolved);
+                continue;
             }
             else
             {
-                if (_boneSuffixLookup.TryGetValue(GetSuffix(paths[i], 2), out resolved) ||
-                    _boneSuffixLookup.TryGetValue(GetSuffix(paths[i], 3), out resolved))
-                {
-                    reordered.Add(resolved);
-                    continue;
-                }
-
-                string terminalName = GetTerminalName(paths[i]);
-                if (!string.IsNullOrEmpty(terminalName) && _boneNameLookup.TryGetValue(terminalName, out resolved))
-                {
-                    reordered.Add(resolved);
-                    continue;
-                }
-
                 if (!_loggedPathMismatch)
                 {
                     Debug.LogWarning($"[GhostFollower] Could not resolve bone path '{paths[i]}'. Falling back to local traversal order.");
@@ -223,6 +229,23 @@ public class GhostFollower : MonoBehaviour
         _bones.Clear();
         _bones.AddRange(reordered);
         _cachedBonePaths = paths;
+    }
+
+    public Transform ResolveBone(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+            return _skeletonRoot;
+
+        Transform resolved = ResolveBoneFromPath(path);
+        if (resolved != null)
+            return resolved;
+
+        string stripped = StripRoot(path);
+        resolved = ResolveBoneFromPath(stripped);
+        if (resolved != null)
+            return resolved;
+
+        return _skeletonRoot;
     }
 
     private static string StripRoot(string path)
