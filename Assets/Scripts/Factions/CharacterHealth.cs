@@ -108,6 +108,29 @@ public class CharacterHealth : NetworkBehaviour
         }
     }
 
+    public int GetHitBoxIndex(HitBox hitBox)
+    {
+        if (hitBox == null)
+            return -1;
+
+        int index = _hitBoxes.IndexOf(hitBox);
+        if (index < 0)
+        {
+            RefreshHitBoxes();
+            index = _hitBoxes.IndexOf(hitBox);
+        }
+
+        return index;
+    }
+
+    Transform GetHitBoxTransform(int hitBoxIndex)
+    {
+        if (hitBoxIndex < 0 || hitBoxIndex >= _hitBoxes.Count)
+            return null;
+
+        return _hitBoxes[hitBoxIndex].transform;
+    }
+
     public void OnHit(
         BodyPart bodyPart,
         float damage,
@@ -115,6 +138,7 @@ public class CharacterHealth : NetworkBehaviour
         Vector3 hitDir,
         float force,
         int puppetMasterMuscleIndex,
+        int hitBoxIndex,
         NetworkObject shooter = null)
     {
         if (_state == null || !_state.IsServer)
@@ -125,7 +149,7 @@ public class CharacterHealth : NetworkBehaviour
             return;
 
         // Propagate local hit FX to all observers (ghosts + owner).
-        RPC_PlayHitFx(hitPoint, -hitDir);
+        RPC_PlayHitFx(hitPoint, -hitDir, hitBoxIndex);
 
         bool wasAlive = _state.State == LifeState.Alive;
 
@@ -237,10 +261,11 @@ public class CharacterHealth : NetworkBehaviour
     // -------- FX --------
 
     [ObserversRpc]
-    void RPC_PlayHitFx(Vector3 hitPoint, Vector3 surfaceNormal)
+    void RPC_PlayHitFx(Vector3 hitPoint, Vector3 surfaceNormal, int hitBoxIndex)
     {
-        _bloodHitFx?.PlayHitFx(hitPoint, surfaceNormal);
-        _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal);
+        Transform hitTransform = GetHitBoxTransform(hitBoxIndex);
+        _bloodHitFx?.PlayHitFx(hitPoint, surfaceNormal, hitTransform);
+        _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal, hitBoxIndex);
     }
 
     // -------- Non-lethal flinch --------

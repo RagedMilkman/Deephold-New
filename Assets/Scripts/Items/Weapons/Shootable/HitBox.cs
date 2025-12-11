@@ -57,7 +57,8 @@ public class HitBox : MonoBehaviour, IShootable
             return;
 
         float finalDamage = baseDamage * damageMultiplier;
-        owner.OnHit(bodyPart, finalDamage, hitPoint, hitDir, force, puppetMasterMuscleIndex, shooter);
+        int hitBoxIndex = owner.GetHitBoxIndex(this);
+        owner.OnHit(bodyPart, finalDamage, hitPoint, hitDir, force, puppetMasterMuscleIndex, hitBoxIndex, shooter);
     }
 
     public bool CanBeShot(NetworkObject shooter, Vector3 point, Vector3 normal)

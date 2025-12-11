@@ -11,7 +11,7 @@ public class BloodHitFxVisualizer : MonoBehaviour
     [SerializeField, Tooltip("Decal projector spawned at the hit location.")]
     private GameObject _bloodDecalPrefab;
 
-    public void PlayHitFx(Vector3 hitPoint, Vector3 surfaceNormal)
+    public void PlayHitFx(Vector3 hitPoint, Vector3 surfaceNormal, Transform spawnParent = null)
     {
         if (_bloodImpactPrefab == null && _bloodDecalPrefab == null)
             return;
@@ -21,9 +21,9 @@ public class BloodHitFxVisualizer : MonoBehaviour
             : Quaternion.identity;
 
         if (_bloodImpactPrefab != null)
-            Instantiate(_bloodImpactPrefab, hitPoint, rotation);
+            Instantiate(_bloodImpactPrefab, hitPoint, rotation, spawnParent);
 
         if (_bloodDecalPrefab != null)
-            Instantiate(_bloodDecalPrefab, hitPoint, rotation);
+            Instantiate(_bloodDecalPrefab, hitPoint, rotation, spawnParent);
     }
 }
