@@ -19,6 +19,12 @@ public class CharacterState : NetworkBehaviour
     {
         if (!puppetMaster)
             puppetMaster = GetComponentInChildren<PuppetMaster>(true);
+
+        if (!IsServer && puppetMaster)
+        {
+            puppetMaster.enabled = false;
+            puppetMaster.gameObject.SetActive(false);
+        }
     }
 
     public override void OnStartServer()
