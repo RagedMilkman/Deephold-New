@@ -30,7 +30,7 @@ public class CharacterState : NetworkBehaviour
             State = LifeState.Alive;
             RPC_State(Health, maxHealth, (int)State);
         }
-        else if (puppetMaster)
+        else if (!IsOwner && puppetMaster)
         {
             // Puppet master is on but this is the client.
             puppetMaster.enabled = false;
@@ -79,7 +79,7 @@ public class CharacterState : NetworkBehaviour
 
     void ApplyPuppetMasterDeathState()
     {
-        if (!IsServer)
+        if (!IsServer && !IsOwner)
         {
             if (puppetMaster)
             {
