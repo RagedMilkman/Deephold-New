@@ -168,7 +168,12 @@ public class CharacterHealth : NetworkBehaviour
         // Already-dead ragdoll: apply impulse and FX only
         else if (!wasAlive && _state.State == LifeState.Dead)
         {
-            ApplyPuppetMasterImpulse(hitPoint, hitDir, force, puppetMasterMuscleIndex);
+            ApplyPuppetMasterImpulse(
+                hitPoint,
+                hitDir,
+                force,
+                puppetMasterMuscleIndex,
+                applyGlobalForceMultiplier: true);
         }
     }
 
@@ -223,8 +228,13 @@ public class CharacterHealth : NetworkBehaviour
         _puppetMaster.Kill(killSettings);
 
         // Apply impulse scaled by global and per-profile multipliers
-        float totalForce = baseForce * _puppetMasterForceMultiplier * profile.forceMultiplier;
-        ApplyPuppetMasterImpulse(hitPoint, hitDir, totalForce, puppetMasterMuscleIndex);
+        ApplyPuppetMasterImpulse(
+            hitPoint,
+            hitDir,
+            baseForce,
+            puppetMasterMuscleIndex,
+            profile.forceMultiplier,
+            applyGlobalForceMultiplier: true);
     }
 
     void DisableAnimationSystems()
@@ -246,7 +256,9 @@ public class CharacterHealth : NetworkBehaviour
         Vector3 hitPoint,
         Vector3 hitDir,
         float force,
-        int puppetMasterMuscleIndex)
+        int puppetMasterMuscleIndex,
+        float extraForceMultiplier = 1f,
+        bool applyGlobalForceMultiplier = false)
     {
         if (_puppetMaster == null)
             return;
@@ -255,7 +267,14 @@ public class CharacterHealth : NetworkBehaviour
         if (muscles == null || muscles.Length == 0)
             return;
 
-        var impactForce = hitDir.normalized * force;
+        float totalForce = force * extraForceMultiplier;
+        if (applyGlobalForceMultiplier)
+            totalForce *= _puppetMasterForceMultiplier;
+
+        if (totalForce <= 0f)
+            return;
+
+        var impactForce = hitDir.normalized * totalForce;
         var targetIndex = (puppetMasterMuscleIndex >= 0 && puppetMasterMuscleIndex < muscles.Length)
             ? puppetMasterMuscleIndex
             : 0;
