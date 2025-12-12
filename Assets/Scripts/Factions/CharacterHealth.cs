@@ -74,6 +74,9 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField, Tooltip("Maximum non-lethal impulse magnitude applied to a muscle.")]
     float _hitImpulseMaxForce = 5f;
 
+    [SerializeField, Tooltip("Additional damping applied once the character is dead.")]
+    float _deadForceMultiplier = 0.25f;
+
     // Runtime
     Coroutine _hitImpulseRoutine;
 
@@ -173,7 +176,8 @@ public class CharacterHealth : NetworkBehaviour
                 hitDir,
                 force,
                 puppetMasterMuscleIndex,
-                applyGlobalForceMultiplier: true);
+                applyGlobalForceMultiplier: true,
+                applyDeadForceReduction: true);
         }
     }
 
@@ -234,7 +238,8 @@ public class CharacterHealth : NetworkBehaviour
             baseForce,
             puppetMasterMuscleIndex,
             profile.forceMultiplier,
-            applyGlobalForceMultiplier: true);
+            applyGlobalForceMultiplier: true,
+            applyDeadForceReduction: true);
     }
 
     void DisableAnimationSystems()
@@ -258,7 +263,8 @@ public class CharacterHealth : NetworkBehaviour
         float force,
         int puppetMasterMuscleIndex,
         float extraForceMultiplier = 1f,
-        bool applyGlobalForceMultiplier = false)
+        bool applyGlobalForceMultiplier = false,
+        bool applyDeadForceReduction = false)
     {
         if (_puppetMaster == null)
             return;
@@ -270,6 +276,9 @@ public class CharacterHealth : NetworkBehaviour
         float totalForce = force * extraForceMultiplier;
         if (applyGlobalForceMultiplier)
             totalForce *= _puppetMasterForceMultiplier;
+
+        if (applyDeadForceReduction && _state != null && _state.State == LifeState.Dead)
+            totalForce *= _deadForceMultiplier;
 
         if (totalForce <= 0f)
             return;
