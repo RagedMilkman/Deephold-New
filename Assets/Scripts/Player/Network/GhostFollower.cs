@@ -130,11 +130,15 @@ public class GhostFollower : MonoBehaviour
 
         int boneCount = Mathf.Min(_bones.Count, Mathf.Min(from.BoneCount, to.BoneCount));
         for (int i = 0; i < boneCount; i++)
-        {            
+        {
+            Transform bone = _bones[i];
+            if (bone == null)
+                continue;
+
             Vector3 blendedPosition = Vector3.Lerp(from.Positions[i], to.Positions[i], t);
             Quaternion blendedRotation = Quaternion.Slerp(from.Rotations[i], to.Rotations[i], t);
 
-            _bones[i].SetLocalPositionAndRotation(blendedPosition, blendedRotation);
+            bone.SetLocalPositionAndRotation(blendedPosition, blendedRotation);
         }
     }
 
@@ -217,12 +221,11 @@ public class GhostFollower : MonoBehaviour
             {
                 if (!_loggedPathMismatch)
                 {
-                    Debug.LogWarning($"[GhostFollower] Could not resolve bone path '{paths[i]}'. Falling back to local traversal order.");
+                    Debug.LogWarning($"[GhostFollower] Could not resolve bone path '{paths[i]}'. Using null placeholder to keep indices aligned.");
                     _loggedPathMismatch = true;
                 }
 
-                CollectBonesAndLookup();
-                return;
+                reordered.Add(null);
             }
         }
 
