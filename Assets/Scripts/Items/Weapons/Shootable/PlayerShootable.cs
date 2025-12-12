@@ -18,7 +18,7 @@ public class PlayerShootable : MonoBehaviour, IShootable
     public bool CanBeShot(NetworkObject shooter, Vector3 point, Vector3 normal)
     {
         // dead? invulnerable? team check? do it here.
-        return state && state.State == LifeState.Alive;
+        return state != null;
     }
 
     public void ServerOnShot(NetworkObject shooter, float damage, float force, Vector3 point, Vector3 normal)

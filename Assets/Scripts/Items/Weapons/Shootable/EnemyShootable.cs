@@ -18,7 +18,7 @@ public class EnemyShootable : MonoBehaviour, IShootable
 
     public bool CanBeShot(NetworkObject shooter, Vector3 point, Vector3 normal)
     {
-        if (!state || state.State == LifeState.Dead) return false;
+        if (!state) return false;
 
         if (ignoreSameRoot && shooter != null)
         {

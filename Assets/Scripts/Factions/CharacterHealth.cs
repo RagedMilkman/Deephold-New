@@ -95,7 +95,7 @@ public class CharacterHealth : NetworkBehaviour
 
     public bool CanBeShot(NetworkObject shooter, Vector3 point, Vector3 normal)
     {
-        return _state != null && _state.State == LifeState.Alive;
+        return _state != null;
     }
 
     public void RefreshHitBoxes()
@@ -164,6 +164,11 @@ public class CharacterHealth : NetworkBehaviour
         else if (wasAlive && _state.State == LifeState.Alive)
         {
             ApplyNonLethalHitImpulse(hitPoint, hitDir, force, puppetMasterMuscleIndex);
+        }
+        // Already-dead ragdoll: apply impulse and FX only
+        else if (!wasAlive && _state.State == LifeState.Dead)
+        {
+            ApplyPuppetMasterImpulse(hitPoint, hitDir, force, puppetMasterMuscleIndex);
         }
     }
 
