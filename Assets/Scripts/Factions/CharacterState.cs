@@ -72,7 +72,17 @@ public class CharacterState : NetworkBehaviour
 
     void ApplyPuppetMasterDeathState()
     {
-        if (!IsServer || !puppetMaster)
+        if (!IsServer)
+        {
+            if (puppetMaster)
+            {
+                puppetMaster.enabled = false;
+                puppetMaster.gameObject.SetActive(false);
+            }
+            return;
+        }
+
+        if (!puppetMaster)
             return;
 
         puppetMaster.gameObject.SetActive(true);
