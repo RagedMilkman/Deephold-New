@@ -10,6 +10,7 @@ public class CharacterState : NetworkBehaviour
     [SerializeField] bool despawnOnDeath = true;
     [SerializeField] float despawnDelay = 2f;
     [SerializeField, Tooltip("Optional PuppetMaster to activate on death.")] PuppetMaster puppetMaster;
+    [SerializeField, Tooltip("Master weight applied to the PuppetMaster once dead.")] float deadMasterWeight = 0.3f;
 
     public int Health { get; private set; }
     public int MaxHealth => maxHealth;
@@ -95,5 +96,6 @@ public class CharacterState : NetworkBehaviour
         puppetMaster.enabled = true;
         puppetMaster.mode = PuppetMaster.Mode.Active;
         puppetMaster.state = PuppetMaster.State.Dead;
+        puppetMaster.masterWeight = deadMasterWeight;
     }
 }
