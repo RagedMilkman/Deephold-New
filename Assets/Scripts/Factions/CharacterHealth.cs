@@ -77,7 +77,7 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField, Tooltip("Additional damping applied once the character is dead.")]
     float _deadForceMultiplier = 0.25f;
 
-    [SerializeField, Tooltip("Master weight applied to the PuppetMaster once dead.")]
+    [SerializeField, Tooltip("Master weights (mapping/pin/muscle) applied to the PuppetMaster once dead.")]
     float _deadMasterWeight = 0.3f;
 
     // Runtime
@@ -234,7 +234,7 @@ public class CharacterHealth : NetworkBehaviour
 
         _puppetMaster.Kill(killSettings);
 
-        ApplyDeadMasterWeight();
+        ApplyDeadMasterWeights();
 
         // Apply impulse scaled by global and per-profile multipliers
         ApplyPuppetMasterImpulse(
@@ -296,12 +296,14 @@ public class CharacterHealth : NetworkBehaviour
         muscles[targetIndex].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
     }
 
-    void ApplyDeadMasterWeight()
+    void ApplyDeadMasterWeights()
     {
         if (_puppetMaster == null)
             return;
 
-        _puppetMaster.masterWeight = _deadMasterWeight;
+        _puppetMaster.mappingWeight = _deadMasterWeight;
+        _puppetMaster.pinWeight = _deadMasterWeight;
+        _puppetMaster.muscleWeight = _deadMasterWeight;
     }
 
     // -------- FX --------
