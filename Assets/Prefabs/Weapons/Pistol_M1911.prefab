@@ -610,7 +610,7 @@ MonoBehaviour:
   bulletRange: 75
   bulletHitMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 256
   tracerColor: {r: 1, g: 1, b: 1, a: 0.4}
   tracerDuration: 0.05
   tracerWidth: 0.01

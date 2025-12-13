@@ -1370,7 +1370,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         float radius = weapon.ProjectileRadius;
         int mask = weapon.ProjectileHitMask.value != 0 ? weapon.ProjectileHitMask.value : Physics.DefaultRaycastLayers;
 
-        var hits = Physics.SphereCastAll(rayOrigin, radius, dir, maxDistance, mask, QueryTriggerInteraction.Ignore);
+        var hits = Physics.SphereCastAll(rayOrigin, radius, dir, maxDistance, mask, QueryTriggerInteraction.Collide);
         if (hits.Length > 1)
             System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
 

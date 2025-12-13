@@ -107,7 +107,7 @@ public class CharacterHealth : NetworkBehaviour
     public void RefreshHitBoxes()
     {
         _hitBoxes.Clear();
-        foreach (var hitBox in GetComponentsInChildren<HitBox>(true))
+        foreach (var hitBox in GetComponentsInChildren<HitBox>(false))
         {
             hitBox.SetOwner(this);
             _hitBoxes.Add(hitBox);

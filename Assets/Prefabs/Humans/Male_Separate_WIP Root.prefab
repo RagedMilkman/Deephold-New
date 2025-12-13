@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1801868475072856405}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-thumb02.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -226,7 +226,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 85485426310276670}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
   m_Name: 
@@ -244,7 +244,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5784872865464127771}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-pinky03.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -277,7 +277,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4267930752759613325}
   - component: {fileID: 8612759347683754725}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: HumanM_BodyMesh.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -418,7 +418,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3245779256473473365}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-pinky01.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -450,7 +450,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3149116535985896328}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-handProp.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -667,7 +667,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 483735115986841218}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
   m_Name: 
@@ -716,7 +716,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8201153600298404521}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-pinky02.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -810,7 +810,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6693078446544450993}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-ringFinger03.R_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -841,7 +841,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 786480293591362087}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-pinky03.R_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -881,7 +881,7 @@ GameObject:
   - component: {fileID: 8585220257302826407}
   - component: {fileID: 736014698206206743}
   - component: {fileID: 6018056103568353724}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Male_Separate_WIP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1322,7 +1322,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2813405995968088212}
-  m_Layer: 0
+  - component: {fileID: 6638692114212706213}
+  - component: {fileID: 1742726177282354932}
+  m_Layer: 8
   m_Name: B-upperArm.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1347,6 +1349,45 @@ Transform:
   - {fileID: 1297612106878122449}
   m_Father: {fileID: 4430298099425609267}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &6638692114212706213
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226491243990899484}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.05
+  m_Height: 0.25
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.15, z: 0}
+--- !u!114 &1742726177282354932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226491243990899484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 3
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &1242112789937652399
 GameObject:
   m_ObjectHideFlags: 0
@@ -1356,7 +1397,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5336206697640450117}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-thumb03.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1388,7 +1429,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 37804262705538682}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-ringFinger01.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1420,7 +1461,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1766185643451243340}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Additional Pin Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1451,7 +1492,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6480624605856179686}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-jaw_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1482,7 +1523,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1554749810799956569}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-thumb03.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1514,7 +1555,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1412944811771827846}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-middleFinger02.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1546,7 +1587,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6898623346918262358}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-pinky02.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1578,7 +1619,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2284593889230769011}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-ringFinger02.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1641,7 +1682,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2523213556043372879}
-  m_Layer: 0
+  - component: {fileID: 9073040591828232202}
+  - component: {fileID: 1479167206991374120}
+  m_Layer: 8
   m_Name: B-shoulder.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1664,6 +1707,43 @@ Transform:
   - {fileID: 8609793648661020213}
   m_Father: {fileID: 6457918931794240513}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &9073040591828232202
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758129864661139035}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.08
+  m_Center: {x: 0, y: 0.2, z: 0}
+--- !u!114 &1479167206991374120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758129864661139035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 2
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &1891059495520282686
 GameObject:
   m_ObjectHideFlags: 0
@@ -1673,7 +1753,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4360282747244673470}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-ringFinger03.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1892,7 +1972,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1937918617829203581}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
   m_Name: 
@@ -1911,7 +1991,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7933082650158506118}
   - component: {fileID: 3963306467829991253}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FallbackPassive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2141,7 +2221,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2007979752557386144}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
   m_Name: 
@@ -2159,7 +2239,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7561949377159331468}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-toe.L_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2376,7 +2456,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2090471182372052363}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
   m_Name: 
@@ -2395,7 +2475,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2153727457375801094}
   - component: {fileID: 3986178111154703896}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: LargeRangedReloading
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2440,7 +2520,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4340005235380495519}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-pinky01.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2652,7 +2732,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8041145044934708655}
   - component: {fileID: 7576300172257871407}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: LargeRangedActive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2697,7 +2777,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6196794788958955958}
-  m_Layer: 0
+  - component: {fileID: 5584211556562889110}
+  - component: {fileID: 1902703878255250026}
+  m_Layer: 8
   m_Name: B-foot.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2720,6 +2802,43 @@ Transform:
   - {fileID: 3935224101146216516}
   m_Father: {fileID: 8791065328575078297}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5584211556562889110
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2474105766930218001}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.2, y: 0.36, z: 0.14}
+  m_Center: {x: 0, y: 0.1, z: 0}
+--- !u!114 &1902703878255250026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2474105766930218001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 5
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &2508729882864677917
 GameObject:
   m_ObjectHideFlags: 0
@@ -2729,7 +2848,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6434654116476073683}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-middleFinger03.R_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2760,7 +2879,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4926259865974059228}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-indexFinger01.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2792,7 +2911,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4246392926394218544}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-indexFinger01.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3460,7 +3579,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 110124614236658623}
-  m_Layer: 0
+  - component: {fileID: 7198767431695279579}
+  - component: {fileID: 7385606520928942864}
+  m_Layer: 8
   m_Name: B-shin.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3483,6 +3604,45 @@ Transform:
   - {fileID: 6957260311464824681}
   m_Father: {fileID: 4736262309584536293}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &7198767431695279579
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2820386263486655343}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.08
+  m_Height: 0.5
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.2, z: 0}
+--- !u!114 &7385606520928942864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2820386263486655343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 4
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &2849586331574408223
 GameObject:
   m_ObjectHideFlags: 0
@@ -3678,7 +3838,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2849586331574408223}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
   m_Name: 
@@ -3696,7 +3856,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1297612106878122449}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Prop Muscle Target B-upperArm.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3728,7 +3888,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4243742678417146091}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-thumb01.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3761,7 +3921,7 @@ GameObject:
   m_Component:
   - component: {fileID: 991082109797085796}
   - component: {fileID: 2501755372179092592}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FallbackActive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3806,7 +3966,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1571014393751143221}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-indexFinger02.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3839,7 +3999,7 @@ GameObject:
   m_Component:
   - component: {fileID: 359018380053005257}
   - component: {fileID: 6922562897058638671}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SmallRangedActive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3884,7 +4044,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4736262309584536293}
-  m_Layer: 0
+  - component: {fileID: 617756470554922599}
+  - component: {fileID: 1833070472505809}
+  m_Layer: 8
   m_Name: B-thigh.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3907,6 +4069,45 @@ Transform:
   - {fileID: 110124614236658623}
   m_Father: {fileID: 2301636281318634596}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &617756470554922599
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3464192611579442619}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.08
+  m_Height: 0.5
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.2, z: 0}
+--- !u!114 &1833070472505809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3464192611579442619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 4
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &3487029924238178165
 GameObject:
   m_ObjectHideFlags: 0
@@ -3916,7 +4117,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4206568232460349962}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-thumb03.R_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3948,7 +4149,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1445633554000333124}
   - component: {fileID: 5356665127219094112}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: HumanM_BodyMesh.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4089,7 +4290,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8791065328575078297}
-  m_Layer: 0
+  - component: {fileID: 6308312260832653850}
+  - component: {fileID: 5700674995245601048}
+  m_Layer: 8
   m_Name: B-shin.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4112,6 +4315,45 @@ Transform:
   - {fileID: 6196794788958955958}
   m_Father: {fileID: 4659229053818309540}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &6308312260832653850
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3515344883926574376}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.08
+  m_Height: 0.5
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.2, z: 0}
+--- !u!114 &5700674995245601048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3515344883926574376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 5
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &3596954755782923628
 GameObject:
   m_ObjectHideFlags: 0
@@ -4122,7 +4364,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3377269454437733931}
   - component: {fileID: 4080012858633912537}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SmallRangedAway
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4167,7 +4409,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8860153113105009933}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-handProp.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4199,7 +4441,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4936850347896542579}
   - component: {fileID: 9055084371464334866}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FallbackAway
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4244,7 +4486,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8771846889329044599}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-indexFinger03.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4276,7 +4518,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8105901520913630840}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Additional Pin Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4308,7 +4550,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8211054037304080268}
   - component: {fileID: 1434623654431657040}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SmallRangedReloading
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4353,7 +4595,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7212313278994452948}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-jaw
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4385,7 +4627,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7328082326080369522}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Human_DummyModel_M
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4417,7 +4659,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 27560906324153378}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4449,7 +4691,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3935224101146216516}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-toe.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4481,7 +4723,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7838181659241714094}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-ringFinger03.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4513,7 +4755,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1038732332774995955}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-thumb02.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4545,7 +4787,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4430298099425609267}
-  m_Layer: 0
+  - component: {fileID: 5718162429869220208}
+  - component: {fileID: 2380892790974836222}
+  m_Layer: 8
   m_Name: B-shoulder.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4580,6 +4824,43 @@ Transform:
   - {fileID: 3377269454437733931}
   m_Father: {fileID: 6457918931794240513}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &5718162429869220208
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5312326530505267205}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.08
+  m_Center: {x: 0, y: 0.2, z: 0}
+--- !u!114 &2380892790974836222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5312326530505267205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 3
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &5328683555145240009
 GameObject:
   m_ObjectHideFlags: 0
@@ -4589,7 +4870,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8378303079290512787}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-indexFinger03.R_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4620,7 +4901,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4830384041829823720}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-middleFinger03.L_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4651,7 +4932,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4659229053818309540}
-  m_Layer: 0
+  - component: {fileID: 8656510079036071088}
+  - component: {fileID: 1770366283499424063}
+  m_Layer: 8
   m_Name: B-thigh.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4674,6 +4957,45 @@ Transform:
   - {fileID: 8791065328575078297}
   m_Father: {fileID: 2301636281318634596}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &8656510079036071088
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5448930322177444592}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.08
+  m_Height: 0.5
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.2, z: 0}
+--- !u!114 &1770366283499424063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5448930322177444592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 5
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &5533623541971217769
 GameObject:
   m_ObjectHideFlags: 0
@@ -4683,7 +5005,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1475036745749180965}
-  m_Layer: 0
+  - component: {fileID: 1952572976019664660}
+  - component: {fileID: 5360068863531309497}
+  m_Layer: 8
   m_Name: B-spine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4706,6 +5030,43 @@ Transform:
   - {fileID: 6457918931794240513}
   m_Father: {fileID: 2301636281318634596}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1952572976019664660
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5533623541971217769}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3, y: 0.2, z: 0.21}
+  m_Center: {x: 0, y: 0.09, z: 0}
+--- !u!114 &5360068863531309497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5533623541971217769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 1
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &5744861736588303961
 GameObject:
   m_ObjectHideFlags: 0
@@ -4715,7 +5076,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 44112999536414748}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-pinky03.L_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4747,7 +5108,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5578860598896174996}
   - component: {fileID: 1360115188150381929}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: LargeRangedPassive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4792,7 +5153,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 165797805185249789}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-middleFinger01.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4825,7 +5186,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4986519864235129821}
   - component: {fileID: 6923116186993703481}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: HumanM_BodyMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4967,7 +5328,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1624526749858564917}
   - component: {fileID: 4505351806427319285}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SmallRangedPassive
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5012,7 +5373,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4463985768107172379}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-thumb01.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5230,7 +5591,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6267655807985359499}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
   m_Name: 
@@ -5248,7 +5609,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3134357568264094166}
-  m_Layer: 0
+  - component: {fileID: 7377819010937194689}
+  - component: {fileID: 3491356837326584838}
+  m_Layer: 8
   m_Name: B-forearm.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5271,6 +5634,45 @@ Transform:
   - {fileID: 6602382449375955848}
   m_Father: {fileID: 8609793648661020213}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &7377819010937194689
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6270518400529239564}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.05
+  m_Height: 0.2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.11, z: 0}
+--- !u!114 &3491356837326584838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6270518400529239564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 2
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &6272310450329516162
 GameObject:
   m_ObjectHideFlags: 0
@@ -5280,7 +5682,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6957260311464824681}
-  m_Layer: 0
+  - component: {fileID: 5201147656139716955}
+  - component: {fileID: 3365479270226563844}
+  m_Layer: 8
   m_Name: B-foot.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5303,6 +5707,43 @@ Transform:
   - {fileID: 6493512899624613950}
   m_Father: {fileID: 110124614236658623}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5201147656139716955
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6272310450329516162}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.2, y: 0.36, z: 0.14}
+  m_Center: {x: 0, y: 0.1, z: 0}
+--- !u!114 &3365479270226563844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6272310450329516162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 4
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &6318296665523320667
 GameObject:
   m_ObjectHideFlags: 0
@@ -5313,7 +5754,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6095782635096552967}
   - component: {fileID: 3433540534521851884}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: LargeRangedAway
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5358,7 +5799,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8966156916849160722}
-  m_Layer: 0
+  - component: {fileID: 6133680110670340562}
+  - component: {fileID: 2826978671420067425}
+  m_Layer: 8
   m_Name: B-hand.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5373,7 +5816,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013655453, y: 0.70536864, z: 0.033096664, w: 0.7079359}
+  m_LocalRotation: {x: 0.013655545, y: 0.7053686, z: 0.033096552, w: 0.7079359}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -5386,6 +5829,43 @@ Transform:
   - {fileID: 4243742678417146091}
   m_Father: {fileID: 5176424918872219151}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &6133680110670340562
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6605094168032525342}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.1, y: 0.3, z: 0.05}
+  m_Center: {x: 0, y: 0.15, z: 0}
+--- !u!114 &2826978671420067425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6605094168032525342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 3
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &6765880115704193029
 GameObject:
   m_ObjectHideFlags: 0
@@ -5395,7 +5875,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5176424918872219151}
-  m_Layer: 0
+  - component: {fileID: 6321702596204587833}
+  - component: {fileID: 3893450249087728371}
+  m_Layer: 8
   m_Name: B-forearm.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5418,6 +5900,45 @@ Transform:
   - {fileID: 8966156916849160722}
   m_Father: {fileID: 2813405995968088212}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &6321702596204587833
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6765880115704193029}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.05
+  m_Height: 0.2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.11, z: 0}
+--- !u!114 &3893450249087728371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6765880115704193029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 3
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &6797074947291448208
 GameObject:
   m_ObjectHideFlags: 0
@@ -5612,7 +6133,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6797074947291448208}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
   m_Name: 
@@ -5630,7 +6151,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2682524794244091858}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-indexFinger03.L_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5661,7 +6182,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4337368821466208764}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-indexFinger02.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5724,7 +6245,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2751652447260280994}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-thumb03.L_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5755,7 +6276,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2636210883941776241}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-ringFinger03.L_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5786,7 +6307,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 768711587064841454}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5819,7 +6340,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1483215828498961434}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-spineProxy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6035,7 +6556,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7423204359606108926}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
   m_Name: 
@@ -6053,7 +6574,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4268797643179008273}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-middleFinger03.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6302,7 +6823,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7477841327058202707}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
   m_Name: 
@@ -6558,6 +7079,8 @@ MonoBehaviour:
   _hitImpulseDelay: 0.01
   _hitImpulseForceMultiplier: 0.3
   _hitImpulseMaxForce: 60
+  _deadForceMultiplier: 0.25
+  _deadMasterWeight: 0.3
 --- !u!114 &3403907483884108976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6577,6 +7100,7 @@ MonoBehaviour:
   despawnOnDeath: 0
   despawnDelay: 5
   puppetMaster: {fileID: 4984505607652927022}
+  deadMasterWeight: 0.3
 --- !u!114 &2375063280235814730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6662,7 +7186,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6493512899624613950}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-toe.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6694,7 +7218,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3364972901191245140}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-middleFinger03.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6727,7 +7251,7 @@ GameObject:
   m_Component:
   - component: {fileID: 702251339834685912}
   - component: {fileID: 5810705270682565829}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FallbackReloading
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6772,7 +7296,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9020200290419940708}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-indexFinger03.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6980,7 +7504,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5499378176282924725}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Prop Muscle Target B-upperArm.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7012,7 +7536,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5813928525900478393}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-ringFinger02.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7227,7 +7751,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8077484625001399060}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
   m_Name: 
@@ -7245,7 +7769,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6246496914526978851}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-toe.R_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7276,7 +7800,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6602382449375955848}
-  m_Layer: 0
+  - component: {fileID: 2588988227376924446}
+  - component: {fileID: 3113164814825809444}
+  m_Layer: 8
   m_Name: B-hand.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7304,6 +7830,43 @@ Transform:
   - {fileID: 4463985768107172379}
   m_Father: {fileID: 3134357568264094166}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2588988227376924446
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8237888801687684240}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.1, y: 0.3, z: 0.05}
+  m_Center: {x: 0, y: 0.15, z: 0}
+--- !u!114 &3113164814825809444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8237888801687684240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 2
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &8373728688931725837
 GameObject:
   m_ObjectHideFlags: 0
@@ -7313,7 +7876,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7682746617158375793}
-  m_Layer: 0
+  - component: {fileID: 1692445587674608013}
+  - component: {fileID: 3891745785782591709}
+  m_Layer: 8
   m_Name: B-head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7336,6 +7901,45 @@ Transform:
   - {fileID: 7212313278994452948}
   m_Father: {fileID: 5767680489197904244}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &1692445587674608013
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8373728688931725837}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.11
+  m_Height: 0.35
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.03, z: 0}
+--- !u!114 &3891745785782591709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8373728688931725837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 0
+  damageMultiplier: 2
+  puppetMasterMuscleIndex: -1
 --- !u!1 &8542122289439271368
 GameObject:
   m_ObjectHideFlags: 0
@@ -7345,7 +7949,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7554684268743425834}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-pinky03.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7377,7 +7981,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6022722081059162814}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-middleFinger02.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7409,7 +8013,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2301636281318634596}
-  m_Layer: 0
+  - component: {fileID: 7961296205393364090}
+  - component: {fileID: 9018002148606528726}
+  m_Layer: 8
   m_Name: B-hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7434,6 +8040,43 @@ Transform:
   - {fileID: 4659229053818309540}
   m_Father: {fileID: 768711587064841454}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7961296205393364090
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8767517886673604436}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.36, y: 0.18, z: 0.2}
+  m_Center: {x: 0, y: -0.01, z: 0}
+--- !u!114 &9018002148606528726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8767517886673604436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 1
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &8775180458958596251
 GameObject:
   m_ObjectHideFlags: 0
@@ -7443,7 +8086,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5767680489197904244}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-neck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7475,7 +8118,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6457918931794240513}
-  m_Layer: 0
+  - component: {fileID: 958153351268702981}
+  - component: {fileID: 2623903746591211775}
+  m_Layer: 8
   m_Name: B-chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7500,6 +8145,43 @@ Transform:
   - {fileID: 4430298099425609267}
   m_Father: {fileID: 1475036745749180965}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &958153351268702981
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8850092201001150561}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.4, y: 0.3, z: 0.2}
+  m_Center: {x: 0, y: 0.13, z: 0}
+--- !u!114 &2623903746591211775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8850092201001150561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 1
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &9008729103938274597
 GameObject:
   m_ObjectHideFlags: 0
@@ -7509,7 +8191,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2187141180099641902}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-ringFinger01.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7541,7 +8223,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8609793648661020213}
-  m_Layer: 0
+  - component: {fileID: 7550283230085248349}
+  - component: {fileID: 7330590881268541811}
+  m_Layer: 8
   m_Name: B-upperArm.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7564,6 +8248,45 @@ Transform:
   - {fileID: 3134357568264094166}
   m_Father: {fileID: 2523213556043372879}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &7550283230085248349
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9019437160456224919}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.05
+  m_Height: 0.25
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.15, z: 0}
+--- !u!114 &7330590881268541811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9019437160456224919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitBox
+  owner: {fileID: 0}
+  bodyPart: 2
+  damageMultiplier: 1
+  puppetMasterMuscleIndex: -1
 --- !u!1 &9099357786023295030
 GameObject:
   m_ObjectHideFlags: 0
@@ -7573,7 +8296,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8157194102265876441}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: B-middleFinger01.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
