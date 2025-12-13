@@ -77,8 +77,14 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField, Tooltip("Additional damping applied once the character is dead.")]
     float _deadForceMultiplier = 0.25f;
 
-    [SerializeField, Tooltip("Master weights (mapping/pin/muscle) applied to the PuppetMaster once dead.")]
-    float _deadMasterWeight = 0.3f;
+    [SerializeField, Tooltip("Mapping weight applied to the PuppetMaster once dead.")]
+    float _deadMappingWeight = 0.3f;
+
+    [SerializeField, Tooltip("Pin weight applied to the PuppetMaster once dead.")]
+    float _deadPinWeight = 0.3f;
+
+    [SerializeField, Tooltip("Muscle weight applied to the PuppetMaster once dead.")]
+    float _deadMuscleWeight = 0.3f;
 
     // Runtime
     Coroutine _hitImpulseRoutine;
@@ -302,9 +308,9 @@ public class CharacterHealth : NetworkBehaviour
         if (_puppetMaster == null)
             return;
 
-        _puppetMaster.mappingWeight = _deadMasterWeight;
-        _puppetMaster.pinWeight = _deadMasterWeight;
-        _puppetMaster.muscleWeight = _deadMasterWeight;
+        _puppetMaster.mappingWeight = _deadMappingWeight;
+        _puppetMaster.pinWeight = _deadPinWeight;
+        _puppetMaster.muscleWeight = _deadMuscleWeight;
     }
 
     // -------- FX --------
