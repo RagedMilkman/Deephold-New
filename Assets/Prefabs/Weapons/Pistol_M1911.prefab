@@ -620,7 +620,7 @@ MonoBehaviour:
   isAutomatic: 0
   aimMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 128
   aimMaxDistance: 1000
   fallbackAimDistance: 50
   aimBeamWidth: 0.002
