@@ -85,6 +85,7 @@ public class CharacterHealth : NetworkBehaviour
 
     public Transform OwnerRoot => _ownerRoot ? _ownerRoot : transform.root;
     public IReadOnlyList<HitBox> HitBoxes => _hitBoxes;
+    public Animator Animator => _animator;
 
     void Awake()
     {

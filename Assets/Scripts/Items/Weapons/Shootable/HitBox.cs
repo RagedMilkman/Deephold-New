@@ -12,11 +12,36 @@ public enum BodyPart
     LegR
 }
 
+public enum PuppetBodyPart
+{
+    Auto,
+    Hips,
+    Spine,
+    Chest,
+    UpperChest,
+    Head,
+    LeftUpperArm,
+    LeftLowerArm,
+    LeftHand,
+    RightUpperArm,
+    RightLowerArm,
+    RightHand,
+    LeftUpperLeg,
+    LeftLowerLeg,
+    LeftFoot,
+    RightUpperLeg,
+    RightLowerLeg,
+    RightFoot
+}
+
 public class HitBox : MonoBehaviour, IShootable
 {
     [SerializeField] CharacterHealth owner;
     [SerializeField] BodyPart bodyPart;
     [SerializeField] float damageMultiplier = 1f;
+
+    [SerializeField, Tooltip("Optional PuppetMaster bone to apply forces to. Set to Auto to fallback to nearest bone.")]
+    PuppetBodyPart puppetBodyPart = PuppetBodyPart.Auto;
 
     // Now private  auto-populated from PuppetMaster
     [SerializeField, Tooltip("Debug only  auto-assigned at runtime")]
@@ -46,8 +71,7 @@ public class HitBox : MonoBehaviour, IShootable
 
         if (owner != null && owner.PuppetMaster != null)
         {
-            // Automatically find the closest PuppetMaster muscle
-            puppetMasterMuscleIndex = owner.PuppetMaster.GetClosestMuscleIndex(transform);
+            puppetMasterMuscleIndex = owner.PuppetMaster.GetMuscleIndex(owner.Animator, puppetBodyPart, transform);
         }
     }
 
