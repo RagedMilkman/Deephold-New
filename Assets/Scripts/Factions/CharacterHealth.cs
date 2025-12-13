@@ -74,6 +74,9 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField, Tooltip("Maximum non-lethal impulse magnitude applied to a muscle.")]
     float _hitImpulseMaxForce = 5f;
 
+    [SerializeField, Tooltip("Delay before applying dead PuppetMaster weights (allows state to settle).")]
+    float _deadWeightsDelay = 0.05f;
+
     [SerializeField, Tooltip("Additional damping applied once the character is dead.")]
     float _deadForceMultiplier = 0.25f;
 
@@ -241,7 +244,10 @@ public class CharacterHealth : NetworkBehaviour
 
         _puppetMaster.Kill(killSettings);
 
-        ApplyDeadMasterWeights();
+        if (_deadWeightsDelay > 0f)
+            StartCoroutine(ApplyDeadMasterWeightsDelayed());
+        else
+            ApplyDeadMasterWeights();
 
         // Apply impulse scaled by global and per-profile multipliers
         ApplyPuppetMasterImpulse(
@@ -311,6 +317,14 @@ public class CharacterHealth : NetworkBehaviour
         _puppetMaster.mappingWeight = _deadMappingWeight;
         _puppetMaster.pinWeight = _deadPinWeight;
         _puppetMaster.muscleWeight = _deadMuscleWeight;
+    }
+
+    System.Collections.IEnumerator ApplyDeadMasterWeightsDelayed()
+    {
+        if (_deadWeightsDelay > 0f)
+            yield return new WaitForSeconds(_deadWeightsDelay);
+
+        ApplyDeadMasterWeights();
     }
 
     // -------- FX --------
