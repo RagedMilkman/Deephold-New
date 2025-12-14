@@ -11,6 +11,8 @@ public class CharacterState : NetworkBehaviour
     [SerializeField] float despawnDelay = 2f;
     [SerializeField, Tooltip("Optional PuppetMaster to activate on death.")] PuppetMaster puppetMaster;
     [SerializeField, Tooltip("Master weights (mapping/pin/muscle) applied to the PuppetMaster once dead.")] float deadMasterWeight = 0.3f;
+    [SerializeField, Tooltip("Primary collider used for movement (disabled on death).")]
+    Collider characterCollider;
 
     public int Health { get; private set; }
     public int MaxHealth => maxHealth;
@@ -20,6 +22,9 @@ public class CharacterState : NetworkBehaviour
     {
         if (!puppetMaster)
             puppetMaster = GetComponentInChildren<PuppetMaster>(true);
+
+        if (!characterCollider)
+            characterCollider = GetComponent<Collider>();
     }
 
     public override void OnStartServer()
@@ -28,18 +33,21 @@ public class CharacterState : NetworkBehaviour
         {
             Health = maxHealth;
             State = LifeState.Alive;
+            ApplyColliderLifeState(State);
             RPC_State(Health, maxHealth, (int)State);
         }
     }
 
     public override void OnStartClient()
     {
-        if (!puppetMaster)
-            return;
+        if (puppetMaster)
+        {
+            bool run = ShouldRunPuppetMaster();
+            puppetMaster.gameObject.SetActive(run);
+            puppetMaster.enabled = run;
+        }
 
-        bool run = ShouldRunPuppetMaster();
-        puppetMaster.gameObject.SetActive(run);
-        puppetMaster.enabled = run;
+        ApplyColliderLifeState(State);
     }
 
     public void ServerDamage(int amount, NetworkObject attacker = null)
@@ -51,11 +59,13 @@ public class CharacterState : NetworkBehaviour
         {
             State = LifeState.Dead;
             ApplyPuppetMasterDeathState();
+            ApplyColliderLifeState(State);
             RPC_State(Health, maxHealth, (int)State);
             if (despawnOnDeath) Invoke(nameof(ServerDespawn), Mathf.Max(0f, despawnDelay));
         }
         else
         {
+            ApplyColliderLifeState(LifeState.Alive);
             RPC_State(Health, maxHealth, (int)LifeState.Alive);
         }
     }
@@ -77,6 +87,7 @@ public class CharacterState : NetworkBehaviour
     void RPC_State(int hp, int maxHp, int st)
     {
         Health = hp; maxHealth = maxHp; State = (LifeState)st;
+        ApplyColliderLifeState(State);
         if (State == LifeState.Dead)
             ApplyPuppetMasterDeathState();
     }
@@ -99,6 +110,14 @@ public class CharacterState : NetworkBehaviour
         puppetMaster.mappingWeight = deadMasterWeight;
         puppetMaster.pinWeight = deadMasterWeight;
         puppetMaster.muscleWeight = deadMasterWeight;
+    }
+
+    void ApplyColliderLifeState(LifeState state)
+    {
+        if (!characterCollider)
+            return;
+
+        characterCollider.enabled = state != LifeState.Dead;
     }
 
     private bool ShouldRunPuppetMaster()
