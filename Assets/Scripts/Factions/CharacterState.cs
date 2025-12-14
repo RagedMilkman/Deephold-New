@@ -30,7 +30,11 @@ public class CharacterState : NetworkBehaviour
             State = LifeState.Alive;
             RPC_State(Health, maxHealth, (int)State);
         }
-        else if (puppetMaster && !IsOwner)
+    }
+
+    public override void OnStartClient()
+    {
+        if (puppetMaster && !IsOwner)
         {
             // Puppet master is on but this is a non-owner client.
             puppetMaster.enabled = false;
