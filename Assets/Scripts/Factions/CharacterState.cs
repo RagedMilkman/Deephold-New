@@ -34,12 +34,12 @@ public class CharacterState : NetworkBehaviour
 
     public override void OnStartClient()
     {
-        if (puppetMaster && !IsOwner)
-        {
-            // Puppet master is on but this is a non-owner client.
-            puppetMaster.enabled = false;
-            puppetMaster.gameObject.SetActive(false);
-        }
+        if (!puppetMaster)
+            return;
+
+        bool run = ShouldRunPuppetMaster();
+        puppetMaster.gameObject.SetActive(run);
+        puppetMaster.enabled = run;
     }
 
     public void ServerDamage(int amount, NetworkObject attacker = null)
@@ -86,19 +86,31 @@ public class CharacterState : NetworkBehaviour
         if (!puppetMaster)
             return;
 
-        if (!IsOwner)
-        {
-            puppetMaster.enabled = false;
-            puppetMaster.gameObject.SetActive(false);
-            return;
-        }
+        bool run = ShouldRunPuppetMaster();
 
-        puppetMaster.gameObject.SetActive(true);
-        puppetMaster.enabled = true;
+        puppetMaster.gameObject.SetActive(run);
+        puppetMaster.enabled = run;
+
+        if (!run)
+            return;
+
         puppetMaster.mode = PuppetMaster.Mode.Active;
         puppetMaster.state = PuppetMaster.State.Dead;
         puppetMaster.mappingWeight = deadMasterWeight;
         puppetMaster.pinWeight = deadMasterWeight;
         puppetMaster.muscleWeight = deadMasterWeight;
+    }
+
+    private bool ShouldRunPuppetMaster()
+    {
+        // Owner client runs it (host's local player included).
+        if (IsClient && IsOwner)
+            return true;
+
+        // Server runs it only for unowned objects (NPCs / server-only).
+        if (IsServer && !Owner.IsValid)
+            return true;
+
+        return false; // non-owner clients + server-side player objects
     }
 }

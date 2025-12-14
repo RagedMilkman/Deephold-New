@@ -1,11 +1,16 @@
 using System.Collections.Generic;
 using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using RootMotion.FinalIK;
 using RootMotion.Dynamics;
 using UnityEngine;
 
 /// <summary>
 /// Handles health and damage routing for a character with multiple hitboxes.
+/// Server is authoritative for health/damage. PuppetMaster simulation runs only on:
+/// - Owner client (for player characters), and
+/// - Server for unowned objects (NPCs / server-owned).
+/// Non-owner clients never run PuppetMaster; they only receive FX and state.
 /// </summary>
 public class CharacterHealth : NetworkBehaviour
 {
@@ -21,10 +26,9 @@ public class CharacterHealth : NetworkBehaviour
     BoneSnapshotReplicator _boneSnapshotReplicator;
 
     [Header("PuppetMaster / Death")]
-    [SerializeField, Tooltip("Optional PuppetMaster to activate on death.")]
+    [SerializeField, Tooltip("Optional PuppetMaster used for hit flinches and death ragdoll.")]
     PuppetMaster _puppetMaster;
     public PuppetMaster PuppetMaster => _puppetMaster;
-
 
     [SerializeField, Tooltip("Base state settings used when killing the PuppetMaster on death.")]
     PuppetMaster.StateSettings _deathStateSettings;
@@ -109,6 +113,52 @@ public class CharacterHealth : NetworkBehaviour
         RefreshHitBoxes();
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        ApplyPuppetMasterRunnerState();
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        ApplyPuppetMasterRunnerState();
+    }
+
+    void OnEnable()
+    {
+        // Helps when objects are pooled / re-enabled.
+        ApplyPuppetMasterRunnerState();
+    }
+
+    bool ShouldRunPuppetMaster()
+    {
+        // Owner client runs it (host's local player included).
+        if (IsClient && IsOwner)
+            return true;
+
+        // Server runs it only for unowned objects (NPCs / server-only).
+        if (IsServer && !Owner.IsValid)
+            return true;
+
+        return false;
+    }
+
+    void ApplyPuppetMasterRunnerState()
+    {
+        if (_puppetMaster == null)
+            return;
+
+        bool run = ShouldRunPuppetMaster();
+
+        // Non-runner instances should never tick PM.
+        _puppetMaster.enabled = run;
+
+        // Optional: keep the GameObject alive if you rely on references elsewhere.
+        // If you prefer hard-off, keep the SetActive below.
+        _puppetMaster.gameObject.SetActive(run);
+    }
+
     public bool CanBeShot(NetworkObject shooter, Vector3 point, Vector3 normal)
     {
         return _state != null;
@@ -157,6 +207,7 @@ public class CharacterHealth : NetworkBehaviour
         int hitBoxIndex,
         NetworkObject shooter = null)
     {
+        // Server authority: only server mutates health/state.
         if (_state == null || !_state.IsServer)
             return;
 
@@ -164,7 +215,7 @@ public class CharacterHealth : NetworkBehaviour
         if (finalDamage <= 0)
             return;
 
-        // Propagate local hit FX to all observers (ghosts + owner).
+        // FX always replicated.
         RPC_PlayHitFx(hitPoint, -hitDir, hitBoxIndex);
 
         bool wasAlive = _state.State == LifeState.Alive;
@@ -174,36 +225,31 @@ public class CharacterHealth : NetworkBehaviour
         // Lethal: alive -> dead
         if (wasAlive && _state.State == LifeState.Dead)
         {
-            HandleDeath(bodyPart, hitPoint, hitDir, force, puppetMasterMuscleIndex);
+            // Replicate ragdoll activation + impulse to the PM runner(s).
+            RPC_EnterDeathRagdoll((int)bodyPart, hitPoint, hitDir, force, puppetMasterMuscleIndex);
         }
-        // Non-lethal: apply flinch impulse
+        // Non-lethal: flinch on the PM runner(s).
         else if (wasAlive && _state.State == LifeState.Alive)
         {
-            ApplyNonLethalHitImpulse(hitPoint, hitDir, force, puppetMasterMuscleIndex);
+            RPC_NonLethalImpulse(hitPoint, hitDir, force, puppetMasterMuscleIndex);
         }
-        // Already-dead ragdoll: apply impulse and FX only
+        // Already-dead ragdoll: impulse (and FX already handled above).
         else if (!wasAlive && _state.State == LifeState.Dead)
         {
-            ApplyPuppetMasterImpulse(
-                hitPoint,
-                hitDir,
-                force,
-                puppetMasterMuscleIndex,
-                applyGlobalForceMultiplier: true,
-                applyDeadForceReduction: true);
+            RPC_DeadImpulse(hitPoint, hitDir, force, puppetMasterMuscleIndex);
         }
     }
 
-    void HandleDeath(
-        BodyPart bodyPart,
-        Vector3 hitPoint,
-        Vector3 hitDir,
-        float force,
-        int puppetMasterMuscleIndex)
+    [ObserversRpc]
+    void RPC_EnterDeathRagdoll(int bodyPartInt, Vector3 hitPoint, Vector3 hitDir, float force, int muscleIndex)
     {
-        DeathProfile profile;
+        if (!ShouldRunPuppetMaster())
+            return;
 
-        switch (bodyPart)
+        DisableAnimationSystems();
+
+        DeathProfile profile;
+        switch ((BodyPart)bodyPartInt)
         {
             case BodyPart.Head:
                 profile = _instantDeath;
@@ -216,7 +262,31 @@ public class CharacterHealth : NetworkBehaviour
                 break;
         }
 
-        ActivateDeathRagdoll(hitPoint, hitDir, force, puppetMasterMuscleIndex, profile);
+        ActivateDeathRagdoll(hitPoint, hitDir, force, muscleIndex, profile);
+    }
+
+    [ObserversRpc]
+    void RPC_NonLethalImpulse(Vector3 hitPoint, Vector3 hitDir, float force, int muscleIndex)
+    {
+        if (!ShouldRunPuppetMaster())
+            return;
+
+        ApplyNonLethalHitImpulse(hitPoint, hitDir, force, muscleIndex);
+    }
+
+    [ObserversRpc]
+    void RPC_DeadImpulse(Vector3 hitPoint, Vector3 hitDir, float force, int muscleIndex)
+    {
+        if (!ShouldRunPuppetMaster())
+            return;
+
+        ApplyPuppetMasterImpulse(
+            hitPoint,
+            hitDir,
+            force,
+            muscleIndex,
+            applyGlobalForceMultiplier: true,
+            applyDeadForceReduction: true);
     }
 
     void ActivateDeathRagdoll(
@@ -226,17 +296,16 @@ public class CharacterHealth : NetworkBehaviour
         int puppetMasterMuscleIndex,
         DeathProfile profile)
     {
-        DisableAnimationSystems();
-
         if (_puppetMaster == null)
             return;
 
+        // Ensure PM is active on the runner.
         _puppetMaster.gameObject.SetActive(true);
         _puppetMaster.enabled = true;
         _puppetMaster.mode = PuppetMaster.Mode.Active;
         _puppetMaster.state = PuppetMaster.State.Alive;
 
-        // Clone base settings and override per-profile fields
+        // Clone base settings and override per-profile fields.
         var killSettings = _deathStateSettings;
         killSettings.killDuration = profile.killDuration;
         killSettings.deadMuscleWeight = profile.deadMuscleWeight;
@@ -249,7 +318,7 @@ public class CharacterHealth : NetworkBehaviour
         else
             ApplyDeadMasterWeights();
 
-        // Apply impulse scaled by global and per-profile multipliers
+        // Apply impulse scaled by global and per-profile multipliers.
         ApplyPuppetMasterImpulse(
             hitPoint,
             hitDir,
@@ -332,9 +401,6 @@ public class CharacterHealth : NetworkBehaviour
     [ObserversRpc]
     void RPC_PlayHitFx(Vector3 hitPoint, Vector3 surfaceNormal, int hitBoxIndex)
     {
-        // Parent FX to the specific hit box (bone) when possible so decals stick to the
-        // moving limb instead of world-space root. Falls back to the owner root when
-        // the hit box cannot be resolved (eg. index out of range).
         Transform spawnParent = GetHitBoxTransform(hitBoxIndex);
         if (spawnParent == null)
             spawnParent = OwnerRoot;
@@ -369,24 +435,27 @@ public class CharacterHealth : NetworkBehaviour
         float force,
         int puppetMasterMuscleIndex)
     {
+        if (_puppetMaster == null)
+            yield break;
+
         var muscles = _puppetMaster.muscles;
         if (muscles == null || muscles.Length == 0)
             yield break;
 
-        // Cache current mode (usually Kinematic while alive)
+        // Cache current mode (usually Kinematic while alive).
         var previousMode = _puppetMaster.mode;
 
-        // Briefly go Active so the impulse actually moves the ragdoll
+        // Briefly go Active so the impulse actually moves the ragdoll.
         _puppetMaster.mode = PuppetMaster.Mode.Active;
 
         if (_hitImpulseDelay > 0f)
             yield return new WaitForSeconds(_hitImpulseDelay);
 
-        // If they died during the delay, let death logic take over
+        // If they died during the delay, let death logic take over.
         if (_state != null && _state.State == LifeState.Dead)
             yield break;
 
-        // Scale and clamp the flinch force so it can't knock them over
+        // Scale and clamp the flinch force so it can't knock them over.
         float clamped = Mathf.Min(force, _hitImpulseMaxForce);
         float flinchForceMag = clamped * _hitImpulseForceMultiplier;
         if (flinchForceMag <= 0f)
@@ -400,10 +469,10 @@ public class CharacterHealth : NetworkBehaviour
 
         muscles[targetIndex].rigidbody.AddForceAtPosition(impactForce, hitPoint, ForceMode.Impulse);
 
-        // Keep Active for a very short time so the flinch is visible but can't fully topple them
+        // Keep Active for a very short time so the flinch is visible but can't fully topple them.
         yield return new WaitForSeconds(_hitImpulseDuration);
 
-        // Don't override full ragdoll if they've died since
+        // Don't override full ragdoll if they've died since.
         if (_state != null && _state.State == LifeState.Dead)
             yield break;
 
