@@ -119,6 +119,8 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             CharacterRootRotation = msg.CharacterRootRotation
         };
 
+        CopySnapshotToServerRig(relay);
+
         _server.Broadcast(relay, true, Channel.Unreliable);
     }
 
@@ -344,6 +346,30 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             ghostSpawnParent = _ghostHitFx.transform;
 
         _ghostHitFx.PlayHitFx(hitPoint, surfaceNormal, ghostSpawnParent);
+    }
+
+    private void CopySnapshotToServerRig(BoneSnapshotMessage msg)
+    {
+        if (!IsServer)
+            return;
+
+        if (msg.Positions == null || msg.Rotations == null)
+            return;
+
+        int boneCount = Mathf.Min(_bones.Count, Mathf.Min(msg.Positions.Length, msg.Rotations.Length));
+        if (boneCount == 0)
+            return;
+
+        _characterRoot.SetPositionAndRotation(msg.CharacterRootPosition, msg.CharacterRootRotation);
+
+        for (int i = 0; i < boneCount; i++)
+        {
+            Transform bone = _bones[i];
+            if (bone == null)
+                continue;
+
+            bone.SetLocalPositionAndRotation(msg.Positions[i], msg.Rotations[i]);
+        }
     }
 
     private static T[] Clone<T>(T[] source)
