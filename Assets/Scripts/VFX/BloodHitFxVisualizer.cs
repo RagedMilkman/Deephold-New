@@ -18,6 +18,9 @@ public class BloodHitFxVisualizer : MonoBehaviour
     [SerializeField, Tooltip("One-shot blood pool spawned at the character's feet on death.")]
     private GameObject _bloodPoolPrefab;
 
+    [SerializeField, Tooltip("If false, death will not spawn a blood pool.")]
+    private bool _spawnDeathBloodPool = true;
+
     [SerializeField, Tooltip("Uniform scale applied to the entry impact effect.")]
     private float _entryImpactScale = 0.5f;
 
@@ -82,7 +85,7 @@ public class BloodHitFxVisualizer : MonoBehaviour
 
     public void SpawnDeathBloodPool(Vector3 position, Transform parent = null)
     {
-        if (_bloodPoolPrefab == null || _spawnedBloodPool)
+        if (!_spawnDeathBloodPool || _bloodPoolPrefab == null || _spawnedBloodPool)
             return;
 
         Vector3 spawnPos = position;
