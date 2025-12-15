@@ -128,8 +128,8 @@ public class CharacterHealth : NetworkBehaviour
     LimbIK _rightLegIk;
 
     // FX runtime state
-    [SyncVar]
-    int _bloodPoolHitBoxIndex = -1;
+    [AllowMutableSyncType]
+    readonly SyncVar<int> _bloodPoolHitBoxIndex = new(-1);
     bool _spawnedBloodPool;
 
     // Runtime
@@ -178,7 +178,7 @@ public class CharacterHealth : NetworkBehaviour
         base.OnStartServer();
         Health = _maxHealth;
         State = LifeState.Alive;
-        _bloodPoolHitBoxIndex = -1;
+        _bloodPoolHitBoxIndex.Value = -1;
         _spawnedBloodPool = false;
         ApplyColliderLifeState(State);
         InitializeLocalizedHealth();
@@ -190,7 +190,7 @@ public class CharacterHealth : NetworkBehaviour
     {
         // Helps when objects are pooled / re-enabled.
         _localizedHealth.OnChange += OnLocalizedHealthChanged;
-        _bloodPoolHitBoxIndex = -1;
+        _bloodPoolHitBoxIndex.Value = -1;
         _spawnedBloodPool = false;
         ApplyPuppetMasterRunnerState();
         ApplyBodyPartEffects();
@@ -441,10 +441,10 @@ public class CharacterHealth : NetworkBehaviour
 
     Transform GetBloodPoolParent(out int hitBoxIndex)
     {
-        if (_bloodPoolHitBoxIndex >= 0)
+        if (_bloodPoolHitBoxIndex.Value >= 0)
         {
-            hitBoxIndex = _bloodPoolHitBoxIndex;
-            return GetHitBoxTransform(_bloodPoolHitBoxIndex);
+            hitBoxIndex = _bloodPoolHitBoxIndex.Value;
+            return GetHitBoxTransform(_bloodPoolHitBoxIndex.Value);
         }
 
         return GetMostDamagedHitBoxTransform(out hitBoxIndex);
@@ -505,7 +505,7 @@ public class CharacterHealth : NetworkBehaviour
     [ObserversRpc]
     void RPC_SpawnBloodPool(Vector3 position, int hitBoxIndex)
     {
-        _bloodPoolHitBoxIndex = hitBoxIndex;
+        _bloodPoolHitBoxIndex.Value = hitBoxIndex;
         Transform parent = GetHitBoxTransform(hitBoxIndex);
         SpawnDeathBloodPool(position, parent);
     }
@@ -742,7 +742,7 @@ public class CharacterHealth : NetworkBehaviour
             ApplyPuppetMasterDeathState();
             ApplyColliderLifeState(State);
             Vector3 bloodPoolPosition = GetBloodPoolSpawnPosition(out Transform parent, out int hitBoxIndex);
-            _bloodPoolHitBoxIndex = hitBoxIndex;
+            _bloodPoolHitBoxIndex.Value = hitBoxIndex;
             SpawnDeathBloodPool(bloodPoolPosition, parent);
             RPC_State(Health, _maxHealth, (int)State);
             RPC_SpawnBloodPool(bloodPoolPosition, hitBoxIndex);
