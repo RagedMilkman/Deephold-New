@@ -136,7 +136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TopDownChaseAI
   _motor: {fileID: 5903944542015488180}
   _target: {fileID: 0}
-  state: {fileID: 9052822904049701206}
+  state: {fileID: 0}
   _stopDistance: 0.5
 --- !u!114 &2555694571077031807
 MonoBehaviour:
@@ -364,7 +364,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.70793295
+      value: 0.707933
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
@@ -372,11 +372,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.70536214
+      value: -0.7053621
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.033239257
+      value: -0.033239264
       objectReference: {fileID: 0}
     - target: {fileID: 6797074947291448208, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_Layer
@@ -466,6 +466,18 @@ PrefabInstance:
       propertyPath: m_LocalRotation.y
       value: -0
       objectReference: {fileID: 0}
+    - target: {fileID: 8125184488041465076, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: itemRegistry.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8125184488041465076, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: 'itemRegistry.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 6dcae5f7c00c90d44b4bae63a336f6b4, type: 2}
+    - target: {fileID: 8125184488041465076, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: 'itemRegistry.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 8e0a32cba193be746ad40a132d7f33a2, type: 2}
     - target: {fileID: 8219493970271211756, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.20013106
@@ -520,11 +532,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.70793605
+      value: 0.707936
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013654937
+      value: 0.01365498
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
@@ -532,7 +544,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.0330977
+      value: 0.03309762
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -577,14 +589,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2995738668064062231, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
   m_PrefabInstance: {fileID: 5953492238139108838}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &9052822904049701206 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3403907483884108976, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
-  m_PrefabInstance: {fileID: 5953492238139108838}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e9e1253389a9434f90a0be1d35d4a57, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterHealth
