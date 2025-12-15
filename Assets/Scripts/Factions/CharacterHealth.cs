@@ -193,6 +193,11 @@ public class CharacterHealth : NetworkBehaviour
         ApplyBodyPartEffects();
     }
 
+    void OnValidate()
+    {
+        CacheBloodHitFxVisualizers();
+    }
+
     void OnDisable()
     {
         _localizedHealth.OnChange -= OnLocalizedHealthChanged;
@@ -483,7 +488,7 @@ public class CharacterHealth : NetworkBehaviour
     {
         _bloodPoolHitBoxIndex.Value = hitBoxIndex;
         Transform parent = GetHitBoxTransform(hitBoxIndex);
-        _bloodHitFx?.SpawnDeathBloodPool(position, parent);
+        ForEachBloodFx(v => v.SpawnDeathBloodPool(position, parent));
     }
 
     [ObserversRpc]
