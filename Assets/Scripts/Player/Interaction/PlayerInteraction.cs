@@ -10,7 +10,7 @@ public abstract class PlayerInteraction : NetworkBehaviour
     [SerializeField] protected bool requireAlive = true;   // block when Dead
     [SerializeField] protected bool allowOnServer = false;  // rarely needed; most input is client-side
 
-    protected CharacterState playerState;
+    protected CharacterHealth playerState;
     protected bool isAlive = true;
 
     // Convenience: are we allowed to run "active" logic this frame?
@@ -22,9 +22,9 @@ public abstract class PlayerInteraction : NetworkBehaviour
     protected virtual void Awake()
     {
         // Resolve PlayerState on the same root
-        playerState = GetComponent<CharacterState>();
+        playerState = GetComponent<CharacterHealth>();
         if (!playerState)
-            playerState = GetComponentInParent<CharacterState>(true);
+            playerState = GetComponentInParent<CharacterHealth>(true);
     }
 
     public override void OnStartServer()

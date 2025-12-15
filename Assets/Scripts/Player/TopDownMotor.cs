@@ -10,7 +10,7 @@ public class TopDownMotor : MonoBehaviour
     [SerializeField] CharacterController controller;  // on root Player
     [SerializeField] YawReplicator yawReplicator;
     [SerializeField] PositionReplicator positionReplicator;
-    [SerializeField] CharacterState characterState;
+    [SerializeField] CharacterHealth characterState;
 
     [Header("Movement")]
     [SerializeField] float moveSpeed = 4f;
@@ -56,7 +56,7 @@ public class TopDownMotor : MonoBehaviour
         if (!rotateTarget) rotateTarget = body ? body : transform;
         if (!yawReplicator) yawReplicator = GetComponentInChildren<YawReplicator>();
         if (!positionReplicator) positionReplicator = GetComponentInChildren<PositionReplicator>();
-        if (!characterState) characterState = GetComponentInParent<CharacterState>();
+        if (!characterState) characterState = GetComponentInParent<CharacterHealth>();
         UpdateRigYawTarget();
         currentMovementType = MovementType.Standing;
         UpdateRigAnimatorState();
@@ -69,7 +69,7 @@ public class TopDownMotor : MonoBehaviour
         if (!rotateTarget) rotateTarget = body ? body : transform;
         if (!yawReplicator) yawReplicator = GetComponentInChildren<YawReplicator>();
         if (!positionReplicator) positionReplicator = GetComponentInChildren<PositionReplicator>();
-        if (!characterState) characterState = GetComponentInParent<CharacterState>();
+        if (!characterState) characterState = GetComponentInParent<CharacterHealth>();
         UpdateRigYawTarget();
         currentStance = defaultStance;
         currentMovementType = MovementType.Standing;
@@ -88,7 +88,7 @@ public class TopDownMotor : MonoBehaviour
             if (!controller) controller = GetComponent<CharacterController>();
             if (!rigAnimator) rigAnimator = GetComponentInChildren<HumanoidRigAnimator>();
             if (!rotateTarget) rotateTarget = body ? body : transform;
-            if (!characterState) characterState = GetComponentInParent<CharacterState>();
+            if (!characterState) characterState = GetComponentInParent<CharacterHealth>();
             UpdateRigYawTarget();
         }
     }

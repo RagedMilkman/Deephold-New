@@ -4,7 +4,7 @@ using FishNet.Object;
 
 public class EnemyShootable : MonoBehaviour, IShootable
 {
-    [SerializeField] CharacterState state;
+    [SerializeField] CharacterHealth state;
     [SerializeField] Transform ownerRoot;          // set to enemy root (optional)
     [SerializeField] bool ignoreSameRoot = true;   // prevent self/team-self hits if desired
 
@@ -12,13 +12,13 @@ public class EnemyShootable : MonoBehaviour, IShootable
 
     void Awake()
     {
-        if (!state) state = GetComponentInParent<CharacterState>(true);
+        if (!state) state = GetComponentInParent<CharacterHealth>(true);
         if (!ownerRoot) ownerRoot = state ? state.transform : transform.root;
     }
 
     public bool CanBeShot(NetworkObject shooter, Vector3 point, Vector3 normal)
     {
-        if (!state) return false;
+        if (!state || state.State == LifeState.Dead) return false;
 
         if (ignoreSameRoot && shooter != null)
         {

@@ -131,13 +131,13 @@ public class PlayerLocationService : NetworkBehaviour
         }
     }
 
-    Transform ResolveCharacterTransform(PlayerData player, out CharacterState state)
+    Transform ResolveCharacterTransform(PlayerData player, out CharacterHealth state)
     {
         state = null;
         if (!player)
             return null;
 
-        state = player.GetComponentInChildren<CharacterState>();
+        state = player.GetComponentInChildren<CharacterHealth>();
         if (state)
             return state.transform;
 

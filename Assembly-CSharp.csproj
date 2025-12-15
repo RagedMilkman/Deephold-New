@@ -156,7 +156,6 @@
     <Compile Include="Assets\Scripts\Items\Weapons\KineticProjectileWeapon.cs" />
     <Compile Include="Assets\Scripts\World\Generation\PerlinNoiseGenerator.cs" />
     <Compile Include="Assets\Scripts\Items\HandMount.cs" />
-    <Compile Include="Assets\Scripts\Factions\CharacterState.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\ToolbeltInteraction.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\BespokePathService.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\RangedInteraction.cs" />

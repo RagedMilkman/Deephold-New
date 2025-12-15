@@ -4,21 +4,21 @@ using FishNet.Object;
 
 public class PlayerShootable : MonoBehaviour, IShootable
 {
-    [SerializeField] CharacterState state;
+    [SerializeField] CharacterHealth state;
     [SerializeField] Transform ownerRoot; // set to player root
 
     public Transform OwnerRoot => ownerRoot ? ownerRoot : transform.root;
 
     void Awake()
     {
-        if (!state) state = GetComponentInParent<CharacterState>(true);
+        if (!state) state = GetComponentInParent<CharacterHealth>(true);
         if (!ownerRoot) ownerRoot = state ? state.transform : transform.root;
     }
 
     public bool CanBeShot(NetworkObject shooter, Vector3 point, Vector3 normal)
     {
         // dead? invulnerable? team check? do it here.
-        return state != null;
+        return state != null && state.State == LifeState.Alive;
     }
 
     public void ServerOnShot(NetworkObject shooter, float damage, float force, Vector3 point, Vector3 normal)

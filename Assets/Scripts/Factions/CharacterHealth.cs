@@ -5,6 +5,9 @@ using FishNet.Object.Synchronizing;
 using RootMotion.FinalIK;
 using RootMotion.Dynamics;
 using UnityEngine;
+using UnityEngine.Serialization;
+
+public enum LifeState { Alive = 0, Dead = 1 }
 
 /// <summary>
 /// Handles health and damage routing for a character with multiple hitboxes.
@@ -15,7 +18,17 @@ using UnityEngine;
 /// </summary>
 public class CharacterHealth : NetworkBehaviour
 {
-    [SerializeField] CharacterState _state;
+    [Header("Health")]
+    [FormerlySerializedAs("maxHealth")]
+    [SerializeField] int _maxHealth = 30;
+    [FormerlySerializedAs("despawnOnDeath")]
+    [SerializeField] bool _despawnOnDeath = true;
+    [FormerlySerializedAs("despawnDelay")]
+    [SerializeField] float _despawnDelay = 2f;
+    [FormerlySerializedAs("characterCollider")]
+    [SerializeField, Tooltip("Primary collider used for movement (disabled on death).")]
+    Collider _characterCollider;
+
     [SerializeField] Transform _ownerRoot;
     [SerializeField] List<HitBox> _hitBoxes = new();
     [SerializeField, Tooltip("Maximum localized health applied to each body part.")]
@@ -29,6 +42,7 @@ public class CharacterHealth : NetworkBehaviour
     BoneSnapshotReplicator _boneSnapshotReplicator;
 
     [Header("PuppetMaster / Death")]
+    [FormerlySerializedAs("puppetMaster")]
     [SerializeField, Tooltip("Optional PuppetMaster used for hit flinches and death ragdoll.")]
     PuppetMaster _puppetMaster;
     public PuppetMaster PuppetMaster => _puppetMaster;
@@ -112,13 +126,16 @@ public class CharacterHealth : NetworkBehaviour
     // Runtime
     Coroutine _hitImpulseRoutine;
 
+    public int Health { get; private set; }
+    public int MaxHealth => _maxHealth;
+    public LifeState State { get; private set; } = LifeState.Alive;
+
     public Transform OwnerRoot => _ownerRoot ? _ownerRoot : transform.root;
     public IReadOnlyList<HitBox> HitBoxes => _hitBoxes;
     public Animator Animator => _animator;
 
     void Awake()
     {
-        if (!_state) _state = GetComponent<CharacterState>();
         if (!_ownerRoot) _ownerRoot = transform.root;
         if (!_topDownMotor) _topDownMotor = GetComponentInChildren<TopDownMotor>(true);
         if (!_puppetMaster) _puppetMaster = GetComponentInChildren<PuppetMaster>(true);
@@ -126,6 +143,7 @@ public class CharacterHealth : NetworkBehaviour
         if (_ikSolvers == null || _ikSolvers.Length == 0) _ikSolvers = GetComponentsInChildren<IK>(true);
         if (!_bloodHitFx) _bloodHitFx = GetComponentInChildren<BloodHitFxVisualizer>(true);
         if (!_boneSnapshotReplicator) _boneSnapshotReplicator = GetComponent<BoneSnapshotReplicator>();
+        if (!_characterCollider) _characterCollider = GetComponent<Collider>();
 
         CacheLegIkSolvers();
 
@@ -136,14 +154,21 @@ public class CharacterHealth : NetworkBehaviour
     {
         base.OnStartClient();
         ApplyPuppetMasterRunnerState();
+        ApplyColliderLifeState(State);
+        if (State == LifeState.Dead)
+            ApplyPuppetMasterDeathState();
         ApplyBodyPartEffects();
     }
 
     public override void OnStartServer()
     {
         base.OnStartServer();
+        Health = _maxHealth;
+        State = LifeState.Alive;
+        ApplyColliderLifeState(State);
         InitializeLocalizedHealth();
         ApplyPuppetMasterRunnerState();
+        RPC_State(Health, _maxHealth, (int)State);
     }
 
     void OnEnable()
@@ -189,7 +214,7 @@ public class CharacterHealth : NetworkBehaviour
 
     public bool CanBeShot(NetworkObject shooter, Vector3 point, Vector3 normal)
     {
-        return _state != null;
+        return State == LifeState.Alive;
     }
 
     public void RefreshHitBoxes()
@@ -269,7 +294,7 @@ public class CharacterHealth : NetworkBehaviour
         NetworkObject shooter = null)
     {
         // Server authority: only server mutates health/state.
-        if (_state == null || !_state.IsServer)
+        if (!IsServer)
             return;
 
         var finalDamage = Mathf.RoundToInt(Mathf.Max(0f, damage));
@@ -281,23 +306,23 @@ public class CharacterHealth : NetworkBehaviour
         // FX always replicated.
         RPC_PlayHitFx(hitPoint, -hitDir, hitBoxIndex);
 
-        bool wasAlive = _state.State == LifeState.Alive;
+        bool wasAlive = State == LifeState.Alive;
 
-        _state.ServerDamage(finalDamage, shooter);
+        ServerDamage(finalDamage, shooter);
 
         // Lethal: alive -> dead
-        if (wasAlive && _state.State == LifeState.Dead)
+        if (wasAlive && State == LifeState.Dead)
         {
             // Replicate ragdoll activation + impulse to the PM runner(s).
             RPC_EnterDeathRagdoll((int)bodyPart, hitPoint, hitDir, force, puppetMasterMuscleIndex);
         }
         // Non-lethal: flinch on the PM runner(s).
-        else if (wasAlive && _state.State == LifeState.Alive)
+        else if (wasAlive && State == LifeState.Alive)
         {
             RPC_NonLethalImpulse(hitPoint, hitDir, force, puppetMasterMuscleIndex);
         }
         // Already-dead ragdoll: impulse (and FX already handled above).
-        else if (!wasAlive && _state.State == LifeState.Dead)
+        else if (!wasAlive && State == LifeState.Dead)
         {
             RPC_DeadImpulse(hitPoint, hitDir, force, puppetMasterMuscleIndex);
         }
@@ -310,9 +335,9 @@ public class CharacterHealth : NetworkBehaviour
 
         _localizedHealth[bodyPart] = updated;
 
-        if (_state != null && _state.State == LifeState.Alive && updated == 0)
+        if (State == LifeState.Alive && updated == 0)
         {
-            _state.ServerDamage(_state.Health);
+            ServerDamage(Health);
         }
     }
 
@@ -494,7 +519,7 @@ public class CharacterHealth : NetworkBehaviour
         if (applyGlobalForceMultiplier)
             totalForce *= _puppetMasterForceMultiplier;
 
-        if (applyDeadForceReduction && _state != null && _state.State == LifeState.Dead)
+        if (applyDeadForceReduction && State == LifeState.Dead)
             totalForce *= _deadForceMultiplier;
 
         if (totalForce <= 0f)
@@ -549,7 +574,7 @@ public class CharacterHealth : NetworkBehaviour
     {
         if (_puppetMaster == null)
             return;
-        if (_state != null && _state.State != LifeState.Alive)
+        if (State != LifeState.Alive)
             return;
 
         if (_hitImpulseRoutine != null)
@@ -582,7 +607,7 @@ public class CharacterHealth : NetworkBehaviour
             yield return new WaitForSeconds(_hitImpulseDelay);
 
         // If they died during the delay, let death logic take over.
-        if (_state != null && _state.State == LifeState.Dead)
+        if (State == LifeState.Dead)
             yield break;
 
         // Scale and clamp the flinch force so it can't knock them over.
@@ -603,10 +628,81 @@ public class CharacterHealth : NetworkBehaviour
         yield return new WaitForSeconds(_hitImpulseDuration);
 
         // Don't override full ragdoll if they've died since.
-        if (_state != null && _state.State == LifeState.Dead)
+        if (State == LifeState.Dead)
             yield break;
 
         _puppetMaster.mode = previousMode;
         _hitImpulseRoutine = null;
+    }
+
+    public void ServerDamage(int amount, NetworkObject attacker = null)
+    {
+        if (!IsServer || State == LifeState.Dead)
+            return;
+
+        Health = Mathf.Max(0, Health - Mathf.Abs(amount));
+        if (Health == 0)
+        {
+            State = LifeState.Dead;
+            ApplyPuppetMasterDeathState();
+            ApplyColliderLifeState(State);
+            RPC_State(Health, _maxHealth, (int)State);
+            if (_despawnOnDeath) Invoke(nameof(ServerDespawn), Mathf.Max(0f, _despawnDelay));
+        }
+        else
+        {
+            ApplyColliderLifeState(LifeState.Alive);
+            RPC_State(Health, _maxHealth, (int)LifeState.Alive);
+        }
+    }
+
+    void ServerDespawn()
+    {
+        if (!IsServer)
+            return;
+
+        if (_puppetMaster)
+        {
+            var puppetRoot = _puppetMaster.transform.root.gameObject;
+            if (puppetRoot != gameObject)
+                Destroy(puppetRoot);
+        }
+        Destroy(gameObject);
+    }
+
+    [ObserversRpc]
+    void RPC_State(int hp, int maxHp, int st)
+    {
+        Health = hp;
+        _maxHealth = maxHp;
+        State = (LifeState)st;
+        ApplyColliderLifeState(State);
+        if (State == LifeState.Dead)
+            ApplyPuppetMasterDeathState();
+    }
+
+    void ApplyPuppetMasterDeathState()
+    {
+        if (!_puppetMaster)
+            return;
+
+        bool run = ShouldRunPuppetMaster();
+
+        _puppetMaster.gameObject.SetActive(run);
+        _puppetMaster.enabled = run;
+
+        if (!run)
+            return;
+
+        _puppetMaster.mode = PuppetMaster.Mode.Active;
+        _puppetMaster.state = PuppetMaster.State.Dead;
+    }
+
+    void ApplyColliderLifeState(LifeState state)
+    {
+        if (!_characterCollider)
+            return;
+
+        _characterCollider.enabled = state != LifeState.Dead;
     }
 }
