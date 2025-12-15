@@ -14,6 +14,9 @@ public class CharacterState : NetworkBehaviour
     [SerializeField, Tooltip("Primary collider used for movement (disabled on death).")]
     Collider characterCollider;
 
+    // CharacterHealth manages PuppetMaster lifecycle and death weights when present; avoid double-driving it here.
+    bool puppetMasterManagedByHealth;
+
     public int Health { get; private set; }
     public int MaxHealth => maxHealth;
     public LifeState State { get; private set; } = LifeState.Alive;
@@ -25,6 +28,8 @@ public class CharacterState : NetworkBehaviour
 
         if (!characterCollider)
             characterCollider = GetComponent<Collider>();
+
+        puppetMasterManagedByHealth = TryGetComponent(out CharacterHealth _);
     }
 
     public override void OnStartServer()
@@ -40,7 +45,7 @@ public class CharacterState : NetworkBehaviour
 
     public override void OnStartClient()
     {
-        if (puppetMaster)
+        if (puppetMaster && !puppetMasterManagedByHealth)
         {
             bool run = ShouldRunPuppetMaster();
             puppetMaster.gameObject.SetActive(run);
@@ -94,7 +99,7 @@ public class CharacterState : NetworkBehaviour
 
     void ApplyPuppetMasterDeathState()
     {
-        if (!puppetMaster)
+        if (!puppetMaster || puppetMasterManagedByHealth)
             return;
 
         bool run = ShouldRunPuppetMaster();
