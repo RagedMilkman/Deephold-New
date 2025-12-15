@@ -165,7 +165,8 @@ public class CharacterHealth : NetworkBehaviour
         if (State == LifeState.Dead)
         {
             ApplyPuppetMasterDeathState();
-            SpawnDeathBloodPool(GetBloodPoolSpawnPosition());
+            var position = GetBloodPoolSpawnPosition(out Transform parent, out _);
+            SpawnDeathBloodPool(position, parent);
         }
         ApplyBodyPartEffects();
     }
@@ -407,8 +408,9 @@ public class CharacterHealth : NetworkBehaviour
         limbIk.solver.IKRotationWeight = Mathf.Lerp(_legIkRotationWeight, _legIkMaxRotationWeight, damageFactor);
     }
 
-    Transform GetMostDamagedHitBoxTransform()
+    Transform GetMostDamagedHitBoxTransform(out int hitBoxIndex)
     {
+        hitBoxIndex = -1;
         if (_hitBoxes == null || _hitBoxes.Count == 0)
             return null;
 
@@ -426,19 +428,20 @@ public class CharacterHealth : NetworkBehaviour
             {
                 lowestHealth = localizedHealth;
                 bestTransform = hitBox.transform;
+                hitBoxIndex = i;
             }
         }
 
         return bestTransform;
     }
 
-    Vector3 GetBloodPoolSpawnPosition()
+    Vector3 GetBloodPoolSpawnPosition(out Transform parent, out int hitBoxIndex)
     {
-        var target = GetMostDamagedHitBoxTransform();
-        return target != null ? target.position : OwnerRoot.position;
+        parent = GetMostDamagedHitBoxTransform(out hitBoxIndex);
+        return parent != null ? parent.position : OwnerRoot.position;
     }
 
-    void SpawnDeathBloodPool(Vector3 position)
+    void SpawnDeathBloodPool(Vector3 position, Transform parent = null)
     {
         if (_bloodPoolPrefab == null || _spawnedBloodPool)
             return;
@@ -453,7 +456,7 @@ public class CharacterHealth : NetworkBehaviour
             spawnRot = Quaternion.LookRotation(hit.normal);
         }
 
-        Instantiate(_bloodPoolPrefab, spawnPos, spawnRot);
+        Instantiate(_bloodPoolPrefab, spawnPos, spawnRot, parent);
         _spawnedBloodPool = true;
     }
 
@@ -483,9 +486,10 @@ public class CharacterHealth : NetworkBehaviour
     }
 
     [ObserversRpc]
-    void RPC_SpawnBloodPool(Vector3 position)
+    void RPC_SpawnBloodPool(Vector3 position, int hitBoxIndex)
     {
-        SpawnDeathBloodPool(position);
+        Transform parent = GetHitBoxTransform(hitBoxIndex);
+        SpawnDeathBloodPool(position, parent);
     }
 
     [ObserversRpc]
@@ -719,10 +723,10 @@ public class CharacterHealth : NetworkBehaviour
             State = LifeState.Dead;
             ApplyPuppetMasterDeathState();
             ApplyColliderLifeState(State);
-            Vector3 bloodPoolPosition = GetBloodPoolSpawnPosition();
-            SpawnDeathBloodPool(bloodPoolPosition);
+            Vector3 bloodPoolPosition = GetBloodPoolSpawnPosition(out Transform parent, out int hitBoxIndex);
+            SpawnDeathBloodPool(bloodPoolPosition, parent);
             RPC_State(Health, _maxHealth, (int)State);
-            RPC_SpawnBloodPool(bloodPoolPosition);
+            RPC_SpawnBloodPool(bloodPoolPosition, hitBoxIndex);
             if (_despawnOnDeath) Invoke(nameof(ServerDespawn), Mathf.Max(0f, _despawnDelay));
         }
         else
@@ -756,7 +760,8 @@ public class CharacterHealth : NetworkBehaviour
         if (State == LifeState.Dead)
         {
             ApplyPuppetMasterDeathState();
-            SpawnDeathBloodPool(GetBloodPoolSpawnPosition());
+            var position = GetBloodPoolSpawnPosition(out Transform parent, out _);
+            SpawnDeathBloodPool(position, parent);
         }
     }
 
