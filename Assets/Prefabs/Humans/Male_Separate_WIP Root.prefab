@@ -44,7 +44,6 @@ GameObject:
   - component: {fileID: 9023139530781010839}
   - component: {fileID: 8133593829575410955}
   - component: {fileID: 3975131556503430263}
-  - component: {fileID: 3425142241441384679}
   m_Layer: 6
   m_Name: B-forearm.L
   m_TagString: Untagged
@@ -80,7 +79,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -109,7 +108,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -219,23 +218,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &3425142241441384679
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 85485426310276670}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitBox
-  owner: {fileID: 0}
-  bodyPart: 2
-  damageMultiplier: 0.5
-  puppetBodyPart: 0
-  puppetMasterMuscleIndex: -1
 --- !u!1 &231620197380347731
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,7 +467,6 @@ GameObject:
   - component: {fileID: 2454569896729901998}
   - component: {fileID: 2004303996357207939}
   - component: {fileID: 3307778107152541232}
-  - component: {fileID: 3671350843102769782}
   m_Layer: 6
   m_Name: B-thigh.L
   m_TagString: Untagged
@@ -522,7 +503,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -551,7 +532,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -661,23 +642,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &3671350843102769782
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 483735115986841218}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitBox
-  owner: {fileID: 0}
-  bodyPart: 4
-  damageMultiplier: 0.5
-  puppetBodyPart: 0
-  puppetMasterMuscleIndex: -1
 --- !u!1 &532942047596371228
 GameObject:
   m_ObjectHideFlags: 0
@@ -1366,7 +1330,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1725,7 +1689,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1792,7 +1756,6 @@ GameObject:
   - component: {fileID: 4433895248138161478}
   - component: {fileID: 6203795543513881940}
   - component: {fileID: 98242588270166285}
-  - component: {fileID: 7547266224541123989}
   m_Layer: 6
   m_Name: B-upperArm.R
   m_TagString: Untagged
@@ -1830,7 +1793,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -1859,7 +1822,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -1969,23 +1932,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &7547266224541123989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1937918617829203581}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitBox
-  owner: {fileID: 0}
-  bodyPart: 3
-  damageMultiplier: 0.5
-  puppetBodyPart: 0
-  puppetMasterMuscleIndex: -1
 --- !u!1 &1992422052118686834
 GameObject:
   m_ObjectHideFlags: 0
@@ -2044,7 +1990,6 @@ GameObject:
   - component: {fileID: 7792467624724458809}
   - component: {fileID: 7010370353462063840}
   - component: {fileID: 7575628987161195861}
-  - component: {fileID: 3321106157200837816}
   m_Layer: 6
   m_Name: B-forearm.R
   m_TagString: Untagged
@@ -2080,7 +2025,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -2109,7 +2054,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -2219,23 +2164,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &3321106157200837816
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2007979752557386144}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitBox
-  owner: {fileID: 0}
-  bodyPart: 3
-  damageMultiplier: 0.5
-  puppetBodyPart: 0
-  puppetMasterMuscleIndex: -1
 --- !u!1 &2081398259110565300
 GameObject:
   m_ObjectHideFlags: 0
@@ -2279,7 +2207,6 @@ GameObject:
   - component: {fileID: 1202930169692121925}
   - component: {fileID: 5829703606770123275}
   - component: {fileID: 1053956384645080685}
-  - component: {fileID: 4848714169077143888}
   m_Layer: 6
   m_Name: B-upperArm.L
   m_TagString: Untagged
@@ -2316,7 +2243,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -2345,7 +2272,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -2455,23 +2382,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &4848714169077143888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2090471182372052363}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitBox
-  owner: {fileID: 0}
-  bodyPart: 2
-  damageMultiplier: 0.5
-  puppetBodyPart: 0
-  puppetMasterMuscleIndex: -1
 --- !u!1 &2184754287834159018
 GameObject:
   m_ObjectHideFlags: 0
@@ -2824,7 +2734,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -3627,7 +3537,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -3664,7 +3574,6 @@ GameObject:
   - component: {fileID: 7898724271804054432}
   - component: {fileID: 3920883775786645790}
   - component: {fileID: 4033741690462091286}
-  - component: {fileID: 3239363402132031361}
   m_Layer: 6
   m_Name: B-thigh.R
   m_TagString: Untagged
@@ -3701,7 +3610,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -3730,7 +3639,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -3840,23 +3749,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &3239363402132031361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2849586331574408223}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitBox
-  owner: {fileID: 0}
-  bodyPart: 5
-  damageMultiplier: 0.5
-  puppetBodyPart: 0
-  puppetMasterMuscleIndex: -1
 --- !u!1 &2861867036358024659
 GameObject:
   m_ObjectHideFlags: 0
@@ -4094,7 +3986,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -4341,7 +4233,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -4851,7 +4743,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -4985,7 +4877,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -5059,7 +4951,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -5423,7 +5315,6 @@ GameObject:
   - component: {fileID: 337513332488499530}
   - component: {fileID: 9067979320223101955}
   - component: {fileID: 4079084493753062084}
-  - component: {fileID: 5277954716613311555}
   m_Layer: 6
   m_Name: B-spine
   m_TagString: Untagged
@@ -5462,7 +5353,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -5489,7 +5380,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -5599,23 +5490,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &5277954716613311555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6267655807985359499}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitBox
-  owner: {fileID: 0}
-  bodyPart: 1
-  damageMultiplier: 1
-  puppetBodyPart: 0
-  puppetMasterMuscleIndex: -1
 --- !u!1 &6270518400529239564
 GameObject:
   m_ObjectHideFlags: 0
@@ -5665,7 +5539,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -5739,7 +5613,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -5834,7 +5708,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013655703, y: 0.7053685, z: 0.033096176, w: 0.70793605}
+  m_LocalRotation: {x: 0.013655715, y: 0.7053685, z: 0.033096023, w: 0.70793617}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -5862,7 +5736,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -5934,7 +5808,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -5971,7 +5845,6 @@ GameObject:
   - component: {fileID: 9179225436277783449}
   - component: {fileID: 8268413365225386077}
   - component: {fileID: 3754831009205288449}
-  - component: {fileID: 7963168473171720010}
   m_Layer: 6
   m_Name: B-shin.L
   m_TagString: Untagged
@@ -6007,7 +5880,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -6036,7 +5909,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -6146,23 +6019,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &7963168473171720010
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6797074947291448208}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitBox
-  owner: {fileID: 0}
-  bodyPart: 4
-  damageMultiplier: 0.5
-  puppetBodyPart: 0
-  puppetMasterMuscleIndex: -1
 --- !u!1 &6809189690965787631
 GameObject:
   m_ObjectHideFlags: 0
@@ -6395,7 +6251,6 @@ GameObject:
   - component: {fileID: 5930410930013443604}
   - component: {fileID: 6350999521219244601}
   - component: {fileID: 7273132201309330060}
-  - component: {fileID: 4037435963694153740}
   m_Layer: 6
   m_Name: B-shin.R
   m_TagString: Untagged
@@ -6431,7 +6286,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -6460,7 +6315,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -6570,23 +6425,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &4037435963694153740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7423204359606108926}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitBox
-  owner: {fileID: 0}
-  bodyPart: 5
-  damageMultiplier: 0.5
-  puppetBodyPart: 0
-  puppetMasterMuscleIndex: -1
 --- !u!1 &7465219771704101522
 GameObject:
   m_ObjectHideFlags: 0
@@ -6701,7 +6539,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -6728,7 +6566,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -6946,6 +6784,7 @@ MonoBehaviour:
   controller: {fileID: 1714559259804665549}
   yawReplicator: {fileID: 0}
   positionReplicator: {fileID: 0}
+  characterState: {fileID: 3403907483884108976}
   moveSpeed: 4
   acceleration: 12
   sidewaysSpeedMultiplier: 0.75
@@ -7102,6 +6941,7 @@ MonoBehaviour:
   _hitImpulseDelay: 0.01
   _hitImpulseForceMultiplier: 0.3
   _hitImpulseMaxForce: 60
+  _deadWeightsDelay: 0.05
   _deadForceMultiplier: 0.25
   _deadMappingWeight: 0.9
   _deadPinWeight: 0.35
@@ -7126,6 +6966,7 @@ MonoBehaviour:
   despawnDelay: 15
   puppetMaster: {fileID: 4984505607652927022}
   deadMasterWeight: 0.3
+  characterCollider: {fileID: 0}
 --- !u!114 &2375063280235814730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7596,7 +7437,6 @@ GameObject:
   - component: {fileID: 1198910265774925931}
   - component: {fileID: 8601688280802774288}
   - component: {fileID: 7412719404032405382}
-  - component: {fileID: 4817708195286884801}
   m_Layer: 6
   m_Name: B-head
   m_TagString: Untagged
@@ -7632,7 +7472,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -7659,7 +7499,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -7769,23 +7609,6 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &4817708195286884801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8077484625001399060}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c890319b2a6e33d4d9417ba242f5a983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HitBox
-  owner: {fileID: 0}
-  bodyPart: 0
-  damageMultiplier: 2
-  puppetBodyPart: 0
-  puppetMasterMuscleIndex: -1
 --- !u!1 &8170930508393627006
 GameObject:
   m_ObjectHideFlags: 0
@@ -7871,7 +7694,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -7943,7 +7766,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -8083,7 +7906,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -8189,7 +8012,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -8293,7 +8116,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2

@@ -109,7 +109,7 @@ Material:
     - _DecalMeshDepthBias: 0
     - _DecalMeshViewBias: 0
     - _DetailNormalMapScale: 1
-    - _DrawOrder: -32
+    - _DrawOrder: 18
     - _DstBlend: 10
     - _Frame: 1.2
     - _FrameLength: 36

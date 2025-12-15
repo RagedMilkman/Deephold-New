@@ -10,7 +10,6 @@ public class CharacterState : NetworkBehaviour
     [SerializeField] bool despawnOnDeath = true;
     [SerializeField] float despawnDelay = 2f;
     [SerializeField, Tooltip("Optional PuppetMaster to activate on death.")] PuppetMaster puppetMaster;
-    [SerializeField, Tooltip("Master weights (mapping/pin/muscle) applied to the PuppetMaster once dead.")] float deadMasterWeight = 0.3f;
     [SerializeField, Tooltip("Primary collider used for movement (disabled on death).")]
     Collider characterCollider;
 
@@ -107,9 +106,6 @@ public class CharacterState : NetworkBehaviour
 
         puppetMaster.mode = PuppetMaster.Mode.Active;
         puppetMaster.state = PuppetMaster.State.Dead;
-        puppetMaster.mappingWeight = deadMasterWeight;
-        puppetMaster.pinWeight = deadMasterWeight;
-        puppetMaster.muscleWeight = deadMasterWeight;
     }
 
     void ApplyColliderLifeState(LifeState state)
