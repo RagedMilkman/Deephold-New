@@ -165,7 +165,7 @@ public class CharacterHealth : NetworkBehaviour
         if (State == LifeState.Dead)
         {
             ApplyPuppetMasterDeathState();
-            SpawnDeathBloodPool(OwnerRoot.position);
+            SpawnDeathBloodPool(GetBloodPoolSpawnPosition());
         }
         ApplyBodyPartEffects();
     }
@@ -405,6 +405,37 @@ public class CharacterHealth : NetworkBehaviour
         float damageFactor = 1f - Mathf.Clamp01(normalizedHealth);
         limbIk.solver.IKPositionWeight = Mathf.Lerp(_legIkPositionWeight, 0f, damageFactor);
         limbIk.solver.IKRotationWeight = Mathf.Lerp(_legIkRotationWeight, _legIkMaxRotationWeight, damageFactor);
+    }
+
+    Transform GetMostDamagedHitBoxTransform()
+    {
+        if (_hitBoxes == null || _hitBoxes.Count == 0)
+            return null;
+
+        Transform bestTransform = null;
+        int lowestHealth = int.MaxValue;
+
+        for (int i = 0; i < _hitBoxes.Count; i++)
+        {
+            var hitBox = _hitBoxes[i];
+            if (hitBox == null)
+                continue;
+
+            int localizedHealth = GetLocalizedHealth(hitBox.BodyPart);
+            if (localizedHealth < lowestHealth)
+            {
+                lowestHealth = localizedHealth;
+                bestTransform = hitBox.transform;
+            }
+        }
+
+        return bestTransform;
+    }
+
+    Vector3 GetBloodPoolSpawnPosition()
+    {
+        var target = GetMostDamagedHitBoxTransform();
+        return target != null ? target.position : OwnerRoot.position;
     }
 
     void SpawnDeathBloodPool(Vector3 position)
@@ -688,9 +719,10 @@ public class CharacterHealth : NetworkBehaviour
             State = LifeState.Dead;
             ApplyPuppetMasterDeathState();
             ApplyColliderLifeState(State);
-            SpawnDeathBloodPool(OwnerRoot.position);
+            Vector3 bloodPoolPosition = GetBloodPoolSpawnPosition();
+            SpawnDeathBloodPool(bloodPoolPosition);
             RPC_State(Health, _maxHealth, (int)State);
-            RPC_SpawnBloodPool(OwnerRoot.position);
+            RPC_SpawnBloodPool(bloodPoolPosition);
             if (_despawnOnDeath) Invoke(nameof(ServerDespawn), Mathf.Max(0f, _despawnDelay));
         }
         else
@@ -724,7 +756,7 @@ public class CharacterHealth : NetworkBehaviour
         if (State == LifeState.Dead)
         {
             ApplyPuppetMasterDeathState();
-            SpawnDeathBloodPool(OwnerRoot.position);
+            SpawnDeathBloodPool(GetBloodPoolSpawnPosition());
         }
     }
 
