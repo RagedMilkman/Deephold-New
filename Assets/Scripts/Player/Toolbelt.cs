@@ -576,7 +576,7 @@ public class ToolbeltNetworked : NetworkBehaviour
 
         var def = GetRegistryDefinition(slot.RegistryIndex);
         slot.EnsureVisual(
-            mountRoot,
+            ResolveSlotMountRoot(slot.Slot),
             def,
             DetermineMountType,
             ResolveMountTarget,
@@ -607,7 +607,7 @@ public class ToolbeltNetworked : NetworkBehaviour
                 slot,
                 desiredStance,
                 (int)slot.Slot,
-                mountRoot,
+                ResolveSlotMountRoot(slot.Slot),
                 GetEquipDurationForSlot,
                 GetUnequipDurationForSlot,
                 GetStanceTransitionDurationForSlot,
@@ -718,6 +718,15 @@ public class ToolbeltNetworked : NetworkBehaviour
         return defaultPuppetMasterPropRoot && puppetMasterPropRootType.IsInstanceOfType(defaultPuppetMasterPropRoot)
             ? defaultPuppetMasterPropRoot
             : null;
+    }
+
+    Transform ResolveSlotMountRoot(ToolbeltSlotName slot)
+    {
+        var propRoot = GetPuppetMasterPropRoot(slot);
+        if (propRoot != null)
+            return ((Component)propRoot).transform;
+
+        return mountRoot;
     }
 
     void RegisterInstanceWithPuppetMaster(GameObject instance, ToolbeltSlotName slot)
