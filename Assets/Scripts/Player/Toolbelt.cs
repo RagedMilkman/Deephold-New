@@ -49,7 +49,14 @@ public class ToolbeltNetworked : NetworkBehaviour
     private bool defaultLeftWristErrorLogged;
     private bool defaultRightWristErrorLogged;
 
-    private Component puppetMasterPropRoot;
+    [SerializeField, Tooltip("Optional default PuppetMaster PropRoot. Falls back to searching the character hierarchy if unset.")]
+    private Component defaultPuppetMasterPropRoot;
+
+    [SerializeField, Tooltip("PropRoot overrides per slot when using multiple PuppetMaster PropRoots.")]
+    private List<PuppetMasterPropRootBinding> puppetMasterPropRoots = new();
+
+    private readonly Dictionary<ToolbeltSlotName, Component> resolvedPuppetMasterPropRoots = new();
+    private readonly Dictionary<GameObject, Component> puppetMasterPropRootByInstance = new();
     private Type puppetMasterPropType;
     private Type puppetMasterPropRootType;
 
@@ -107,7 +114,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (!humanoidRigAnimator && transform.root)
             humanoidRigAnimator = transform.root.GetComponentInChildren<HumanoidRigAnimator>(true);
 
-        ResolvePuppetMasterPropRoot();
+        ResolvePuppetMasterPropRoots();
 
     }
 
@@ -123,7 +130,7 @@ public class ToolbeltNetworked : NetworkBehaviour
             return;
         }
 
-        ResolvePuppetMasterPropRoot();
+        ResolvePuppetMasterPropRoots();
 
         AttachStanceSource();
         RefreshMountPoints();
@@ -670,41 +677,86 @@ public class ToolbeltNetworked : NetworkBehaviour
         instanceTransform.localScale = (scale == Vector3.zero) ? Vector3.one : scale;
     }
 
-    void ResolvePuppetMasterPropRoot()
+    [Serializable]
+    private struct PuppetMasterPropRootBinding
+    {
+        public ToolbeltSlotName slot;
+        public Component propRoot;
+    }
+
+    void ResolvePuppetMasterPropRoots()
     {
         puppetMasterPropType ??= Type.GetType("RootMotion.Dynamics.Prop, Assembly-CSharp-firstpass")
             ?? Type.GetType("RootMotion.Dynamics.Prop");
         puppetMasterPropRootType ??= Type.GetType("RootMotion.Dynamics.PropRoot, Assembly-CSharp-firstpass")
             ?? Type.GetType("RootMotion.Dynamics.PropRoot");
 
+        resolvedPuppetMasterPropRoots.Clear();
+
         if (puppetMasterPropRootType == null || !transform.root)
             return;
 
-        puppetMasterPropRoot = transform.root.GetComponentInChildren(puppetMasterPropRootType, true);
+        if (!defaultPuppetMasterPropRoot || !puppetMasterPropRootType.IsInstanceOfType(defaultPuppetMasterPropRoot))
+            defaultPuppetMasterPropRoot = transform.root.GetComponentInChildren(puppetMasterPropRootType, true);
+
+        for (int i = 0; i < puppetMasterPropRoots.Count; i++)
+        {
+            var binding = puppetMasterPropRoots[i];
+            if (binding.propRoot && puppetMasterPropRootType.IsInstanceOfType(binding.propRoot))
+                resolvedPuppetMasterPropRoots[binding.slot] = binding.propRoot;
+        }
     }
 
-    void RegisterInstanceWithPuppetMaster(GameObject instance)
+    Component GetPuppetMasterPropRoot(ToolbeltSlotName slot)
     {
-        if (!instance || puppetMasterPropRoot == null || puppetMasterPropType == null)
+        if (puppetMasterPropRootType == null)
+            return null;
+
+        if (resolvedPuppetMasterPropRoots.TryGetValue(slot, out var root) && root)
+            return root;
+
+        return defaultPuppetMasterPropRoot && puppetMasterPropRootType.IsInstanceOfType(defaultPuppetMasterPropRoot)
+            ? defaultPuppetMasterPropRoot
+            : null;
+    }
+
+    void RegisterInstanceWithPuppetMaster(GameObject instance, ToolbeltSlotName slot)
+    {
+        if (!instance || puppetMasterPropType == null)
             return;
 
         var prop = instance.GetComponent(puppetMasterPropType);
         if (prop == null)
             return;
 
-        puppetMasterPropRoot.SendMessage("AddProp", prop, SendMessageOptions.DontRequireReceiver);
+        var propRoot = GetPuppetMasterPropRoot(slot);
+        if (propRoot == null)
+            return;
+
+        propRoot.SendMessage("AddProp", prop, SendMessageOptions.DontRequireReceiver);
+        puppetMasterPropRootByInstance[instance] = propRoot;
     }
 
-    void UnregisterInstanceFromPuppetMaster(GameObject instance)
+    void UnregisterInstanceFromPuppetMaster(GameObject instance, ToolbeltSlotName slot)
     {
-        if (!instance || puppetMasterPropRoot == null || puppetMasterPropType == null)
+        if (!instance || puppetMasterPropType == null)
             return;
+
+        puppetMasterPropRootByInstance.TryGetValue(instance, out var propRoot);
+        if (propRoot == null)
+            propRoot = GetPuppetMasterPropRoot(slot);
+
+        if (propRoot == null)
+        {
+            puppetMasterPropRootByInstance.Remove(instance);
+            return;
+        }
 
         var prop = instance.GetComponent(puppetMasterPropType);
-        if (prop == null)
-            return;
+        if (prop != null)
+            propRoot.SendMessage("RemoveProp", prop, SendMessageOptions.DontRequireReceiver);
 
-        puppetMasterPropRoot.SendMessage("RemoveProp", prop, SendMessageOptions.DontRequireReceiver);
+        puppetMasterPropRootByInstance.Remove(instance);
     }
 
     ToolMountPoint.MountType DetermineMountType(ItemDefinition def)
