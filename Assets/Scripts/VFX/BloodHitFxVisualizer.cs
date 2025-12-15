@@ -14,6 +14,10 @@ public class BloodHitFxVisualizer : MonoBehaviour
     [SerializeField, Tooltip("Decal projector spawned at the hit location.")]
     private GameObject _bloodDecalPrefab;
 
+    [Header("Death FX")]
+    [SerializeField, Tooltip("One-shot blood pool spawned at the character's feet on death.")]
+    private GameObject _bloodPoolPrefab;
+
     [SerializeField, Tooltip("Uniform scale applied to the entry impact effect.")]
     private float _entryImpactScale = 0.5f;
 
@@ -25,6 +29,8 @@ public class BloodHitFxVisualizer : MonoBehaviour
 
     [SerializeField, Tooltip("How far to push the exit FX along the bullet direction.")]
     private float _exitSpawnOffset = 0.02f;
+
+    private bool _spawnedBloodPool;
 
     public void PlayHitFx(
         Vector3 hitPoint,
@@ -67,5 +73,32 @@ public class BloodHitFxVisualizer : MonoBehaviour
         var exitImpact = Instantiate(exitPrefab, exitPoint, exitRotation, spawnParent);
         float exitScale = remainingForce * _exitScalePerForce;
         exitImpact.transform.localScale *= exitScale;
+    }
+
+    public void ResetBloodPoolSpawn()
+    {
+        _spawnedBloodPool = false;
+    }
+
+    public void SpawnDeathBloodPool(Vector3 position, Transform parent = null)
+    {
+        if (_bloodPoolPrefab == null || _spawnedBloodPool)
+            return;
+
+        Vector3 spawnPos = position;
+        Quaternion spawnRot = Quaternion.LookRotation(Vector3.up);
+
+        Vector3 rayOrigin = position + (Vector3.up * 0.5f);
+        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 2f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+        {
+            spawnPos = hit.point;
+            spawnRot = Quaternion.LookRotation(hit.normal);
+        }
+
+        var instance = Instantiate(_bloodPoolPrefab, spawnPos, spawnRot, parent);
+        if (parent != null && instance.transform.parent != parent)
+            instance.transform.SetParent(parent, true);
+
+        _spawnedBloodPool = true;
     }
 }

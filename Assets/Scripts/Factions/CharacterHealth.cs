@@ -41,10 +41,6 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField, Tooltip("Relays hit FX to a spawned ghost visualizer, if present.")]
     BoneSnapshotReplicator _boneSnapshotReplicator;
 
-    [Header("Death FX")]
-    [SerializeField, Tooltip("One-shot blood pool spawned at the character's feet on death.")]
-    GameObject _bloodPoolPrefab;
-
     [Header("PuppetMaster / Death")]
     [FormerlySerializedAs("puppetMaster")]
     [SerializeField, Tooltip("Optional PuppetMaster used for hit flinches and death ragdoll.")]
@@ -130,7 +126,6 @@ public class CharacterHealth : NetworkBehaviour
     // FX runtime state
     [AllowMutableSyncType]
     readonly SyncVar<int> _bloodPoolHitBoxIndex = new(-1);
-    bool _spawnedBloodPool;
 
     // Runtime
     Coroutine _hitImpulseRoutine;
@@ -168,7 +163,7 @@ public class CharacterHealth : NetworkBehaviour
         {
             ApplyPuppetMasterDeathState();
             var position = GetBloodPoolSpawnPosition(out Transform parent, out _);
-            SpawnDeathBloodPool(position, parent);
+            _bloodHitFx?.SpawnDeathBloodPool(position, parent);
         }
         ApplyBodyPartEffects();
     }
@@ -179,7 +174,7 @@ public class CharacterHealth : NetworkBehaviour
         Health = _maxHealth;
         State = LifeState.Alive;
         _bloodPoolHitBoxIndex.Value = -1;
-        _spawnedBloodPool = false;
+        _bloodHitFx?.ResetBloodPoolSpawn();
         ApplyColliderLifeState(State);
         InitializeLocalizedHealth();
         ApplyPuppetMasterRunnerState();
@@ -191,7 +186,7 @@ public class CharacterHealth : NetworkBehaviour
         // Helps when objects are pooled / re-enabled.
         _localizedHealth.OnChange += OnLocalizedHealthChanged;
         _bloodPoolHitBoxIndex.Value = -1;
-        _spawnedBloodPool = false;
+        _bloodHitFx?.ResetBloodPoolSpawn();
         ApplyPuppetMasterRunnerState();
         ApplyBodyPartEffects();
     }
@@ -456,27 +451,6 @@ public class CharacterHealth : NetworkBehaviour
         return parent != null ? parent.position : OwnerRoot.position;
     }
 
-    void SpawnDeathBloodPool(Vector3 position, Transform parent = null)
-    {
-        if (_bloodPoolPrefab == null || _spawnedBloodPool)
-            return;
-
-        Vector3 spawnPos = position;
-        Quaternion spawnRot = Quaternion.LookRotation(Vector3.up);
-
-        Vector3 rayOrigin = position + (Vector3.up * 0.5f);
-        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 2f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
-        {
-            spawnPos = hit.point;
-            spawnRot = Quaternion.LookRotation(hit.normal);
-        }
-
-        var instance = Instantiate(_bloodPoolPrefab, spawnPos, spawnRot, parent);
-        if (parent != null && instance.transform.parent != parent)
-            instance.transform.SetParent(parent, true);
-        _spawnedBloodPool = true;
-    }
-
     [ObserversRpc]
     void RPC_EnterDeathRagdoll(int bodyPartInt, Vector3 hitPoint, Vector3 hitDir, float force, int muscleIndex)
     {
@@ -507,7 +481,7 @@ public class CharacterHealth : NetworkBehaviour
     {
         _bloodPoolHitBoxIndex.Value = hitBoxIndex;
         Transform parent = GetHitBoxTransform(hitBoxIndex);
-        SpawnDeathBloodPool(position, parent);
+        _bloodHitFx?.SpawnDeathBloodPool(position, parent);
     }
 
     [ObserversRpc]
@@ -743,7 +717,7 @@ public class CharacterHealth : NetworkBehaviour
             ApplyColliderLifeState(State);
             Vector3 bloodPoolPosition = GetBloodPoolSpawnPosition(out Transform parent, out int hitBoxIndex);
             _bloodPoolHitBoxIndex.Value = hitBoxIndex;
-            SpawnDeathBloodPool(bloodPoolPosition, parent);
+            _bloodHitFx?.SpawnDeathBloodPool(bloodPoolPosition, parent);
             RPC_State(Health, _maxHealth, (int)State);
             RPC_SpawnBloodPool(bloodPoolPosition, hitBoxIndex);
             if (_despawnOnDeath) Invoke(nameof(ServerDespawn), Mathf.Max(0f, _despawnDelay));
@@ -780,7 +754,7 @@ public class CharacterHealth : NetworkBehaviour
         {
             ApplyPuppetMasterDeathState();
             var position = GetBloodPoolSpawnPosition(out Transform parent, out _);
-            SpawnDeathBloodPool(position, parent);
+            _bloodHitFx?.SpawnDeathBloodPool(position, parent);
         }
     }
 
