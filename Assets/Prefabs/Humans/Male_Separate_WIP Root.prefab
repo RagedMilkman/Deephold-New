@@ -5708,7 +5708,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013655748, y: 0.7053685, z: 0.03309595, w: 0.70793617}
+  m_LocalRotation: {x: 0.013655818, y: 0.70536846, z: 0.03309585, w: 0.7079361}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -6854,7 +6854,6 @@ MonoBehaviour:
   - {fileID: 7482769739127380242}
   - {fileID: 2650125091823068198}
   - {fileID: 5106284807051170480}
-  - {fileID: 0}
   - {fileID: 2375063280235814730}
   - {fileID: 8125184488041465076}
   InitializedParentNetworkBehaviour: {fileID: 0}
@@ -6914,6 +6913,7 @@ MonoBehaviour:
   _maxLocalizedHealth: 70
   _bloodHitFx: {fileID: 0}
   _boneSnapshotReplicator: {fileID: 0}
+  _bloodPoolPrefab: {fileID: 6364625524637988904, guid: f0b28b3ca49ab0e4d8f471adf9c90542, type: 3}
   _puppetMaster: {fileID: 0}
   _deathStateSettings:
     killDuration: 0
@@ -6966,7 +6966,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5562ec83048f3fb44959ad6666b6f51d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoneSnapshotReplicator
-  _componentIndexCache: 4
+  _componentIndexCache: 3
   _addedNetworkObject: {fileID: 7734047683449924906}
   _networkObjectCache: {fileID: 7734047683449924906}
   _rigRoot: {fileID: 6512080644292543530}
@@ -6989,7 +6989,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a12a9fc063de6740983ce8451213c57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ToolbeltNetworked
-  _componentIndexCache: 5
+  _componentIndexCache: 4
   _addedNetworkObject: {fileID: 7734047683449924906}
   _networkObjectCache: {fileID: 7734047683449924906}
   itemRegistry: []

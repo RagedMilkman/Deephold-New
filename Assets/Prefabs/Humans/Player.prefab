@@ -748,7 +748,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013797637
+      value: 0.0137976315
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
@@ -756,7 +756,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.033239674
+      value: -0.0332396
       objectReference: {fileID: 0}
     - target: {fileID: 6797074947291448208, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_Layer
@@ -960,15 +960,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013654899
+      value: 0.013654946
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7053685
+      value: 0.7053686
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.033098195
+      value: 0.033098094
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1026,6 +1026,7 @@ MonoBehaviour:
   _bloodImpactPrefab: {fileID: 8007369982305464528, guid: 4ae5d2ab9b8c5444498df728275352c8, type: 3}
   _bloodExitPrefab: {fileID: 0}
   _bloodDecalPrefab: {fileID: 8707850840964112949, guid: b1fde64c2a4cb1f4e98ccc1e0ac392f1, type: 3}
+  _bloodPoolPrefab: {fileID: 6364625524637988904, guid: f0b28b3ca49ab0e4d8f471adf9c90542, type: 3}
   _entryImpactScale: 0.5
   _exitMinimumForce: 50
   _exitScalePerForce: 0.05

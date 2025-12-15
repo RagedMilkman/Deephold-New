@@ -6,6 +6,7 @@ using RootMotion.FinalIK;
 using RootMotion.Dynamics;
 using UnityEngine;
 using UnityEngine.Serialization;
+using FishNet.CodeGenerating;
 
 public enum LifeState { Alive = 0, Dead = 1 }
 
