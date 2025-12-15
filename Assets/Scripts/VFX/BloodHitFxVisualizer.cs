@@ -23,6 +23,9 @@ public class BloodHitFxVisualizer : MonoBehaviour
     [SerializeField, Tooltip("Multiplier applied to remaining force to scale the exit wound.")]
     private float _exitScalePerForce = 0.02f;
 
+    [SerializeField, Tooltip("How far to push the exit FX along the bullet direction.")]
+    private float _exitSpawnOffset = 0.02f;
+
     public void PlayHitFx(
         Vector3 hitPoint,
         Vector3 surfaceNormal,
@@ -54,12 +57,14 @@ public class BloodHitFxVisualizer : MonoBehaviour
         if (exitPrefab == null)
             return;
 
-        Vector3 exitNormal = hitDirection != Vector3.zero ? hitDirection.normalized : -surfaceNormal;
+        Vector3 exitNormal = hitDirection.sqrMagnitude > 0f ? hitDirection.normalized : -surfaceNormal;
         Quaternion exitRotation = exitNormal.sqrMagnitude > 0f
             ? Quaternion.LookRotation(exitNormal)
             : rotation;
 
-        var exitImpact = Instantiate(exitPrefab, hitPoint, exitRotation, spawnParent);
+        Vector3 exitPoint = hitPoint + (exitNormal * _exitSpawnOffset);
+
+        var exitImpact = Instantiate(exitPrefab, exitPoint, exitRotation, spawnParent);
         float exitScale = remainingForce * _exitScalePerForce;
         exitImpact.transform.localScale *= exitScale;
     }
