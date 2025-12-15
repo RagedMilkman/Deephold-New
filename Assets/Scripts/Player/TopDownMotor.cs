@@ -208,6 +208,11 @@ public class TopDownMotor : MonoBehaviour
 
     public void ApplyYaw(float yawDeg, Vector3? aimPoint = null, bool replicateYaw = true)
     {
+        if (characterState && characterState.State == LifeState.Dead)
+        {
+            return;
+        }
+
         if (rigAnimator != null)
         {
             Vector3 origin = rotateTarget ? rotateTarget.position : transform.position;
