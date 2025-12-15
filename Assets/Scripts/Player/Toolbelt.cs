@@ -696,15 +696,31 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (puppetMasterPropRootType == null || !transform.root)
             return;
 
-        if (!defaultPuppetMasterPropRoot || !puppetMasterPropRootType.IsInstanceOfType(defaultPuppetMasterPropRoot))
-            defaultPuppetMasterPropRoot = transform.root.GetComponentInChildren(puppetMasterPropRootType, true);
+        defaultPuppetMasterPropRoot = CoercePropRoot(defaultPuppetMasterPropRoot)
+            ?? transform.root.GetComponentInChildren(puppetMasterPropRootType, true);
 
         for (int i = 0; i < puppetMasterPropRoots.Count; i++)
         {
             var binding = puppetMasterPropRoots[i];
-            if (binding.propRoot && puppetMasterPropRootType.IsInstanceOfType(binding.propRoot))
-                resolvedPuppetMasterPropRoots[binding.slot] = binding.propRoot;
+            var resolvedRoot = CoercePropRoot(binding.propRoot);
+            if (resolvedRoot)
+                resolvedPuppetMasterPropRoots[binding.slot] = resolvedRoot;
         }
+    }
+
+    Component CoercePropRoot(Component candidate)
+    {
+        if (puppetMasterPropRootType == null || !candidate)
+            return null;
+
+        if (puppetMasterPropRootType.IsInstanceOfType(candidate))
+            return candidate;
+
+        var onGameObject = candidate.TryGetComponent(puppetMasterPropRootType, out var propRoot)
+            ? propRoot
+            : null;
+
+        return onGameObject;
     }
 
     Component GetPuppetMasterPropRoot(ToolbeltSlotName slot)
@@ -715,9 +731,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (resolvedPuppetMasterPropRoots.TryGetValue(slot, out var root) && root)
             return root;
 
-        return defaultPuppetMasterPropRoot && puppetMasterPropRootType.IsInstanceOfType(defaultPuppetMasterPropRoot)
-            ? defaultPuppetMasterPropRoot
-            : null;
+        return CoercePropRoot(defaultPuppetMasterPropRoot);
     }
 
     Transform ResolveSlotMountRoot(ToolbeltSlotName slot)
