@@ -37,6 +37,7 @@ public class CharacterHealth : NetworkBehaviour
     [Header("Hit FX")]
     [SerializeField, Tooltip("Optional FX spawners used for local and ghost visuals.")]
     List<BloodHitFxVisualizer> _bloodHitFxVisualizers = new();
+    readonly List<BloodHitFxVisualizer> _ghostBloodHitFxVisualizers = new();
 
     [SerializeField, Tooltip("Relays hit FX to a spawned ghost visualizer, if present.")]
     BoneSnapshotReplicator _boneSnapshotReplicator;
@@ -149,6 +150,7 @@ public class CharacterHealth : NetworkBehaviour
         if (_ikSolvers == null || _ikSolvers.Length == 0) _ikSolvers = GetComponentsInChildren<IK>(true);
         CacheBloodHitFxVisualizers();
         if (!_boneSnapshotReplicator) _boneSnapshotReplicator = GetComponent<BoneSnapshotReplicator>();
+        SubscribeToGhostFxUpdates();
         if (!_characterCollider) _characterCollider = GetComponent<Collider>();
 
         CacheLegIkSolvers();
@@ -191,6 +193,7 @@ public class CharacterHealth : NetworkBehaviour
         ForEachBloodFx(v => v.ResetBloodPoolSpawn());
         ApplyPuppetMasterRunnerState();
         ApplyBodyPartEffects();
+        SubscribeToGhostFxUpdates();
     }
 
     void OnValidate()
@@ -201,6 +204,7 @@ public class CharacterHealth : NetworkBehaviour
     void OnDisable()
     {
         _localizedHealth.OnChange -= OnLocalizedHealthChanged;
+        UnsubscribeFromGhostFxUpdates();
     }
 
     bool ShouldRunPuppetMaster()
@@ -798,6 +802,7 @@ public class CharacterHealth : NetworkBehaviour
             if (!_bloodHitFxVisualizers.Contains(fx))
                 _bloodHitFxVisualizers.Add(fx);
         }
+        SyncGhostBloodFxVisualizers(_ghostBloodHitFxVisualizers);
     }
 
     void ForEachBloodFx(Action<BloodHitFxVisualizer> callback)
@@ -812,6 +817,54 @@ public class CharacterHealth : NetworkBehaviour
                 continue;
 
             callback(fx);
+        }
+    }
+
+    void SubscribeToGhostFxUpdates()
+    {
+        if (_boneSnapshotReplicator == null)
+            return;
+
+        _boneSnapshotReplicator.GhostHitFxVisualizersChanged -= SyncGhostBloodFxVisualizers;
+        _boneSnapshotReplicator.GhostHitFxVisualizersChanged += SyncGhostBloodFxVisualizers;
+        SyncGhostBloodFxVisualizers(_boneSnapshotReplicator.GhostHitFxVisualizers);
+    }
+
+    void UnsubscribeFromGhostFxUpdates()
+    {
+        if (_boneSnapshotReplicator == null)
+            return;
+
+        _boneSnapshotReplicator.GhostHitFxVisualizersChanged -= SyncGhostBloodFxVisualizers;
+    }
+
+    void SyncGhostBloodFxVisualizers(IReadOnlyList<BloodHitFxVisualizer> visualizers)
+    {
+        if (_bloodHitFxVisualizers == null)
+            return;
+
+        if (_ghostBloodHitFxVisualizers.Count > 0)
+        {
+            for (int i = _bloodHitFxVisualizers.Count - 1; i >= 0; i--)
+            {
+                var fx = _bloodHitFxVisualizers[i];
+                if (fx == null || _ghostBloodHitFxVisualizers.Contains(fx))
+                    _bloodHitFxVisualizers.RemoveAt(i);
+            }
+            _ghostBloodHitFxVisualizers.Clear();
+        }
+
+        if (visualizers == null)
+            return;
+
+        foreach (var fx in visualizers)
+        {
+            if (fx == null)
+                continue;
+
+            _ghostBloodHitFxVisualizers.Add(fx);
+            if (!_bloodHitFxVisualizers.Contains(fx))
+                _bloodHitFxVisualizers.Add(fx);
         }
     }
 }

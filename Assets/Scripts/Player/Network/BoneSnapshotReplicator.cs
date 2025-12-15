@@ -41,6 +41,9 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private readonly List<BloodHitFxVisualizer> _ghostHitFxVisualizers = new();
     private readonly Queue<BoneSnapshot> _pendingSnapshots = new();
 
+    public event Action<IReadOnlyList<BloodHitFxVisualizer>> GhostHitFxVisualizersChanged;
+    public IReadOnlyList<BloodHitFxVisualizer> GhostHitFxVisualizers => _ghostHitFxVisualizers;
+
     private int _sentSnapshots;
     private int _receivedSnapshots;
     private double _lastSendTime;
@@ -274,6 +277,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         _ghostFollower = follower;
         _spawnedGhostInternally &= follower != null;
         CacheGhostHitFxVisualizers(follower != null ? follower.transform : null);
+        NotifyGhostHitFxVisualizersChanged();
 
         if (_ghostFollower != null && _resetDebugCountersOnAttach)
         {
@@ -316,6 +320,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
         _ghostInstance = null;
         _ghostHitFxVisualizers.Clear();
+        NotifyGhostHitFxVisualizersChanged();
         _spawnedGhostInternally = false;
         if (_ghostFollower != null)
             SetGhostFollower(null);
@@ -418,5 +423,10 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             if (hitFx != null)
                 _ghostHitFxVisualizers.Add(hitFx);
         }
+    }
+
+    private void NotifyGhostHitFxVisualizersChanged()
+    {
+        GhostHitFxVisualizersChanged?.Invoke(_ghostHitFxVisualizers);
     }
 }
