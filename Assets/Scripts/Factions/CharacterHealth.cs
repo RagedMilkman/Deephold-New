@@ -214,7 +214,7 @@ public class CharacterHealth : NetworkBehaviour
 
     public bool CanBeShot(NetworkObject shooter, Vector3 point, Vector3 normal)
     {
-        return State == LifeState.Alive;
+        return true; // State == LifeState.Alive;
     }
 
     public void RefreshHitBoxes()

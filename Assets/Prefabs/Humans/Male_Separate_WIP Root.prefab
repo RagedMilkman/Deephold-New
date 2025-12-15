@@ -5708,7 +5708,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013655715, y: 0.7053685, z: 0.033096023, w: 0.70793617}
+  m_LocalRotation: {x: 0.013655748, y: 0.7053685, z: 0.03309595, w: 0.70793617}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -6708,7 +6708,6 @@ GameObject:
   - component: {fileID: 2650125091823068198}
   - component: {fileID: 7734047683449924906}
   - component: {fileID: 5106284807051170480}
-  - component: {fileID: 3403907483884108976}
   - component: {fileID: 2375063280235814730}
   - component: {fileID: 8125184488041465076}
   m_Layer: 0
@@ -6784,12 +6783,13 @@ MonoBehaviour:
   controller: {fileID: 1714559259804665549}
   yawReplicator: {fileID: 0}
   positionReplicator: {fileID: 0}
-  characterState: {fileID: 3403907483884108976}
+  characterState: {fileID: 5106284807051170480}
   moveSpeed: 4
   acceleration: 12
   sidewaysSpeedMultiplier: 0.75
   backwardSpeedMultiplier: 0.6
   activeStanceSpeedMultiplier: 0.65
+  externalSpeedMultiplier: 1
   minAimDistance: 0.05
   defaultStance: 0
   rigAnimator: {fileID: 7336559208925738163}
@@ -6854,7 +6854,7 @@ MonoBehaviour:
   - {fileID: 7482769739127380242}
   - {fileID: 2650125091823068198}
   - {fileID: 5106284807051170480}
-  - {fileID: 3403907483884108976}
+  - {fileID: 0}
   - {fileID: 2375063280235814730}
   - {fileID: 8125184488041465076}
   InitializedParentNetworkBehaviour: {fileID: 0}
@@ -6905,9 +6905,13 @@ MonoBehaviour:
   _componentIndexCache: 2
   _addedNetworkObject: {fileID: 7734047683449924906}
   _networkObjectCache: {fileID: 7734047683449924906}
-  _state: {fileID: 3403907483884108976}
+  _maxHealth: 100
+  _despawnOnDeath: 1
+  _despawnDelay: 15
+  _characterCollider: {fileID: 0}
   _ownerRoot: {fileID: 0}
   _hitBoxes: []
+  _maxLocalizedHealth: 70
   _bloodHitFx: {fileID: 0}
   _boneSnapshotReplicator: {fileID: 0}
   _puppetMaster: {fileID: 0}
@@ -6922,6 +6926,10 @@ MonoBehaviour:
   _animator: {fileID: 801833631192838038}
   _ikSolvers: []
   _puppetMasterForceMultiplier: 1
+  _topDownMotor: {fileID: 0}
+  _legIkPositionWeight: 0.5
+  _legIkRotationWeight: 0
+  _legIkMaxRotationWeight: 0.25
   _instantDeath:
     killDuration: 0
     deadMuscleWeight: 0.1
@@ -6943,30 +6951,9 @@ MonoBehaviour:
   _hitImpulseMaxForce: 60
   _deadWeightsDelay: 0.05
   _deadForceMultiplier: 0.25
-  _deadMappingWeight: 0.9
+  _deadMappingWeight: 1
   _deadPinWeight: 0.35
-  _deadMuscleWeight: 0.35
---- !u!114 &3403907483884108976
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7478472528683366501}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e9e1253389a9434f90a0be1d35d4a57, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterHealth
-  _componentIndexCache: 3
-  _addedNetworkObject: {fileID: 7734047683449924906}
-  _networkObjectCache: {fileID: 7734047683449924906}
-  maxHealth: 300
-  despawnOnDeath: 1
-  despawnDelay: 15
-  puppetMaster: {fileID: 4984505607652927022}
-  deadMasterWeight: 0.3
-  characterCollider: {fileID: 0}
+  _deadMuscleWeight: 0.1
 --- !u!114 &2375063280235814730
 MonoBehaviour:
   m_ObjectHideFlags: 0
