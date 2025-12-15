@@ -128,6 +128,8 @@ public class CharacterHealth : NetworkBehaviour
     LimbIK _rightLegIk;
 
     // FX runtime state
+    [SyncVar]
+    int _bloodPoolHitBoxIndex = -1;
     bool _spawnedBloodPool;
 
     // Runtime
@@ -176,6 +178,7 @@ public class CharacterHealth : NetworkBehaviour
         base.OnStartServer();
         Health = _maxHealth;
         State = LifeState.Alive;
+        _bloodPoolHitBoxIndex = -1;
         _spawnedBloodPool = false;
         ApplyColliderLifeState(State);
         InitializeLocalizedHealth();
@@ -187,6 +190,7 @@ public class CharacterHealth : NetworkBehaviour
     {
         // Helps when objects are pooled / re-enabled.
         _localizedHealth.OnChange += OnLocalizedHealthChanged;
+        _bloodPoolHitBoxIndex = -1;
         _spawnedBloodPool = false;
         ApplyPuppetMasterRunnerState();
         ApplyBodyPartEffects();
@@ -435,9 +439,20 @@ public class CharacterHealth : NetworkBehaviour
         return bestTransform;
     }
 
+    Transform GetBloodPoolParent(out int hitBoxIndex)
+    {
+        if (_bloodPoolHitBoxIndex >= 0)
+        {
+            hitBoxIndex = _bloodPoolHitBoxIndex;
+            return GetHitBoxTransform(_bloodPoolHitBoxIndex);
+        }
+
+        return GetMostDamagedHitBoxTransform(out hitBoxIndex);
+    }
+
     Vector3 GetBloodPoolSpawnPosition(out Transform parent, out int hitBoxIndex)
     {
-        parent = GetMostDamagedHitBoxTransform(out hitBoxIndex);
+        parent = GetBloodPoolParent(out hitBoxIndex);
         return parent != null ? parent.position : OwnerRoot.position;
     }
 
@@ -456,7 +471,9 @@ public class CharacterHealth : NetworkBehaviour
             spawnRot = Quaternion.LookRotation(hit.normal);
         }
 
-        Instantiate(_bloodPoolPrefab, spawnPos, spawnRot, parent);
+        var instance = Instantiate(_bloodPoolPrefab, spawnPos, spawnRot, parent);
+        if (parent != null && instance.transform.parent != parent)
+            instance.transform.SetParent(parent, true);
         _spawnedBloodPool = true;
     }
 
@@ -488,6 +505,7 @@ public class CharacterHealth : NetworkBehaviour
     [ObserversRpc]
     void RPC_SpawnBloodPool(Vector3 position, int hitBoxIndex)
     {
+        _bloodPoolHitBoxIndex = hitBoxIndex;
         Transform parent = GetHitBoxTransform(hitBoxIndex);
         SpawnDeathBloodPool(position, parent);
     }
@@ -724,6 +742,7 @@ public class CharacterHealth : NetworkBehaviour
             ApplyPuppetMasterDeathState();
             ApplyColliderLifeState(State);
             Vector3 bloodPoolPosition = GetBloodPoolSpawnPosition(out Transform parent, out int hitBoxIndex);
+            _bloodPoolHitBoxIndex = hitBoxIndex;
             SpawnDeathBloodPool(bloodPoolPosition, parent);
             RPC_State(Health, _maxHealth, (int)State);
             RPC_SpawnBloodPool(bloodPoolPosition, hitBoxIndex);
