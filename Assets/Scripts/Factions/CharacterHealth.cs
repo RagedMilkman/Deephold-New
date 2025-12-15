@@ -124,6 +124,8 @@ public class CharacterHealth : NetworkBehaviour
     LimbIK _rightLegIk;
 
     // FX runtime state
+    // Tracks which hitbox spawned the death blood pool so late joiners can
+    // parent the effect to the same bone hierarchy across RPCs.
     [AllowMutableSyncType]
     readonly SyncVar<int> _bloodPoolHitBoxIndex = new(-1);
 
