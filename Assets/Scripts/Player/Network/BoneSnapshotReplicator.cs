@@ -38,7 +38,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private GhostFollower _ghostFollower;
     private GameObject _ghostInstance;
     private bool _spawnedGhostInternally;
-    private BloodHitFxVisualizer _ghostHitFx;
+    private readonly List<BloodHitFxVisualizer> _ghostHitFxVisualizers = new();
     private readonly Queue<BoneSnapshot> _pendingSnapshots = new();
 
     private int _sentSnapshots;
@@ -273,9 +273,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     {
         _ghostFollower = follower;
         _spawnedGhostInternally &= follower != null;
-        _ghostHitFx = (_ghostFollower != null)
-            ? _ghostFollower.GetComponentInChildren<BloodHitFxVisualizer>(true)
-            : null;
+        CacheGhostHitFxVisualizers(follower != null ? follower.transform : null);
 
         if (_ghostFollower != null && _resetDebugCountersOnAttach)
         {
@@ -299,7 +297,6 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
         _ghostInstance = Instantiate(_ghostPrefab);
         _ghostFollower = _ghostInstance.GetComponent<GhostFollower>();
-        _ghostHitFx = _ghostInstance.GetComponentInChildren<BloodHitFxVisualizer>(true);
         _spawnedGhostInternally = _ghostFollower != null;
 
         if (_ghostFollower == null)
@@ -318,7 +315,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             Destroy(_ghostInstance);
 
         _ghostInstance = null;
-        _ghostHitFx = null;
+        _ghostHitFxVisualizers.Clear();
         _spawnedGhostInternally = false;
         if (_ghostFollower != null)
             SetGhostFollower(null);
@@ -331,7 +328,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         float force,
         Vector3 hitDir)
     {
-        if (_ghostHitFx == null)
+        if (_ghostHitFxVisualizers.Count == 0)
             return;
 
         // Spawn on the provided puppet/bone transform instead of the ghost root so
@@ -344,10 +341,18 @@ public class BoneSnapshotReplicator : NetworkBehaviour
             ghostSpawnParent = _ghostFollower.ResolveBone(path);
         }
 
-        if (ghostSpawnParent == null)
-            ghostSpawnParent = _ghostHitFx.transform;
+        for (int i = 0; i < _ghostHitFxVisualizers.Count; i++)
+        {
+            var ghostHitFx = _ghostHitFxVisualizers[i];
+            if (ghostHitFx == null)
+                continue;
 
-        _ghostHitFx.PlayHitFx(hitPoint, surfaceNormal, ghostSpawnParent, force, hitDir);
+            Transform targetParent = ghostSpawnParent;
+            if (targetParent == null)
+                targetParent = ghostHitFx.transform;
+
+            ghostHitFx.PlayHitFx(hitPoint, surfaceNormal, targetParent, force, hitDir);
+        }
     }
 
     private void CopySnapshotToServerRig(BoneSnapshotMessage msg)
@@ -399,6 +404,19 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         {
             if (visualizer != null)
                 visualizer.SetSource(_toolbelt);
+        }
+    }
+
+    private void CacheGhostHitFxVisualizers(Transform root)
+    {
+        _ghostHitFxVisualizers.Clear();
+        if (root == null)
+            return;
+
+        foreach (var hitFx in root.GetComponentsInChildren<BloodHitFxVisualizer>(true))
+        {
+            if (hitFx != null)
+                _ghostHitFxVisualizers.Add(hitFx);
         }
     }
 }

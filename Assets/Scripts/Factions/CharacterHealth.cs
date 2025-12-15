@@ -35,8 +35,8 @@ public class CharacterHealth : NetworkBehaviour
     int _maxLocalizedHealth = 30;
 
     [Header("Hit FX")]
-    [SerializeField, Tooltip("Optional FX spawner used for local and ghost visuals.")]
-    BloodHitFxVisualizer _bloodHitFx;
+    [SerializeField, Tooltip("Optional FX spawners used for local and ghost visuals.")]
+    List<BloodHitFxVisualizer> _bloodHitFxVisualizers = new();
 
     [SerializeField, Tooltip("Relays hit FX to a spawned ghost visualizer, if present.")]
     BoneSnapshotReplicator _boneSnapshotReplicator;
@@ -147,7 +147,7 @@ public class CharacterHealth : NetworkBehaviour
         if (!_puppetMaster) _puppetMaster = GetComponentInChildren<PuppetMaster>(true);
         if (!_animator) _animator = GetComponentInChildren<Animator>(true);
         if (_ikSolvers == null || _ikSolvers.Length == 0) _ikSolvers = GetComponentsInChildren<IK>(true);
-        if (!_bloodHitFx) _bloodHitFx = GetComponentInChildren<BloodHitFxVisualizer>(true);
+        CacheBloodHitFxVisualizers();
         if (!_boneSnapshotReplicator) _boneSnapshotReplicator = GetComponent<BoneSnapshotReplicator>();
         if (!_characterCollider) _characterCollider = GetComponent<Collider>();
 
@@ -165,7 +165,7 @@ public class CharacterHealth : NetworkBehaviour
         {
             ApplyPuppetMasterDeathState();
             var position = GetBloodPoolSpawnPosition(out Transform parent, out _);
-            _bloodHitFx?.SpawnDeathBloodPool(position, parent);
+            ForEachBloodFx(v => v.SpawnDeathBloodPool(position, parent));
         }
         ApplyBodyPartEffects();
     }
@@ -176,7 +176,7 @@ public class CharacterHealth : NetworkBehaviour
         Health = _maxHealth;
         State = LifeState.Alive;
         _bloodPoolHitBoxIndex.Value = -1;
-        _bloodHitFx?.ResetBloodPoolSpawn();
+        ForEachBloodFx(v => v.ResetBloodPoolSpawn());
         ApplyColliderLifeState(State);
         InitializeLocalizedHealth();
         ApplyPuppetMasterRunnerState();
@@ -188,7 +188,7 @@ public class CharacterHealth : NetworkBehaviour
         // Helps when objects are pooled / re-enabled.
         _localizedHealth.OnChange += OnLocalizedHealthChanged;
         _bloodPoolHitBoxIndex.Value = -1;
-        _bloodHitFx?.ResetBloodPoolSpawn();
+        ForEachBloodFx(v => v.ResetBloodPoolSpawn());
         ApplyPuppetMasterRunnerState();
         ApplyBodyPartEffects();
     }
@@ -631,7 +631,7 @@ public class CharacterHealth : NetworkBehaviour
         if (spawnParent == null)
             spawnParent = OwnerRoot;
 
-        _bloodHitFx?.PlayHitFx(hitPoint, surfaceNormal, spawnParent, force, hitDir);
+        ForEachBloodFx(v => v.PlayHitFx(hitPoint, surfaceNormal, spawnParent, force, hitDir));
         _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal, spawnParent, force, hitDir);
     }
 
@@ -719,7 +719,7 @@ public class CharacterHealth : NetworkBehaviour
             ApplyColliderLifeState(State);
             Vector3 bloodPoolPosition = GetBloodPoolSpawnPosition(out Transform parent, out int hitBoxIndex);
             _bloodPoolHitBoxIndex.Value = hitBoxIndex;
-            _bloodHitFx?.SpawnDeathBloodPool(bloodPoolPosition, parent);
+            ForEachBloodFx(v => v.SpawnDeathBloodPool(bloodPoolPosition, parent));
             RPC_State(Health, _maxHealth, (int)State);
             RPC_SpawnBloodPool(bloodPoolPosition, hitBoxIndex);
             if (_despawnOnDeath) Invoke(nameof(ServerDespawn), Mathf.Max(0f, _despawnDelay));
@@ -756,7 +756,7 @@ public class CharacterHealth : NetworkBehaviour
         {
             ApplyPuppetMasterDeathState();
             var position = GetBloodPoolSpawnPosition(out Transform parent, out _);
-            _bloodHitFx?.SpawnDeathBloodPool(position, parent);
+            ForEachBloodFx(v => v.SpawnDeathBloodPool(position, parent));
         }
     }
 
@@ -783,5 +783,30 @@ public class CharacterHealth : NetworkBehaviour
             return;
 
         _characterCollider.enabled = state != LifeState.Dead;
+    }
+
+    void CacheBloodHitFxVisualizers()
+    {
+        _bloodHitFxVisualizers.RemoveAll(v => v == null);
+        foreach (var fx in GetComponentsInChildren<BloodHitFxVisualizer>(true))
+        {
+            if (!_bloodHitFxVisualizers.Contains(fx))
+                _bloodHitFxVisualizers.Add(fx);
+        }
+    }
+
+    void ForEachBloodFx(Action<BloodHitFxVisualizer> callback)
+    {
+        if (callback == null || _bloodHitFxVisualizers == null)
+            return;
+
+        for (int i = 0; i < _bloodHitFxVisualizers.Count; i++)
+        {
+            var fx = _bloodHitFxVisualizers[i];
+            if (fx == null)
+                continue;
+
+            callback(fx);
+        }
     }
 }
