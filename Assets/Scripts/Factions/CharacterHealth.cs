@@ -41,6 +41,10 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField, Tooltip("Relays hit FX to a spawned ghost visualizer, if present.")]
     BoneSnapshotReplicator _boneSnapshotReplicator;
 
+    [Header("Death FX")]
+    [SerializeField, Tooltip("One-shot blood pool spawned at the character's feet on death.")]
+    GameObject _bloodPoolPrefab;
+
     [Header("PuppetMaster / Death")]
     [FormerlySerializedAs("puppetMaster")]
     [SerializeField, Tooltip("Optional PuppetMaster used for hit flinches and death ragdoll.")]
@@ -123,6 +127,9 @@ public class CharacterHealth : NetworkBehaviour
     LimbIK _leftLegIk;
     LimbIK _rightLegIk;
 
+    // FX runtime state
+    bool _spawnedBloodPool;
+
     // Runtime
     Coroutine _hitImpulseRoutine;
 
@@ -156,7 +163,10 @@ public class CharacterHealth : NetworkBehaviour
         ApplyPuppetMasterRunnerState();
         ApplyColliderLifeState(State);
         if (State == LifeState.Dead)
+        {
             ApplyPuppetMasterDeathState();
+            SpawnDeathBloodPool(OwnerRoot.position);
+        }
         ApplyBodyPartEffects();
     }
 
@@ -165,6 +175,7 @@ public class CharacterHealth : NetworkBehaviour
         base.OnStartServer();
         Health = _maxHealth;
         State = LifeState.Alive;
+        _spawnedBloodPool = false;
         ApplyColliderLifeState(State);
         InitializeLocalizedHealth();
         ApplyPuppetMasterRunnerState();
@@ -175,6 +186,7 @@ public class CharacterHealth : NetworkBehaviour
     {
         // Helps when objects are pooled / re-enabled.
         _localizedHealth.OnChange += OnLocalizedHealthChanged;
+        _spawnedBloodPool = false;
         ApplyPuppetMasterRunnerState();
         ApplyBodyPartEffects();
     }
@@ -395,6 +407,25 @@ public class CharacterHealth : NetworkBehaviour
         limbIk.solver.IKRotationWeight = Mathf.Lerp(_legIkRotationWeight, _legIkMaxRotationWeight, damageFactor);
     }
 
+    void SpawnDeathBloodPool(Vector3 position)
+    {
+        if (_bloodPoolPrefab == null || _spawnedBloodPool)
+            return;
+
+        Vector3 spawnPos = position;
+        Quaternion spawnRot = Quaternion.LookRotation(Vector3.up);
+
+        Vector3 rayOrigin = position + (Vector3.up * 0.5f);
+        if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, 2f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+        {
+            spawnPos = hit.point;
+            spawnRot = Quaternion.LookRotation(hit.normal);
+        }
+
+        Instantiate(_bloodPoolPrefab, spawnPos, spawnRot);
+        _spawnedBloodPool = true;
+    }
+
     [ObserversRpc]
     void RPC_EnterDeathRagdoll(int bodyPartInt, Vector3 hitPoint, Vector3 hitDir, float force, int muscleIndex)
     {
@@ -418,6 +449,12 @@ public class CharacterHealth : NetworkBehaviour
         }
 
         ActivateDeathRagdoll(hitPoint, hitDir, force, muscleIndex, profile);
+    }
+
+    [ObserversRpc]
+    void RPC_SpawnBloodPool(Vector3 position)
+    {
+        SpawnDeathBloodPool(position);
     }
 
     [ObserversRpc]
@@ -651,7 +688,9 @@ public class CharacterHealth : NetworkBehaviour
             State = LifeState.Dead;
             ApplyPuppetMasterDeathState();
             ApplyColliderLifeState(State);
+            SpawnDeathBloodPool(OwnerRoot.position);
             RPC_State(Health, _maxHealth, (int)State);
+            RPC_SpawnBloodPool(OwnerRoot.position);
             if (_despawnOnDeath) Invoke(nameof(ServerDespawn), Mathf.Max(0f, _despawnDelay));
         }
         else
@@ -683,7 +722,10 @@ public class CharacterHealth : NetworkBehaviour
         State = (LifeState)st;
         ApplyColliderLifeState(State);
         if (State == LifeState.Dead)
+        {
             ApplyPuppetMasterDeathState();
+            SpawnDeathBloodPool(OwnerRoot.position);
+        }
     }
 
     void ApplyPuppetMasterDeathState()
