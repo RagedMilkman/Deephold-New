@@ -105,7 +105,6 @@ public class CharacterHealth : NetworkBehaviour
 
     [SerializeField, Tooltip("Muscle weight applied to the PuppetMaster once dead.")]
     float _deadMuscleWeight = 0.3f;
-    [SyncObject]
     readonly SyncDictionary<BodyPart, int> _localizedHealth = new();
     LimbIK _leftLegIk;
     LimbIK _rightLegIk;
