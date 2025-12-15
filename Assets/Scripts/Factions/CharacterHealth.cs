@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
@@ -17,6 +18,8 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField] CharacterState _state;
     [SerializeField] Transform _ownerRoot;
     [SerializeField] List<HitBox> _hitBoxes = new();
+    [SerializeField, Tooltip("Maximum localized health applied to each body part.")]
+    int _maxLocalizedHealth = 30;
 
     [Header("Hit FX")]
     [SerializeField, Tooltip("Optional FX spawner used for local and ghost visuals.")]
@@ -41,6 +44,16 @@ public class CharacterHealth : NetworkBehaviour
 
     [SerializeField, Tooltip("Global multiplier for forces applied to PuppetMaster on lethal hits.")]
     float _puppetMasterForceMultiplier = 1f;
+
+    [Header("Body Part Effects")]
+    [SerializeField, Tooltip("Optional movement controller to slow when legs are damaged.")]
+    TopDownMotor _topDownMotor;
+    [SerializeField, Tooltip("Default IK position weight for leg LimbIK solvers (full health).")]
+    float _legIkPositionWeight = 0.5f;
+    [SerializeField, Tooltip("Default IK rotation weight for leg LimbIK solvers (full health).")]
+    float _legIkRotationWeight = 0f;
+    [SerializeField, Tooltip("Maximum IK rotation weight for leg LimbIK solvers when fully damaged.")]
+    float _legIkMaxRotationWeight = 0.25f;
 
     [System.Serializable]
     public struct DeathProfile
@@ -92,6 +105,10 @@ public class CharacterHealth : NetworkBehaviour
 
     [SerializeField, Tooltip("Muscle weight applied to the PuppetMaster once dead.")]
     float _deadMuscleWeight = 0.3f;
+    [SyncObject]
+    readonly SyncDictionary<BodyPart, int> _localizedHealth = new();
+    LimbIK _leftLegIk;
+    LimbIK _rightLegIk;
 
     // Runtime
     Coroutine _hitImpulseRoutine;
@@ -104,11 +121,14 @@ public class CharacterHealth : NetworkBehaviour
     {
         if (!_state) _state = GetComponent<CharacterState>();
         if (!_ownerRoot) _ownerRoot = transform.root;
+        if (!_topDownMotor) _topDownMotor = GetComponentInChildren<TopDownMotor>(true);
         if (!_puppetMaster) _puppetMaster = GetComponentInChildren<PuppetMaster>(true);
         if (!_animator) _animator = GetComponentInChildren<Animator>(true);
         if (_ikSolvers == null || _ikSolvers.Length == 0) _ikSolvers = GetComponentsInChildren<IK>(true);
         if (!_bloodHitFx) _bloodHitFx = GetComponentInChildren<BloodHitFxVisualizer>(true);
         if (!_boneSnapshotReplicator) _boneSnapshotReplicator = GetComponent<BoneSnapshotReplicator>();
+
+        CacheLegIkSolvers();
 
         RefreshHitBoxes();
     }
@@ -117,18 +137,27 @@ public class CharacterHealth : NetworkBehaviour
     {
         base.OnStartClient();
         ApplyPuppetMasterRunnerState();
+        ApplyBodyPartEffects();
     }
 
     public override void OnStartServer()
     {
         base.OnStartServer();
+        InitializeLocalizedHealth();
         ApplyPuppetMasterRunnerState();
     }
 
     void OnEnable()
     {
         // Helps when objects are pooled / re-enabled.
+        _localizedHealth.OnChange += OnLocalizedHealthChanged;
         ApplyPuppetMasterRunnerState();
+        ApplyBodyPartEffects();
+    }
+
+    void OnDisable()
+    {
+        _localizedHealth.OnChange -= OnLocalizedHealthChanged;
     }
 
     bool ShouldRunPuppetMaster()
@@ -174,6 +203,19 @@ public class CharacterHealth : NetworkBehaviour
         }
     }
 
+    void InitializeLocalizedHealth()
+    {
+        if (!IsServer)
+            return;
+
+        _localizedHealth.Clear();
+
+        foreach (BodyPart part in Enum.GetValues(typeof(BodyPart)))
+        {
+            _localizedHealth[part] = Mathf.Max(0, _maxLocalizedHealth);
+        }
+    }
+
     public int GetHitBoxIndex(HitBox hitBox)
     {
         if (hitBox == null)
@@ -197,6 +239,26 @@ public class CharacterHealth : NetworkBehaviour
         return _hitBoxes[hitBoxIndex].transform;
     }
 
+    void CacheLegIkSolvers()
+    {
+        if (_leftLegIk != null && _rightLegIk != null)
+            return;
+
+        foreach (var limbIk in GetComponentsInChildren<LimbIK>(true))
+        {
+            string nameLower = limbIk.name.ToLowerInvariant();
+
+            if (_leftLegIk == null && nameLower.Contains("left") && nameLower.Contains("leg"))
+            {
+                _leftLegIk = limbIk;
+            }
+            else if (_rightLegIk == null && nameLower.Contains("right") && nameLower.Contains("leg"))
+            {
+                _rightLegIk = limbIk;
+            }
+        }
+    }
+
     public void OnHit(
         BodyPart bodyPart,
         float damage,
@@ -214,6 +276,8 @@ public class CharacterHealth : NetworkBehaviour
         var finalDamage = Mathf.RoundToInt(Mathf.Max(0f, damage));
         if (finalDamage <= 0)
             return;
+
+        ApplyLocalizedDamage(bodyPart, finalDamage);
 
         // FX always replicated.
         RPC_PlayHitFx(hitPoint, -hitDir, hitBoxIndex);
@@ -238,6 +302,73 @@ public class CharacterHealth : NetworkBehaviour
         {
             RPC_DeadImpulse(hitPoint, hitDir, force, puppetMasterMuscleIndex);
         }
+    }
+
+    void ApplyLocalizedDamage(BodyPart bodyPart, int finalDamage)
+    {
+        int current = GetLocalizedHealth(bodyPart);
+        int updated = Mathf.Max(0, current - finalDamage);
+
+        _localizedHealth[bodyPart] = updated;
+
+        if (_state != null && _state.State == LifeState.Alive && updated == 0)
+        {
+            _state.ServerDamage(_state.Health);
+        }
+    }
+
+    int GetLocalizedHealth(BodyPart bodyPart)
+    {
+        if (_localizedHealth.TryGetValue(bodyPart, out int current))
+            return current;
+
+        return _maxLocalizedHealth;
+    }
+
+    float GetLocalizedHealth01(BodyPart bodyPart)
+    {
+        float max = Mathf.Max(1f, _maxLocalizedHealth);
+        return Mathf.Clamp01(GetLocalizedHealth(bodyPart) / max);
+    }
+
+    void OnLocalizedHealthChanged(SyncDictionaryOperation op, BodyPart key, int value, bool asServer)
+    {
+        ApplyBodyPartEffects();
+    }
+
+    void ApplyBodyPartEffects()
+    {
+        float leftLegHealth = GetLocalizedHealth01(BodyPart.LegL);
+        float rightLegHealth = GetLocalizedHealth01(BodyPart.LegR);
+        float legHealthFactor = Mathf.Min(leftLegHealth, rightLegHealth);
+
+        ApplyMovementPenalty(legHealthFactor);
+        ApplyLegIkWeights(leftLegHealth, rightLegHealth);
+    }
+
+    void ApplyMovementPenalty(float legHealthFactor)
+    {
+        if (_topDownMotor == null)
+            return;
+
+        float multiplier = Mathf.Clamp01(legHealthFactor);
+        _topDownMotor.SetExternalSpeedMultiplier(multiplier);
+    }
+
+    void ApplyLegIkWeights(float leftLegHealth, float rightLegHealth)
+    {
+        ApplyLegIkWeight(_leftLegIk, leftLegHealth);
+        ApplyLegIkWeight(_rightLegIk, rightLegHealth);
+    }
+
+    void ApplyLegIkWeight(LimbIK limbIk, float normalizedHealth)
+    {
+        if (limbIk == null || limbIk.solver == null)
+            return;
+
+        float damageFactor = 1f - Mathf.Clamp01(normalizedHealth);
+        limbIk.solver.IKPositionWeight = Mathf.Lerp(_legIkPositionWeight, 0f, damageFactor);
+        limbIk.solver.IKRotationWeight = Mathf.Lerp(_legIkRotationWeight, _legIkMaxRotationWeight, damageFactor);
     }
 
     [ObserversRpc]

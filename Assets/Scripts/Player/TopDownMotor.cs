@@ -18,6 +18,7 @@ public class TopDownMotor : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float sidewaysSpeedMultiplier = 0.75f;
     [SerializeField, Range(0f, 1f)] float backwardSpeedMultiplier = 0.6f;
     [SerializeField, Range(0f, 1f)] float activeStanceSpeedMultiplier = 0.65f;
+    [SerializeField, Range(0f, 1f)] float externalSpeedMultiplier = 1f;
 
     [Header("Aiming")]
     [SerializeField] float minAimDistance = 0.05f;
@@ -80,6 +81,7 @@ public class TopDownMotor : MonoBehaviour
         sidewaysSpeedMultiplier = Mathf.Clamp01(sidewaysSpeedMultiplier);
         backwardSpeedMultiplier = Mathf.Clamp(backwardSpeedMultiplier, 0f, sidewaysSpeedMultiplier);
         activeStanceSpeedMultiplier = Mathf.Clamp01(activeStanceSpeedMultiplier);
+        externalSpeedMultiplier = Mathf.Clamp01(externalSpeedMultiplier);
 
         if (!Application.isPlaying)
         {
@@ -144,7 +146,7 @@ public class TopDownMotor : MonoBehaviour
                 : Mathf.Lerp(sidewaysSpeedMultiplier, backwardSpeedMultiplier, -dot);
 
             float stanceSpeedMultiplier = currentStance == Stance.Active ? activeStanceSpeedMultiplier : 1f;
-            float targetSpeed = moveSpeed * inputMagnitude * speedMultiplier * stanceSpeedMultiplier;
+            float targetSpeed = moveSpeed * inputMagnitude * speedMultiplier * stanceSpeedMultiplier * externalSpeedMultiplier;
             targetVel = desiredDir * targetSpeed;
         }
         else
@@ -265,6 +267,11 @@ public class TopDownMotor : MonoBehaviour
     public Stance CurrentStance => currentStance;
 
     public MovementType CurrentMovementType => currentMovementType;
+
+    public void SetExternalSpeedMultiplier(float multiplier)
+    {
+        externalSpeedMultiplier = Mathf.Clamp01(multiplier);
+    }
 
     public void SetStance(Stance stance)
     {
