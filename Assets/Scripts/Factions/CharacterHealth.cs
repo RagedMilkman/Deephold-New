@@ -304,7 +304,7 @@ public class CharacterHealth : NetworkBehaviour
         ApplyLocalizedDamage(bodyPart, finalDamage);
 
         // FX always replicated.
-        RPC_PlayHitFx(hitPoint, -hitDir, hitBoxIndex);
+        RPC_PlayHitFx(hitPoint, -hitDir, hitDir, force, hitBoxIndex);
 
         bool wasAlive = State == LifeState.Alive;
 
@@ -554,14 +554,19 @@ public class CharacterHealth : NetworkBehaviour
     // -------- FX --------
 
     [ObserversRpc]
-    void RPC_PlayHitFx(Vector3 hitPoint, Vector3 surfaceNormal, int hitBoxIndex)
+    void RPC_PlayHitFx(
+        Vector3 hitPoint,
+        Vector3 surfaceNormal,
+        Vector3 hitDir,
+        float force,
+        int hitBoxIndex)
     {
         Transform spawnParent = GetHitBoxTransform(hitBoxIndex);
         if (spawnParent == null)
             spawnParent = OwnerRoot;
 
-        _bloodHitFx?.PlayHitFx(hitPoint, surfaceNormal, spawnParent);
-        _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal, spawnParent);
+        _bloodHitFx?.PlayHitFx(hitPoint, surfaceNormal, spawnParent, force, hitDir);
+        _boneSnapshotReplicator?.RelayHitFxToGhost(hitPoint, surfaceNormal, spawnParent, force, hitDir);
     }
 
     // -------- Non-lethal flinch --------

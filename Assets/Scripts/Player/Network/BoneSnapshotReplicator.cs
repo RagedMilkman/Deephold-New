@@ -327,7 +327,9 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     public void RelayHitFxToGhost(
         Vector3 hitPoint,
         Vector3 surfaceNormal,
-        Transform defaultSpawnParent)
+        Transform defaultSpawnParent,
+        float force,
+        Vector3 hitDir)
     {
         if (_ghostHitFx == null)
             return;
@@ -345,7 +347,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
         if (ghostSpawnParent == null)
             ghostSpawnParent = _ghostHitFx.transform;
 
-        _ghostHitFx.PlayHitFx(hitPoint, surfaceNormal, ghostSpawnParent);
+        _ghostHitFx.PlayHitFx(hitPoint, surfaceNormal, ghostSpawnParent, force, hitDir);
     }
 
     private void CopySnapshotToServerRig(BoneSnapshotMessage msg)
