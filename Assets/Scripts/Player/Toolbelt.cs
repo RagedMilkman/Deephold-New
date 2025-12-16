@@ -671,33 +671,59 @@ public class ToolbeltNetworked : NetworkBehaviour
             return null;
 
         GameObject detached = null;
+        ToolBeltSlot sourceSlot = null;
         foreach (var slot in EnumerateSlots())
         {
             if (slot?.Instance != equippedInstance)
                 continue;
 
             detached = slot.DetachVisual(AssignOwnerToolbelt, UnregisterInstanceFromPuppetMaster);
+            sourceSlot = slot;
             break;
         }
 
         if (!detached)
             detached = equippedInstance;
 
+        GameObject spawned = null;
+        Vector3 spawnPosition = Vector3.zero;
+        Quaternion spawnRotation = Quaternion.identity;
+        Vector3 spawnScale = Vector3.one;
+
         if (detached)
         {
             var transform = detached.transform;
+            spawnPosition = transform.position;
+            spawnRotation = transform.rotation;
+            spawnScale = transform.lossyScale;
+
             if (transform && transform.parent)
                 transform.SetParent(null, true);
+        }
 
-            foreach (var rigidbody in detached.GetComponentsInChildren<Rigidbody>(true))
-                rigidbody.isKinematic = false;
+        if (IsServer && sourceSlot != null)
+        {
+            var definition = GetRegistryDefinition(sourceSlot.RegistryIndex);
+            var prefab = definition ? definition.prefab : null;
+            if (prefab)
+            {
+                spawned = Instantiate(prefab, spawnPosition, spawnRotation);
+                spawned.transform.localScale = spawnScale;
+                PrepareDetachedInstance(spawned);
 
-            detached.SetActive(true);
-            foreach (var renderer in detached.GetComponentsInChildren<Renderer>(true))
-                renderer.enabled = true;
+                var networkManager = NetworkManager;
+                if (networkManager != null)
+                    networkManager.ServerManager.Spawn(spawned);
+            }
+        }
 
-            foreach (var networkObject in detached.GetComponentsInChildren<NetworkObject>(true))
-                networkObject.enabled = true;
+        if (!spawned)
+        {
+            PrepareDetachedInstance(detached);
+        }
+        else if (detached)
+        {
+            Destroy(detached);
         }
 
         if (detached == equippedInstance)
@@ -708,7 +734,23 @@ public class ToolbeltNetworked : NetworkBehaviour
         equippedWeaponReloading = false;
         reloadStanceEndsAt = 0f;
 
-        return detached;
+        return spawned ? spawned : detached;
+    }
+
+    void PrepareDetachedInstance(GameObject instance)
+    {
+        if (!instance)
+            return;
+
+        foreach (var rigidbody in instance.GetComponentsInChildren<Rigidbody>(true))
+            rigidbody.isKinematic = false;
+
+        instance.SetActive(true);
+        foreach (var renderer in instance.GetComponentsInChildren<Renderer>(true))
+            renderer.enabled = true;
+
+        foreach (var networkObject in instance.GetComponentsInChildren<NetworkObject>(true))
+            networkObject.enabled = true;
     }
 
     void AssignOwnerToolbelt(GameObject instance, bool assign)
