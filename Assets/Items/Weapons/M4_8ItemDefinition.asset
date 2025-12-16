@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: M4_8ItemDefinition
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   displayName: M4_8
-  prefab: {fileID: 2014609664598146743, guid: cc0b39d0fe2812d4bb50dd1a5e4a80b8, type: 3}
+  prefab: {fileID: 9012573594709687727, guid: 48ff35788a64195488cd992750b6f819, type: 3}
   localPosition: {x: 0, y: 0, z: 0}
   localEulerAngles: {x: 0, y: 180, z: 0}
   localScale: {x: 0.11, y: 0.11, z: 0.11}

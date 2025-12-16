@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: m1911ItemDefinition
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
   displayName: M1911
-  prefab: {fileID: 7229062074147639232, guid: 52065015772666943a8ce27e6063ef27, type: 3}
+  prefab: {fileID: 7044001979759022035, guid: f215b54ee5ec32943b3f86d6de58b8f7, type: 3}
   localPosition: {x: 0, y: 0, z: 0}
   localEulerAngles: {x: 0, y: 180, z: 0}
   localScale: {x: 0.11, y: 0.11, z: 0.11}
