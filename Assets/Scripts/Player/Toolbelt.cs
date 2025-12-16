@@ -691,6 +691,10 @@ public class ToolbeltNetworked : NetworkBehaviour
 
             foreach (var rigidbody in detached.GetComponentsInChildren<Rigidbody>(true))
                 rigidbody.isKinematic = false;
+
+            detached.SetActive(true);
+            foreach (var renderer in detached.GetComponentsInChildren<Renderer>(true))
+                renderer.enabled = true;
         }
 
         if (detached == equippedInstance)
