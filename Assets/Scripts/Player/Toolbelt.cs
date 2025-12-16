@@ -695,6 +695,9 @@ public class ToolbeltNetworked : NetworkBehaviour
             detached.SetActive(true);
             foreach (var renderer in detached.GetComponentsInChildren<Renderer>(true))
                 renderer.enabled = true;
+
+            foreach (var networkObject in detached.GetComponentsInChildren<NetworkObject>(true))
+                networkObject.enabled = true;
         }
 
         if (detached == equippedInstance)
