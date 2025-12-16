@@ -56,6 +56,10 @@ public class ToolbeltVisualizer : MonoBehaviour
     [Header("Visual Transitions")]
     [SerializeField, Min(0f)] private float defaultStanceTransitionDuration = 0.1f;
 
+    [Header("Visibility")]
+    [SerializeField, Tooltip("Meshes render when following a ghost or when the local client owns the source player.")]
+    private bool treatAsGhost;
+
     [Header("Syncing")]
     [SerializeField, Min(0.02f)] private float syncIntervalSeconds = 0.1f;
     [SerializeField, Tooltip("Copy the source's item registry into the target view if empty.")]
@@ -74,6 +78,7 @@ public class ToolbeltVisualizer : MonoBehaviour
     private KineticProjectileWeapon equippedWeapon;
     private ToolMountPoint.MountStance equippedStance = ToolMountPoint.MountStance.Passive;
     private int equippedSlot = ToolbeltNetworked.SlotCount;
+    private bool isGhostVisualizer;
 
     public ToolbeltNetworked Source => source;
 
@@ -91,6 +96,7 @@ public class ToolbeltVisualizer : MonoBehaviour
             mountRoot = humanoidRigAnimator ? humanoidRigAnimator.transform : transform;
 
         RefreshMountPoints();
+        isGhostVisualizer = treatAsGhost || GetComponentInParent<GhostFollower>(true) != null;
     }
 
     private void OnEnable()
@@ -195,6 +201,7 @@ public class ToolbeltVisualizer : MonoBehaviour
         EnsureSlotVisual(consumableSlot);
 
         ApplyEquippedVisual(equippedSlot);
+        ApplyItemVisibility();
     }
 
     private void EnsureSlotVisual(ToolBeltSlot slot)
@@ -249,6 +256,8 @@ public class ToolbeltVisualizer : MonoBehaviour
 
             AssignWeaponMountPoints(instance, slot.CurrentMount ?? mountRoot);
         }
+
+        ApplyItemVisibility();
     }
 
     private void ClearVisuals()
@@ -517,5 +526,30 @@ public class ToolbeltVisualizer : MonoBehaviour
 
         foreach (var weapon in instance.GetComponentsInChildren<KineticProjectileWeapon>(true))
             weapon.OnServerFired(origin, endPoint, hitNormal, hitSomething, suppressLocalFeedback: false);
+    }
+
+    private bool ShouldEnableItemMeshes()
+    {
+        if (isGhostVisualizer)
+            return true;
+
+        return source != null && source.IsOwner;
+    }
+
+    private void ApplyItemVisibility()
+    {
+        bool enableMeshes = ShouldEnableItemMeshes();
+
+        foreach (var slot in EnumerateSlots())
+            ApplyItemVisibility(slot, enableMeshes);
+    }
+
+    private void ApplyItemVisibility(ToolBeltSlot slot, bool enableMeshes)
+    {
+        if (slot?.Instance == null)
+            return;
+
+        foreach (var renderer in slot.Instance.GetComponentsInChildren<Renderer>(true))
+            renderer.enabled = enableMeshes;
     }
 }
