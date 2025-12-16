@@ -59,6 +59,7 @@ public class ToolbeltNetworked : NetworkBehaviour
     private readonly Dictionary<GameObject, Component> puppetMasterPropRootByInstance = new();
     private Type puppetMasterPropType;
     private Type puppetMasterPropRootType;
+    private bool hasPuppetMasterPropRoots;
 
     private ToolMountPoint[] mountPoints = System.Array.Empty<ToolMountPoint>();
     private GameObject equippedInstance;
@@ -167,7 +168,7 @@ public class ToolbeltNetworked : NetworkBehaviour
             ApplyEquippedStanceInternal(replicatedStance, false);
         }
 
-        if (IsClient && ShouldRenderVisuals)
+        if (ShouldMaintainVisualInstances)
             RebuildVisual(equippedSlot);
     }
 
@@ -175,7 +176,7 @@ public class ToolbeltNetworked : NetworkBehaviour
     {
         base.OnStartClient();
 
-        if (!ShouldRenderVisuals)
+        if (!ShouldMaintainVisualInstances)
             return;
 
         int slot = equippedSlot;
@@ -552,7 +553,7 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     void RebuildVisual(int oneBasedSlot)
     {
-        if (!ShouldRenderVisuals || !IsClient)
+        if (!ShouldMaintainVisualInstances)
             return;
 
         if (!EnsureMountRoot())
@@ -603,17 +604,31 @@ public class ToolbeltNetworked : NetworkBehaviour
                 ? ResolveEquippedStance()
                 : ToolMountPoint.MountStance.Away;
 
-            var instance = ToolbeltVisualHelpers.ApplySlotStance(
-                slot,
-                desiredStance,
-                (int)slot.Slot,
-                ResolveSlotMountRoot(slot.Slot),
-                GetEquipDurationForSlot,
-                GetUnequipDurationForSlot,
-                GetStanceTransitionDurationForSlot,
-                ApplyDefinitionTransform,
-                this,
-                now);
+            GameObject instance;
+            if (ShouldAnimateVisuals)
+            {
+                instance = ToolbeltVisualHelpers.ApplySlotStance(
+                    slot,
+                    desiredStance,
+                    (int)slot.Slot,
+                    ResolveSlotMountRoot(slot.Slot),
+                    GetEquipDurationForSlot,
+                    GetUnequipDurationForSlot,
+                    GetStanceTransitionDurationForSlot,
+                    ApplyDefinitionTransform,
+                    this,
+                    now);
+            }
+            else
+            {
+                instance = slot.ApplyStance(
+                    desiredStance,
+                    ResolveSlotMountRoot(slot.Slot),
+                    ApplyDefinitionTransform,
+                    this,
+                    0f,
+                    now);
+            }
             if ((desiredStance == ToolMountPoint.MountStance.Passive
                 || desiredStance == ToolMountPoint.MountStance.Active
                 || desiredStance == ToolMountPoint.MountStance.Reloading) && instance)
@@ -692,6 +707,7 @@ public class ToolbeltNetworked : NetworkBehaviour
             ?? Type.GetType("RootMotion.Dynamics.PropRoot");
 
         resolvedPuppetMasterPropRoots.Clear();
+        hasPuppetMasterPropRoots = false;
 
         if (puppetMasterPropRootType == null || !transform.root)
             return;
@@ -699,12 +715,18 @@ public class ToolbeltNetworked : NetworkBehaviour
         defaultPuppetMasterPropRoot = CoercePropRoot(defaultPuppetMasterPropRoot)
             ?? transform.root.GetComponentInChildren(puppetMasterPropRootType, true);
 
+        if (defaultPuppetMasterPropRoot)
+            hasPuppetMasterPropRoots = true;
+
         for (int i = 0; i < puppetMasterPropRoots.Count; i++)
         {
             var binding = puppetMasterPropRoots[i];
             var resolvedRoot = CoercePropRoot(binding.propRoot);
             if (resolvedRoot)
+            {
                 resolvedPuppetMasterPropRoots[binding.slot] = resolvedRoot;
+                hasPuppetMasterPropRoots = true;
+            }
         }
     }
 
@@ -1539,7 +1561,7 @@ public class ToolbeltNetworked : NetworkBehaviour
 
         needsRebuild |= mountRootChanged;
 
-        bool allowVisuals = ShouldRenderVisuals;
+        bool allowVisuals = ShouldMaintainVisualInstances;
         if (!allowVisuals)
         {
             if (equippedInstance)
@@ -1547,10 +1569,10 @@ public class ToolbeltNetworked : NetworkBehaviour
         }
         else
         {
-            if (needsRebuild && IsClient)
+            if (needsRebuild)
                 RebuildVisual(equippedSlot);
 
-            if (IsClient)
+            if (ShouldAnimateVisuals)
             {
                 float now = Time.time;
                 foreach (var slot in EnumerateSlots())
@@ -1565,6 +1587,8 @@ public class ToolbeltNetworked : NetworkBehaviour
     public IReadOnlyList<ItemDefinition> ItemRegistry => itemRegistry;
 
     private bool ShouldRenderVisuals => renderVisuals && (!renderVisualsIfOwner || IsOwner);
+    private bool ShouldMaintainVisualInstances => (IsClient && ShouldRenderVisuals) || (IsServer && hasPuppetMasterPropRoots);
+    private bool ShouldAnimateVisuals => IsClient && ShouldRenderVisuals;
 
     public bool VisualsEnabled
     {
@@ -1576,11 +1600,11 @@ public class ToolbeltNetworked : NetworkBehaviour
 
             renderVisuals = value;
 
-            if (!ShouldRenderVisuals)
+            if (!ShouldMaintainVisualInstances)
             {
                 ClearVisuals();
             }
-            else if (IsClient)
+            else
             {
                 RebuildVisual(equippedSlot);
             }
@@ -1617,7 +1641,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         equippedSlot = Mathf.Clamp(snapshot.EquippedSlot, 1, SlotCount);
         ApplyEquippedStanceInternal(snapshot.EquippedStance, refreshVisual: false, updateDesired: false);
 
-        if (rebuildVisual && IsClient && ShouldRenderVisuals)
+        if (rebuildVisual && ShouldMaintainVisualInstances)
             RebuildVisual(equippedSlot);
     }
 
@@ -1938,4 +1962,3 @@ public class ToolbeltNetworked : NetworkBehaviour
     }
 
 }
-
