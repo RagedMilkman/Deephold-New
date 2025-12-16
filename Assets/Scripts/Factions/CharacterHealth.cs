@@ -58,6 +58,8 @@ public class CharacterHealth : NetworkBehaviour
     [SerializeField, Tooltip("IK solvers to disable when transitioning to ragdoll.")]
     IK[] _ikSolvers;
 
+    ToolbeltNetworked _toolbelt;
+
     [SerializeField, Tooltip("Global multiplier for forces applied to PuppetMaster on lethal hits.")]
     float _puppetMasterForceMultiplier = 1f;
 
@@ -155,6 +157,7 @@ public class CharacterHealth : NetworkBehaviour
         if (!_characterCollider) _characterCollider = GetComponent<Collider>();
 
         CacheLegIkSolvers();
+        CacheToolbelt();
 
         RefreshHitBoxes();
     }
@@ -169,6 +172,7 @@ public class CharacterHealth : NetworkBehaviour
             ApplyPuppetMasterDeathState();
             var position = GetBloodPoolSpawnPosition(out Transform parent, out _);
             ForEachBloodFx(v => v.SpawnDeathBloodPool(position, parent));
+            DetachEquippedWeapon();
         }
         ApplyBodyPartEffects();
     }
@@ -195,6 +199,34 @@ public class CharacterHealth : NetworkBehaviour
         ApplyPuppetMasterRunnerState();
         ApplyBodyPartEffects();
         SubscribeToGhostFxUpdates();
+    }
+
+    void CacheToolbelt()
+    {
+        if (_toolbelt)
+            return;
+
+        _toolbelt = GetComponentInChildren<ToolbeltNetworked>(true);
+    }
+
+    void DetachEquippedWeapon()
+    {
+        CacheToolbelt();
+        if (!_toolbelt)
+            return;
+
+        var equippedObject = _toolbelt.CurrentEquippedObject;
+        if (!equippedObject)
+            return;
+
+        var weaponTransform = equippedObject.transform;
+        if (!weaponTransform)
+            return;
+
+        if (weaponTransform.parent == null)
+            return;
+
+        weaponTransform.SetParent(null, true);
     }
 
     void OnValidate()
@@ -730,6 +762,7 @@ public class CharacterHealth : NetworkBehaviour
             Vector3 bloodPoolPosition = GetBloodPoolSpawnPosition(out Transform parent, out int hitBoxIndex);
             _bloodPoolHitBoxIndex.Value = hitBoxIndex;
             ForEachBloodFx(v => v.SpawnDeathBloodPool(bloodPoolPosition, parent));
+            DetachEquippedWeapon();
             RPC_State(Health, _maxHealth, (int)State);
             RPC_SpawnBloodPool(bloodPoolPosition, hitBoxIndex);
             if (_despawnOnDeath) Invoke(nameof(ServerDespawn), Mathf.Max(0f, _despawnDelay));
@@ -767,6 +800,7 @@ public class CharacterHealth : NetworkBehaviour
             ApplyPuppetMasterDeathState();
             var position = GetBloodPoolSpawnPosition(out Transform parent, out _);
             ForEachBloodFx(v => v.SpawnDeathBloodPool(position, parent));
+            DetachEquippedWeapon();
         }
     }
 
