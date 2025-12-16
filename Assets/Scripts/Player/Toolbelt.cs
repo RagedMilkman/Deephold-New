@@ -568,6 +568,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         EnsureSlotVisual(consumableSlot);
 
         ApplyEquippedVisual(oneBasedSlot);
+        ApplyItemVisibility();
     }
 
     void EnsureSlotVisual(ToolBeltSlot slot)
@@ -646,6 +647,8 @@ public class ToolbeltNetworked : NetworkBehaviour
             reloadingWeapon = null;
             equippedWeaponReloading = false;
         }
+
+        ApplyItemVisibility();
     }
 
     void ClearVisuals()
@@ -1578,6 +1581,8 @@ public class ToolbeltNetworked : NetworkBehaviour
                 foreach (var slot in EnumerateSlots())
                     slot?.UpdateVisual(now);
             }
+
+            ApplyItemVisibility();
         }
 
         if (equippedWeaponReloading && reloadStanceEndsAt > 0f && Time.time >= reloadStanceEndsAt)
@@ -1643,6 +1648,28 @@ public class ToolbeltNetworked : NetworkBehaviour
 
         if (rebuildVisual && ShouldMaintainVisualInstances)
             RebuildVisual(equippedSlot);
+    }
+
+    private bool ShouldEnableItemMeshes()
+    {
+        return IsOwner;
+    }
+
+    private void ApplyItemVisibility()
+    {
+        bool enableMeshes = ShouldEnableItemMeshes();
+
+        foreach (var slot in EnumerateSlots())
+            ApplyItemVisibility(slot, enableMeshes);
+    }
+
+    private void ApplyItemVisibility(ToolBeltSlot slot, bool enableMeshes)
+    {
+        if (slot?.Instance == null)
+            return;
+
+        foreach (var renderer in slot.Instance.GetComponentsInChildren<Renderer>(true))
+            renderer.enabled = enableMeshes;
     }
 
     void ResolveReloadTimeout()
