@@ -665,6 +665,42 @@ public class ToolbeltNetworked : NetworkBehaviour
         ResetArmTargets();
     }
 
+    public GameObject DetachEquippedInstanceToSceneRoot()
+    {
+        if (!equippedInstance)
+            return null;
+
+        GameObject detached = null;
+        foreach (var slot in EnumerateSlots())
+        {
+            if (slot?.Instance != equippedInstance)
+                continue;
+
+            detached = slot.DetachVisual(AssignOwnerToolbelt, UnregisterInstanceFromPuppetMaster);
+            break;
+        }
+
+        if (!detached)
+            detached = equippedInstance;
+
+        if (detached)
+        {
+            var transform = detached.transform;
+            if (transform && transform.parent)
+                transform.SetParent(null, true);
+        }
+
+        if (detached == equippedInstance)
+            equippedInstance = null;
+
+        equippedWeapon = null;
+        reloadingWeapon = null;
+        equippedWeaponReloading = false;
+        reloadStanceEndsAt = 0f;
+
+        return detached;
+    }
+
     void AssignOwnerToolbelt(GameObject instance, bool assign)
     {
         if (!instance)

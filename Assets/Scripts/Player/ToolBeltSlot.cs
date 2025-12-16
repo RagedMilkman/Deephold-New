@@ -160,6 +160,22 @@ public sealed class ToolBeltSlot
         return instance;
     }
 
+    public GameObject DetachVisual(Action<GameObject, bool> assignOwnerToolbelt, Action<GameObject, ToolbeltSlotName> onInstanceDestroyed = null)
+    {
+        if (visual == null)
+            return null;
+
+        var instance = visual.Instance;
+        if (instance)
+        {
+            (onInstanceDestroyed ?? visual.OnDestroyed)?.Invoke(instance, Slot);
+            assignOwnerToolbelt?.Invoke(instance, false);
+        }
+
+        visual = null;
+        return instance;
+    }
+
     private void UpdateVisual(
         ItemDefinition definition,
         Func<ItemDefinition, ToolMountPoint.MountType> determineMountType,

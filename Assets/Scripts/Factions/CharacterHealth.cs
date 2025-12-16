@@ -215,18 +215,7 @@ public class CharacterHealth : NetworkBehaviour
         if (!_toolbelt)
             return;
 
-        var equippedObject = _toolbelt.CurrentEquippedObject;
-        if (!equippedObject)
-            return;
-
-        var weaponTransform = equippedObject.transform;
-        if (!weaponTransform)
-            return;
-
-        if (weaponTransform.parent == null)
-            return;
-
-        weaponTransform.SetParent(null, true);
+        _toolbelt.DetachEquippedInstanceToSceneRoot();
     }
 
     void OnValidate()
