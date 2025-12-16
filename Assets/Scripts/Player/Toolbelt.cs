@@ -688,6 +688,9 @@ public class ToolbeltNetworked : NetworkBehaviour
             var transform = detached.transform;
             if (transform && transform.parent)
                 transform.SetParent(null, true);
+
+            foreach (var rigidbody in detached.GetComponentsInChildren<Rigidbody>(true))
+                rigidbody.isKinematic = false;
         }
 
         if (detached == equippedInstance)
