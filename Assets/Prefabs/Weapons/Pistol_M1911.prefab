@@ -539,6 +539,7 @@ GameObject:
   - component: {fileID: 9134357750954372694}
   - component: {fileID: 3767067059422978199}
   - component: {fileID: 4744464432021386545}
+  - component: {fileID: 5805634712943420585}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -621,6 +622,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5805634712943420585
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6933861995249219607}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.32520756, y: 1.4777193, z: 2.6447449}
+  m_Center: {x: 0, y: -0.35441625, z: -0.28728586}
 --- !u!1 &7044001979759022035
 GameObject:
   m_ObjectHideFlags: 0
@@ -634,6 +656,7 @@ GameObject:
   - component: {fileID: 3913332137228246994}
   - component: {fileID: 1407557503110302397}
   - component: {fileID: 3191554521975178553}
+  - component: {fileID: 6104110191365409088}
   m_Layer: 0
   m_Name: Pistol_M1911
   m_TagString: Untagged
@@ -874,6 +897,33 @@ MonoBehaviour:
   additionalPinOffsetAdd: {x: 0, y: 0, z: 0}
   additionalPinWeight: 1
   additionalPinMass: 1
+--- !u!54 &6104110191365409088
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7044001979759022035}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 2
 --- !u!1 &8048377227941873956
 GameObject:
   m_ObjectHideFlags: 0
