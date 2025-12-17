@@ -748,11 +748,23 @@ public class BipedGaitController : MonoBehaviour
         foot.stepProgress = 0f;
     }
 
+    private FootSide GetSideForFoot(Foot foot)
+    {
+        if (foot == leftFoot)
+            return FootSide.Left;
+
+        if (foot == rightFoot)
+            return FootSide.Right;
+
+        return FootSide.Left;
+    }
+
     private void CacheDefaultRestOffset(Foot foot, Vector3 flattenedFootPosition)
     {
         if (foot == null)
             return;
 
+        FootSide side = GetSideForFoot(foot);
         Vector3 center = FlattenToPlane(GetCircleCenter());
         Vector3 offsetWorld = flattenedFootPosition - center;
 
@@ -771,6 +783,16 @@ public class BipedGaitController : MonoBehaviour
         {
             foot.hasDefaultRestOffset = false;
             return;
+        }
+
+        float xSign = side == FootSide.Right ? 1f : -1f;
+        if (Mathf.Abs(localOffset.x) < 0.0001f)
+        {
+            localOffset.x = xSign * Mathf.Max(localOffset.magnitude, 0.0001f);
+        }
+        else
+        {
+            localOffset.x = Mathf.Abs(localOffset.x) * xSign;
         }
 
         foot.defaultRestOffset = localOffset;
