@@ -317,7 +317,8 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
         if (tracerRenderer)
             tracerRenderer.enabled = true;
 
-        yield return new WaitForSeconds(tracerDuration);
+        // Use unscaled time so tracer fade is not stretched by timeScale changes.
+        yield return new WaitForSecondsRealtime(tracerDuration);
 
         if (tracerRenderer)
             tracerRenderer.enabled = false;
@@ -486,6 +487,13 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
             ownerMotor = transform.root.GetComponentInChildren<TopDownMotor>(true);
 
         if (!ownerMotor || ownerMotor.CurrentStance != TopDownMotor.Stance.Active)
+        {
+            DisableAimVisuals();
+            return;
+        }
+
+        // Hide immediately once aim input stops; otherwise UpdateAimBeam will re-enable the line every frame.
+        if (!ownerMotor.HasCursorTarget)
         {
             DisableAimVisuals();
             return;
