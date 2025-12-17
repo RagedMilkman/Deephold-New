@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\World\GridDirector.cs" />
+    <Compile Include="Assets\Scripts\SightSense.cs" />
     <Compile Include="Assets\Scripts\Items\ToolMountPoint.cs" />
     <Compile Include="Assets\Scripts\Player\ToolbeltVisualizer.cs" />
     <Compile Include="Assets\Scripts\World\Generation\NoiseGenerator.cs" />
@@ -73,13 +74,16 @@
     <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\TrailProjectorSpawner_URP.cs" />
     <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\ProjectorSpriteController_URP.cs" />
     <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\ContinuousProjectorSpawner.cs" />
+    <Compile Include="Assets\Scripts\Senses.cs" />
     <Compile Include="Assets\Scripts\Factions\CharacterHealth.cs" />
     <Compile Include="Assets\Scripts\World\Generation\NoiseGenerationService.cs" />
+    <Compile Include="Assets\Scripts\AIBrain.cs" />
     <Compile Include="Assets\Scripts\Items\ToolbeltItemCategory.cs" />
     <Compile Include="Assets\Scripts\Factions\FactionController.cs" />
     <Compile Include="Assets\BloodEffectsPack\1_URP\Script\BloodModifier_URP.cs" />
     <Compile Include="Assets\Scripts\World\StateServices\WorldStateService.cs" />
     <Compile Include="Assets\Scripts\NetworkBootstrapper.cs" />
+    <Compile Include="Assets\Scripts\Belief.cs" />
     <Compile Include="Assets\Scripts\World\StateServices\IsEarlyGameState.cs" />
     <Compile Include="Assets\Scripts\World\Generation\BlockGenerator.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\RifleWeapon.cs" />
@@ -92,12 +96,14 @@
     <Compile Include="Assets\BloodEffectsPack\Common\Script\Demo\CircularMovement.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\WeaponFireFeedback.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\AIDigService.cs" />
+    <Compile Include="Assets\Scripts\CharacterKnowledge.cs" />
     <Compile Include="Assets\Scripts\World\StateServices\WorldState.cs" />
     <Compile Include="Assets\BloodEffectsPack\Common\Script\KillEffect_Trail_Projector.cs" />
     <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\ProjectorSpawner.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\IShootable.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\PlayerInteraction.cs" />
     <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\TrailProjectorSpawner.cs" />
+    <Compile Include="Assets\Scripts\AgentKnowledge.cs" />
     <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\ContinuousProjectorSpawner_URP.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\NavFieldService.cs" />
     <Compile Include="Assets\Scripts\Player\Network\BoneSnapshotReplicator.cs" />
@@ -141,9 +147,11 @@
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\HitBox.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerCameraOrbit.cs" />
     <Compile Include="Assets\Scripts\World\LocationServices\PlayerSpawnLocationService.cs" />
+    <Compile Include="Assets\Scripts\Observation.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerData.cs" />
     <Compile Include="Assets\Scripts\ServiceExecutionOrder.cs" />
     <Compile Include="Assets\BloodEffectsPack\Common\Script\Demo\ToggleRepeat.cs" />
+    <Compile Include="Assets\Scripts\ISense.cs" />
     <Compile Include="Assets\Scripts\Items\Tools\IPlayerTool.cs" />
     <Compile Include="Assets\Scripts\Items\MountTypeCategoryMap.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\IAIDigService.cs" />

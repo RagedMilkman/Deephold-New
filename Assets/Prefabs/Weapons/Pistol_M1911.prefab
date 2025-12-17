@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5450207407210947190}
   - component: {fileID: 1543341247753417954}
   - component: {fileID: 4920875044590534250}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Slide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: 8186833443404205552}
   - component: {fileID: 8791515129777033717}
   - component: {fileID: 4692490721220021356}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Magazin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 598298532471479517}
   - component: {fileID: 3457512044364518397}
   - component: {fileID: 6807462070324487881}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Hammer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -277,7 +277,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7977015761541517861}
   - component: {fileID: 1726041393793003501}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RightWristMount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -325,7 +325,7 @@ GameObject:
   - component: {fileID: 5948353291650448280}
   - component: {fileID: 249778574370895590}
   - component: {fileID: 650488895990726647}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -413,7 +413,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6675324742842092837}
   - component: {fileID: 6405738746694116696}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: LeftWristMount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -460,7 +460,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7191784921825915148}
   - component: {fileID: 2599076648713934228}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RightHandMount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -506,7 +506,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4853801339891423557}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -540,7 +540,7 @@ GameObject:
   - component: {fileID: 3767067059422978199}
   - component: {fileID: 4744464432021386545}
   - component: {fileID: 5805634712943420585}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -658,7 +658,7 @@ GameObject:
   - component: {fileID: 1407557503110302397}
   - component: {fileID: 3191554521975178553}
   - component: {fileID: 6104110191365409088}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Pistol_M1911
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -981,7 +981,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7558769203343609126}
   - component: {fileID: 4288623521640838819}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: LeftHandMount
   m_TagString: Untagged
   m_Icon: {fileID: 0}

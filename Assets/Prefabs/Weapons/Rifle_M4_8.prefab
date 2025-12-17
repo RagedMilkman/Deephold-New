@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5760313449462069209}
   - component: {fileID: 4415454369463989884}
   - component: {fileID: 1699782756333179901}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Rear_Sight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 788395511044745610}
   - component: {fileID: 3218033571806463829}
   - component: {fileID: 5436289295825023659}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -215,7 +215,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5839631017605948881}
   - component: {fileID: 823105987052654661}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RightHandMount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,7 +263,7 @@ GameObject:
   - component: {fileID: 747760470525584293}
   - component: {fileID: 9061485649436811455}
   - component: {fileID: 4121932218673355659}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -351,7 +351,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2518401794491290229}
   - component: {fileID: 509376465691591786}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RightWristMount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -398,7 +398,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8369683908665976179}
   - component: {fileID: 2461690342387639155}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: LeftWristMount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -446,7 +446,7 @@ GameObject:
   - component: {fileID: 5908951170928660018}
   - component: {fileID: 5893460284481614622}
   - component: {fileID: 3948757564534924192}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -534,7 +534,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8170199135092058560}
   - component: {fileID: 1781000173522858839}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: LeftHandMount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -581,7 +581,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4997569180324867301}
   - component: {fileID: 9199336459069024943}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -638,7 +638,7 @@ GameObject:
   - component: {fileID: 2229419920606098125}
   - component: {fileID: 8537490028283176840}
   - component: {fileID: 7224778336316913217}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -731,7 +731,7 @@ GameObject:
   - component: {fileID: 7374756724865729291}
   - component: {fileID: 5579575798686263070}
   - component: {fileID: 5899220220628181083}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Rifle_M4_8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1055,7 +1055,7 @@ GameObject:
   - component: {fileID: 9087492351692300005}
   - component: {fileID: 7604658315199967622}
   - component: {fileID: 6894622625814554201}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Mag
   m_TagString: Untagged
   m_Icon: {fileID: 0}

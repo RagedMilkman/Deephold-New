@@ -20,7 +20,6 @@ public class CharacterKnowledge
         if (observation == null || observation.Type != ObservationType.Character)
             return;
 
-        var subject = InferSubject(CharacterObject ?? observation.ObservedObject);
         var timestamp = observation.Timestamp;
         var confidence = observation.Confidence;
 
@@ -56,18 +55,5 @@ public class CharacterKnowledge
                 DecayPerSecond = 0f
             };
         }
-    }
-
-    private static BeliefSubject InferSubject(GameObject target)
-    {
-        if (!target)
-            return BeliefSubject.Unknown;
-
-        if (target.CompareTag("Enemy"))
-            return BeliefSubject.Enemy;
-        if (target.CompareTag("Player") || target.CompareTag("Ally"))
-            return BeliefSubject.Ally;
-
-        return BeliefSubject.Unknown;
     }
 }
