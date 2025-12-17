@@ -173,6 +173,11 @@ public class CharacterHealth : NetworkBehaviour
             var position = GetBloodPoolSpawnPosition(out Transform parent, out _);
             ForEachBloodFx(v => v.SpawnDeathBloodPool(position, parent));
             DetachEquippedWeapon();
+            SetGhostEquippedWeaponHidden(true);
+        }
+        else
+        {
+            SetGhostEquippedWeaponHidden(false);
         }
         ApplyBodyPartEffects();
     }
@@ -216,6 +221,14 @@ public class CharacterHealth : NetworkBehaviour
             return;
 
         _toolbelt.DetachEquippedInstanceToSceneRoot();
+    }
+
+    void SetGhostEquippedWeaponHidden(bool hide)
+    {
+        if (_boneSnapshotReplicator == null)
+            return;
+
+        _boneSnapshotReplicator.SetGhostHideEquippedWeapon(hide);
     }
 
     void OnValidate()
@@ -790,6 +803,11 @@ public class CharacterHealth : NetworkBehaviour
             var position = GetBloodPoolSpawnPosition(out Transform parent, out _);
             ForEachBloodFx(v => v.SpawnDeathBloodPool(position, parent));
             DetachEquippedWeapon();
+            SetGhostEquippedWeaponHidden(true);
+        }
+        else
+        {
+            SetGhostEquippedWeaponHidden(false);
         }
     }
 

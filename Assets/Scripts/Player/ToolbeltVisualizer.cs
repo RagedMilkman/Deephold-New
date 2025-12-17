@@ -79,6 +79,7 @@ public class ToolbeltVisualizer : MonoBehaviour
     private ToolMountPoint.MountStance equippedStance = ToolMountPoint.MountStance.Passive;
     private int equippedSlot = ToolbeltNetworked.SlotCount;
     private bool isGhostVisualizer;
+    private bool hideEquippedVisual;
 
     public ToolbeltNetworked Source => source;
 
@@ -549,7 +550,18 @@ public class ToolbeltVisualizer : MonoBehaviour
         if (slot?.Instance == null)
             return;
 
+        bool hideEquipped = hideEquippedVisual && (int)slot.Slot == equippedSlot;
+        bool finalVisibility = enableMeshes && !hideEquipped;
         foreach (var renderer in slot.Instance.GetComponentsInChildren<Renderer>(true))
-            renderer.enabled = enableMeshes;
+            renderer.enabled = finalVisibility;
+    }
+
+    public void SetHideEquippedVisual(bool hide)
+    {
+        if (hideEquippedVisual == hide)
+            return;
+
+        hideEquippedVisual = hide;
+        ApplyItemVisibility();
     }
 }

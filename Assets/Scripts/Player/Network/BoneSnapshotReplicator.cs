@@ -38,6 +38,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
     private GhostFollower _ghostFollower;
     private GameObject _ghostInstance;
     private bool _spawnedGhostInternally;
+    private bool _ghostHideEquippedWeapon;
     private readonly List<BloodHitFxVisualizer> _ghostHitFxVisualizers = new();
     private readonly Queue<BoneSnapshot> _pendingSnapshots = new();
 
@@ -291,6 +292,7 @@ public class BoneSnapshotReplicator : NetworkBehaviour
                 _ghostFollower.EnqueueSnapshot(_pendingSnapshots.Dequeue());
 
             AssignToolbeltToGhost(_ghostFollower.gameObject);
+            ApplyGhostToolbeltVisibility();
         }
     }
 
@@ -311,6 +313,24 @@ public class BoneSnapshotReplicator : NetworkBehaviour
 
         SetGhostFollower(_ghostFollower);
         AssignToolbeltToGhost(_ghostInstance);
+    }
+
+    public void SetGhostHideEquippedWeapon(bool hide)
+    {
+        _ghostHideEquippedWeapon = hide;
+        ApplyGhostToolbeltVisibility();
+    }
+
+    private void ApplyGhostToolbeltVisibility()
+    {
+        if (_ghostFollower == null)
+            return;
+
+        foreach (ToolbeltVisualizer visualizer in _ghostFollower.GetComponentsInChildren<ToolbeltVisualizer>(true))
+        {
+            if (visualizer != null)
+                visualizer.SetHideEquippedVisual(_ghostHideEquippedWeapon);
+        }
     }
 
     private void DespawnGhostFollower()
