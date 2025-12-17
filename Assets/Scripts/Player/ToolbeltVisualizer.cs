@@ -80,6 +80,7 @@ public class ToolbeltVisualizer : MonoBehaviour
     private int equippedSlot = ToolbeltNetworked.SlotCount;
     private bool isGhostVisualizer;
     private bool hideEquippedVisual;
+    private readonly Dictionary<Renderer, bool> rendererVisibilityRestore = new();
 
     public ToolbeltNetworked Source => source;
 
@@ -550,10 +551,29 @@ public class ToolbeltVisualizer : MonoBehaviour
         if (slot?.Instance == null)
             return;
 
+        CleanupRendererRestoreMap();
+
         bool hideEquipped = hideEquippedVisual && (int)slot.Slot == equippedSlot;
         bool finalVisibility = enableMeshes && !hideEquipped;
         foreach (var renderer in slot.Instance.GetComponentsInChildren<Renderer>(true))
-            renderer.enabled = finalVisibility;
+        {
+            if (renderer == null)
+                continue;
+
+            if (finalVisibility)
+            {
+                if (rendererVisibilityRestore.TryGetValue(renderer, out bool previous))
+                {
+                    renderer.enabled = previous;
+                    rendererVisibilityRestore.Remove(renderer);
+                }
+            }
+            else
+            {
+                rendererVisibilityRestore[renderer] = renderer.enabled;
+                renderer.enabled = false;
+            }
+        }
     }
 
     public void SetHideEquippedVisual(bool hide)
@@ -563,5 +583,13 @@ public class ToolbeltVisualizer : MonoBehaviour
 
         hideEquippedVisual = hide;
         ApplyItemVisibility();
+    }
+
+    private void CleanupRendererRestoreMap()
+    {
+        if (rendererVisibilityRestore.Count == 0)
+            return;
+
+        rendererVisibilityRestore.RemoveWhere(kvp => kvp.Key == null);
     }
 }
