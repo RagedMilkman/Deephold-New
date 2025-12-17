@@ -136,8 +136,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TopDownChaseAI
   _motor: {fileID: 5903944542015488180}
   _target: {fileID: 0}
-  state: {fileID: 0}
-  _stopDistance: 0.5
+  state: {fileID: 1459772520429387606}
+  _stopDistance: 1.12
 --- !u!114 &2555694571077031807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -364,19 +364,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.707933
+      value: 0.70793307
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013797672
+      value: 0.013797675
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.7053621
+      value: -0.705362
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.033239264
+      value: -0.033239257
       objectReference: {fileID: 0}
     - target: {fileID: 6797074947291448208, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_Layer
@@ -532,19 +532,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.707936
+      value: 0.70793605
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.01365498
+      value: 0.013654967
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7053685
+      value: 0.7053686
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.03309762
+      value: 0.033097576
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

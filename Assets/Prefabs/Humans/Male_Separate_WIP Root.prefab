@@ -5525,7 +5525,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013655829, y: 0.7053684, z: 0.03309573, w: 0.7079361}
+  m_LocalRotation: {x: 0.013655866, y: 0.7053684, z: 0.033095643, w: 0.70793617}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -6576,13 +6576,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 1.14
+  m_Height: 1.79
   m_Radius: 0.19
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 1.28, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &247711045251181906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6603,6 +6603,7 @@ MonoBehaviour:
   characterState: {fileID: 5106284807051170480}
   moveSpeed: 4
   acceleration: 12
+  gravity: -30
   sidewaysSpeedMultiplier: 0.75
   backwardSpeedMultiplier: 0.6
   activeStanceSpeedMultiplier: 0.65
