@@ -3,22 +3,36 @@ using UnityEngine;
 
 public class Senses : MonoBehaviour
 {
-    [SerializeReference] private List<ISense> senses = new();
+    [Tooltip("GameObjects that contain one or more components implementing ISense.")]
+    [SerializeField] private List<GameObject> senseObjects = new();
 
-    public IReadOnlyList<ISense> SenseModules => senses;
+    public IReadOnlyList<GameObject> SenseObjects => senseObjects;
 
     public List<Observation> GetObservations()
     {
         var observations = new List<Observation>();
+        var seenSenses = new HashSet<ISense>();
 
-        foreach (var sense in senses)
+        foreach (var obj in senseObjects)
         {
-            if (sense == null)
+            if (!obj)
                 continue;
 
-            var sensed = sense.GetObservations();
-            if (sensed != null)
-                observations.AddRange(sensed);
+            var senseComponents = obj.GetComponents<ISense>();
+            if (senseComponents == null)
+                continue;
+
+            foreach (var sense in senseComponents)
+            {
+                if (sense == null || seenSenses.Contains(sense))
+                    continue;
+
+                seenSenses.Add(sense);
+
+                var sensed = sense.GetObservations();
+                if (sensed != null)
+                    observations.AddRange(sensed);
+            }
         }
 
         return observations;

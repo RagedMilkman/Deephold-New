@@ -7,12 +7,18 @@ public class SightSense : MonoBehaviour, ISense
     [SerializeField, Range(0f, 180f)] private float fieldOfView = 90f;
     [SerializeField] private LayerMask observableLayers = Physics.DefaultRaycastLayers;
     [SerializeField] private LayerMask obstacleLayers = Physics.DefaultRaycastLayers;
+    [SerializeField] private bool debugDraw = false;
+    [SerializeField] private Color debugColor = Color.cyan;
+    [SerializeField] private Color debugHitColor = Color.green;
+    [SerializeField] private Color debugBlockedColor = Color.red;
 
     private readonly List<Observation> buffer = new();
+    private readonly List<Observation> lastObservations = new();
 
     public List<Observation> GetObservations()
     {
         buffer.Clear();
+        lastObservations.Clear();
 
         var origin = transform.position;
         var hits = Physics.OverlapSphere(origin, visionRange, observableLayers, QueryTriggerInteraction.Ignore);
@@ -34,9 +40,16 @@ public class SightSense : MonoBehaviour, ISense
                 continue;
 
             if (!HasLineOfSight(origin, direction, distance, target))
+            {
+                DrawDebugRay(origin, target.position, debugBlockedColor);
                 continue;
+            }
 
-            buffer.Add(new Observation(target, hit.gameObject));
+            var observation = new Observation(target, hit.gameObject);
+            buffer.Add(observation);
+            lastObservations.Add(observation);
+
+            DrawDebugRay(origin, target.position, debugHitColor);
         }
 
         return new List<Observation>(buffer);
@@ -48,5 +61,34 @@ public class SightSense : MonoBehaviour, ISense
             return true;
 
         return hit.transform == target || hit.transform.IsChildOf(target);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!debugDraw)
+            return;
+
+        Gizmos.color = debugColor;
+        Gizmos.DrawWireSphere(transform.position, visionRange);
+
+        var leftDir = Quaternion.AngleAxis(-fieldOfView * 0.5f, Vector3.up) * transform.forward;
+        var rightDir = Quaternion.AngleAxis(fieldOfView * 0.5f, Vector3.up) * transform.forward;
+
+        Gizmos.DrawLine(transform.position, transform.position + leftDir.normalized * visionRange);
+        Gizmos.DrawLine(transform.position, transform.position + rightDir.normalized * visionRange);
+
+        foreach (var obs in lastObservations)
+        {
+            if (obs?.Location)
+                Gizmos.DrawLine(transform.position, obs.Location.position);
+        }
+    }
+
+    private void DrawDebugRay(Vector3 start, Vector3 end, Color color)
+    {
+        if (!debugDraw)
+            return;
+
+        Debug.DrawLine(start, end, color, 0.1f);
     }
 }
