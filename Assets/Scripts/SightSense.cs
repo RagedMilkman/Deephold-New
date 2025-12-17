@@ -45,7 +45,8 @@ public class SightSense : MonoBehaviour, ISense
                 continue;
             }
 
-            var observation = new Observation(target, hit.gameObject, BeliefSource.Sight);
+            var id = target ? target.GetInstanceID().ToString() : string.Empty;
+            var observation = Observation.ForCharacter(target, hit.gameObject, id, null, null, BeliefSource.Sight, 1f, Time.time);
             buffer.Add(observation);
             lastObservations.Add(observation);
 
