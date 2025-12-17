@@ -564,6 +564,13 @@ public class ToolbeltVisualizer : MonoBehaviour
             {
                 if (rendererVisibilityRestore.TryGetValue(renderer, out bool previous))
                 {
+                    // Avoid forcing LineRenderers back on; their owner logic controls them.
+                    if (renderer is LineRenderer)
+                    {
+                        rendererVisibilityRestore.Remove(renderer);
+                        continue;
+                    }
+
                     renderer.enabled = previous;
                     rendererVisibilityRestore.Remove(renderer);
                 }
