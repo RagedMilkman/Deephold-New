@@ -315,12 +315,12 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     IEnumerator TracerRoutine()
     {
         if (tracerRenderer)
-            tracerRenderer.enabled = true;
+            tracerRenderer.gameObject.SetActive(true);
 
         yield return new WaitForSeconds(tracerDuration);
 
         if (tracerRenderer)
-            tracerRenderer.enabled = false;
+            tracerRenderer.gameObject.SetActive(false);
 
         tracerRoutine = null;
     }
@@ -334,7 +334,7 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
         }
 
         if (tracerRenderer)
-            tracerRenderer.enabled = false;
+            tracerRenderer.gameObject.SetActive(false);
     }
 
     protected virtual void ResolveCamera()
@@ -534,7 +534,7 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
             }
         }
 
-        aimBeam.enabled = true;
+        aimBeam.gameObject.SetActive(true);
         aimBeam.positionCount = 2;
         aimBeam.useWorldSpace = true;
         aimBeam.SetPosition(0, origin);
@@ -548,8 +548,8 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
 
     void DisableAimVisuals()
     {
-        if (aimBeam && aimBeam.enabled)
-            aimBeam.enabled = false;
+        if (aimBeam && aimBeam.gameObject.activeSelf)
+            aimBeam.gameObject.SetActive(false);
 
         if (aimImpactSprite && aimImpactSprite.enabled)
             aimImpactSprite.enabled = false;
@@ -629,7 +629,7 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
         aimBeam.positionCount = 2;
         aimBeam.useWorldSpace = true;
         ApplyAimBeamWidth();
-        aimBeam.enabled = false;
+        aimBeam.gameObject.SetActive(false);
 
         var shader = Shader.Find("Sprites/Default");
         if (shader)
