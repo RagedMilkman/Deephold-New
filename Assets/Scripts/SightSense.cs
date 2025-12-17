@@ -45,7 +45,7 @@ public class SightSense : MonoBehaviour, ISense
                 continue;
             }
 
-            var observation = new Observation(target, hit.gameObject);
+            var observation = new Observation(target, hit.gameObject, BeliefSource.Sight);
             buffer.Add(observation);
             lastObservations.Add(observation);
 

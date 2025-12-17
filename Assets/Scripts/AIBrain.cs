@@ -6,7 +6,16 @@ using UnityEngine;
 public class AIBrain : MonoBehaviour
 {
     [field: SerializeField] public Senses Senses { get; private set; }
-    [field: SerializeField] public GameObject Knowledge { get; private set; }
+    [field: SerializeField] public AgentKnowledge Knowledge { get; private set; }
     [field: SerializeField] public GameObject Intelligence { get; private set; }
     [field: SerializeField] public GameObject Behaviours { get; private set; }
+
+    private void Update()
+    {
+        if (!Senses || !Knowledge)
+            return;
+
+        var observations = Senses.GetObservations();
+        Knowledge.RecieveObservations(observations);
+    }
 }
