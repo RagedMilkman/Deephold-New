@@ -761,7 +761,7 @@ Transform:
   m_GameObject: {fileID: 846384043992410267}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.06823158, y: -0.019999996, z: 0.07310605}
+  m_LocalPosition: {x: -0.068231344, y: -0.019999996, z: 0.07310605}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1092,25 +1092,25 @@ MonoBehaviour:
   leftFoot:
     currentTarget: {fileID: 8108832205637750120}
     desiredMarker: {fileID: 1404418296634193068}
-    currentPos: {x: 4.0766416, y: 0.1, z: 4.030176}
-    desiredPos: {x: 4.0766416, y: 0.1, z: 4.030176}
-    desiredRot: {x: -0, y: -0, z: -0, w: 1}
-    initialized: 1
-    defaultRestOffset: {x: 3.68254, y: 0, z: 3.9456198}
-    hasDefaultRestOffset: 1
-    stepStartPos: {x: 4.0766416, y: 0.1, z: 4.030176}
+    currentPos: {x: 0, y: 0, z: 0}
+    desiredPos: {x: 0, y: 0, z: 0}
+    desiredRot: {x: 0, y: 0, z: 0, w: 1}
+    initialized: 0
+    defaultRestOffset: {x: 0, y: 0, z: 0}
+    hasDefaultRestOffset: 0
+    stepStartPos: {x: 0, y: 0, z: 0}
     stepProgress: 1
     plantState: 0
   rightFoot:
     currentTarget: {fileID: 63587652037212613}
     desiredMarker: {fileID: 1420793014882160652}
-    currentPos: {x: 4.0785484, y: 0.1, z: 4.0283484}
-    desiredPos: {x: 4.0785484, y: 0.1, z: 4.0283484}
-    desiredRot: {x: -0, y: -0, z: -0, w: 1}
-    initialized: 1
-    defaultRestOffset: {x: 3.8825397, y: 0, z: 3.9456198}
-    hasDefaultRestOffset: 1
-    stepStartPos: {x: 4.0785484, y: 0.1, z: 4.0283484}
+    currentPos: {x: 0, y: 0, z: 0}
+    desiredPos: {x: 0, y: 0, z: 0}
+    desiredRot: {x: 0, y: 0, z: 0, w: 1}
+    initialized: 0
+    defaultRestOffset: {x: 0, y: 0, z: 0}
+    hasDefaultRestOffset: 0
+    stepStartPos: {x: 0, y: 0, z: 0}
     stepProgress: 1
     plantState: 0
   circleRadius: 0.3
@@ -1129,7 +1129,7 @@ MonoBehaviour:
   hipMinOffset: 0
   hipMaxOffset: 0.02
   adjustHipHeight: 0
-  restRadius: 0.1
+  restRadius: 0.11
   restDelay: 0.5
   restFootStaggerDelay: 0.2
   movementThreshold: 0.005
@@ -1638,7 +1638,7 @@ Transform:
   m_GameObject: {fileID: 1732185637892849752}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.06823158, y: -0.019999996, z: 0.07310605}
+  m_LocalPosition: {x: -0.068231344, y: -0.019999996, z: 0.07310605}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5525,7 +5525,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013655866, y: 0.7053684, z: 0.033095643, w: 0.70793617}
+  m_LocalRotation: {x: 0.013655904, y: 0.70536834, z: 0.033095613, w: 0.7079362}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
