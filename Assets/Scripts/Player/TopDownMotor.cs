@@ -15,6 +15,7 @@ public class TopDownMotor : MonoBehaviour
     [Header("Movement")]
     [SerializeField] float moveSpeed = 4f;
     [SerializeField] float acceleration = 12f;
+    [SerializeField] float gravity = -30f;
     [SerializeField, Range(0f, 1f)] float sidewaysSpeedMultiplier = 0.75f;
     [SerializeField, Range(0f, 1f)] float backwardSpeedMultiplier = 0.6f;
     [SerializeField, Range(0f, 1f)] float activeStanceSpeedMultiplier = 0.65f;
@@ -46,6 +47,7 @@ public class TopDownMotor : MonoBehaviour
     [SerializeField] float headLookFallbackDistance = 5f;
 
     Vector3 moveVel;
+    float verticalVelocity;
     Stance currentStance;
     MovementType currentMovementType = MovementType.Standing;
 
@@ -113,6 +115,7 @@ public class TopDownMotor : MonoBehaviour
         if (characterState && characterState.State == LifeState.Dead)
         {
             moveVel = Vector3.zero;
+            verticalVelocity = 0f;
             UpdateMovementType(MovementType.Standing);
             return;
         }
@@ -156,7 +159,18 @@ public class TopDownMotor : MonoBehaviour
 
         moveVel = Vector3.Lerp(moveVel, targetVel, acceleration * dt);
 
-        if (controller) controller.Move(moveVel * dt);
+        if (controller)
+        {
+            if (controller.isGrounded && verticalVelocity < 0f)
+            {
+                verticalVelocity = 0f;
+            }
+
+            verticalVelocity += gravity * dt;
+
+            Vector3 motion = new Vector3(moveVel.x, verticalVelocity, moveVel.z);
+            controller.Move(motion * dt);
+        }
 
         UpdateMovementType(DetermineMovementType(targetVel, wantsSprint));
 
