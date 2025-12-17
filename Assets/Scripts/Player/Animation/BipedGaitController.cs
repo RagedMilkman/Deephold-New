@@ -176,6 +176,7 @@ public class BipedGaitController : MonoBehaviour
     {
         hipHeightCaptured = false;
         autoAssignmentComplete = false;
+        ResetFeet();
         ResetMovementTracking();
         circleRadius = Mathf.Max(minCircleRadius, 0f);
         circleRadiusVelocity = 0f;
@@ -191,6 +192,7 @@ public class BipedGaitController : MonoBehaviour
     {
         hipHeightCaptured = false;
         autoAssignmentComplete = false;
+        ResetFeet();
         ResetMovementTracking();
         circleRadius = Mathf.Max(minCircleRadius, 0f);
         circleRadiusVelocity = 0f;
@@ -205,8 +207,31 @@ public class BipedGaitController : MonoBehaviour
     private void OnValidate()
     {
         autoAssignmentComplete = false;
+        ResetFeet();
         TryAutoAssignFootTargets();
         hipHeightCaptured = false;
+    }
+
+    private void ResetFeet()
+    {
+        ResetFoot(leftFoot);
+        ResetFoot(rightFoot);
+    }
+
+    private void ResetFoot(Foot foot)
+    {
+        if (foot == null)
+            return;
+
+        foot.initialized = false;
+        foot.plantState = FootPlantState.Planted;
+        foot.stepProgress = 1f;
+        foot.stepStartPos = Vector3.zero;
+        foot.currentPos = Vector3.zero;
+        foot.desiredPos = Vector3.zero;
+        foot.desiredRot = Quaternion.identity;
+        foot.defaultRestOffset = Vector3.zero;
+        foot.hasDefaultRestOffset = false;
     }
 
     private void CacheInitialHipHeight()
