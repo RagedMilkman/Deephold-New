@@ -6,6 +6,7 @@ using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using RootMotion.FinalIK;
 using FishNet.CodeGenerating;
+using FishNet.Component.Transforming;
 using UnityEngine.Rendering;
 
 public class ToolbeltNetworked : NetworkBehaviour
@@ -751,6 +752,9 @@ public class ToolbeltNetworked : NetworkBehaviour
 
         foreach (var networkObject in instance.GetComponentsInChildren<NetworkObject>(true))
             networkObject.enabled = true;
+
+        foreach (var networkTransform in instance.GetComponentsInChildren<NetworkTransform>(true))
+            networkTransform.enabled = true;
     }
 
     void AssignOwnerToolbelt(GameObject instance, bool assign)
