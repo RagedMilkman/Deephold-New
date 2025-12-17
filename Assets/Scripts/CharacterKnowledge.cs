@@ -5,9 +5,9 @@ public class CharacterKnowledge
     public string Id { get; }
     public GameObject CharacterObject { get; }
 
-    public Belief Position { get; private set; }
-    public Belief Health { get; private set; }
-    public Belief Equipped { get; private set; }
+    public Belief<Vector3>? Position { get; private set; }
+    public Belief<float>? Health { get; private set; }
+    public Belief<GameObject>? Equipped { get; private set; }
 
     public CharacterKnowledge(string id, GameObject characterObject)
     {
@@ -23,42 +23,38 @@ public class CharacterKnowledge
         var subject = InferSubject(CharacterObject ?? observation.ObservedObject);
         var timestamp = observation.Timestamp;
         var confidence = observation.Confidence;
-        var source = observation.Source;
 
         if (observation.Location)
         {
-            Position = new Belief(
-                subject,
-                BeliefProposition.Position,
-                BeliefValue.FromPosition(observation.Location.position),
-                confidence,
-                source,
-                CharacterObject ?? observation.ObservedObject,
-                timestamp);
+            Position = new Belief<Vector3>
+            {
+                Value = observation.Location.position,
+                Confidence = confidence,
+                TimeStamp = timestamp,
+                DecayPerSecond = 0f
+            };
         }
 
         if (observation.CharacterData.Health.HasValue)
         {
-            Health = new Belief(
-                subject,
-                BeliefProposition.Health,
-                BeliefValue.FromHealth(observation.CharacterData.Health.Value),
-                confidence,
-                source,
-                CharacterObject ?? observation.ObservedObject,
-                timestamp);
+            Health = new Belief<float>
+            {
+                Value = observation.CharacterData.Health.Value,
+                Confidence = confidence,
+                TimeStamp = timestamp,
+                DecayPerSecond = 0f
+            };
         }
 
         if (observation.CharacterData.Equipped)
         {
-            Equipped = new Belief(
-                subject,
-                BeliefProposition.Equipped,
-                BeliefValue.FromEquipped(observation.CharacterData.Equipped),
-                confidence,
-                source,
-                CharacterObject ?? observation.ObservedObject,
-                timestamp);
+            Equipped = new Belief<GameObject>
+            {
+                Value = observation.CharacterData.Equipped,
+                Confidence = confidence,
+                TimeStamp = timestamp,
+                DecayPerSecond = 0f
+            };
         }
     }
 
