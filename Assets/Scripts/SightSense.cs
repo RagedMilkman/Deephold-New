@@ -30,7 +30,7 @@ public class SightSense : MonoBehaviour, ISense
             if (characterHealth == null)
                 continue;
 
-            if (!seen.Add(characterHealth))
+            if (seen.Contains(characterHealth))
                 continue;
 
             var obstacleTarget = hit.transform;
@@ -54,6 +54,8 @@ public class SightSense : MonoBehaviour, ISense
                 continue;
             }
 
+            _ = seen.Add(characterHealth);
+
             var id = targetRoot ? targetRoot.GetInstanceID().ToString() : string.Empty;
             var toolbelt = characterHealth.GetComponentInChildren<ToolbeltNetworked>(true);
             var equipped = toolbelt ? toolbelt.CurrentEquippedObject : null;
@@ -72,7 +74,10 @@ public class SightSense : MonoBehaviour, ISense
         if (!Physics.Raycast(origin, direction.normalized, out RaycastHit hit, distance, obstacleLayers, QueryTriggerInteraction.Ignore))
             return true;
 
-        return hit.transform == target || hit.transform.IsChildOf(target);
+        var hitRoot = hit.transform.root;
+        var targetRoot = target.root;
+
+        return hitRoot == targetRoot;
     }
 
     private void OnDrawGizmosSelected()
