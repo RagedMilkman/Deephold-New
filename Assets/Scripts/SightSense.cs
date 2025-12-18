@@ -33,11 +33,12 @@ public class SightSense : MonoBehaviour, ISense
             if (!seen.Add(characterHealth))
                 continue;
 
-            var target = characterHealth.OwnerRoot ? characterHealth.OwnerRoot : characterHealth.transform;
-            if (target == transform)
+            var obstacleTarget = hit.transform;
+            var targetRoot = characterHealth.OwnerRoot ? characterHealth.OwnerRoot : characterHealth.transform;
+            if (obstacleTarget == transform)
                 continue;
 
-            var direction = target.position - origin;
+            var direction = obstacleTarget.position - origin;
             var distance = direction.magnitude;
 
             if (distance <= 0.0001f)
@@ -47,20 +48,20 @@ public class SightSense : MonoBehaviour, ISense
             if (angle > fieldOfView * 0.5f)
                 continue;
 
-            if (!HasLineOfSight(origin, direction, distance, target))
+            if (!HasLineOfSight(origin, direction, distance, obstacleTarget))
             {
-                DrawDebugRay(origin, target.position, debugBlockedColor);
+                DrawDebugRay(origin, obstacleTarget.position, debugBlockedColor);
                 continue;
             }
 
-            var id = target ? target.GetInstanceID().ToString() : string.Empty;
+            var id = targetRoot ? targetRoot.GetInstanceID().ToString() : string.Empty;
             var toolbelt = characterHealth.GetComponentInChildren<ToolbeltNetworked>(true);
             var equipped = toolbelt ? toolbelt.CurrentEquippedObject : null;
-            var observation = Observation.ForCharacter(target, characterHealth.gameObject, id, characterHealth.Health, equipped, BeliefSource.Sight, 1f, Time.time);
+            var observation = Observation.ForCharacter(targetRoot, characterHealth.gameObject, id, characterHealth.Health, equipped, BeliefSource.Sight, 1f, Time.time);
             buffer.Add(observation);
             lastObservations.Add(observation);
 
-            DrawDebugRay(origin, target.position, debugHitColor);
+            DrawDebugRay(origin, obstacleTarget.position, debugHitColor);
         }
 
         return new List<Observation>(buffer);
