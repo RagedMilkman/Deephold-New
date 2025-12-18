@@ -10,6 +10,13 @@ public class AIBrain : MonoBehaviour
     [field: SerializeField] public AgentIntelligence Intelligence { get; private set; }
     [field: SerializeField] public GameObject Behaviours { get; private set; }
 
+    [Header("Traits")]
+    [SerializeField, Range(0f, 1f)] private float aggression = 0.5f;
+    [SerializeField, Range(0f, 1f)] private float bravery = 0.5f;
+
+    public float Aggression => aggression;
+    public float Bravery => bravery;
+
     public IIntent CurrentIntent { get; private set; }
 
     private void Update()
