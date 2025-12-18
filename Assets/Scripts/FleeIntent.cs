@@ -6,7 +6,7 @@ using UnityEngine;
 public sealed class FleeIntent : IIntent
 {
     public IntentType Type => IntentType.Flee;
-    public float Urgency { get; init; }
+    public float Urgency { get; set; }
 
     public Vector3 EscapePos;
 }
