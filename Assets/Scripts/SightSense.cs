@@ -70,7 +70,10 @@ public class SightSense : MonoBehaviour, ISense
             var toolbelt = characterHealth.GetComponentInChildren<ToolbeltNetworked>(true);
             var equipped = toolbelt ? toolbelt.CurrentEquippedObject : null;
             var factionId = TryGetFactionId(targetRoot);
-            var observation = Observation.ForCharacter(targetRoot, characterHealth.gameObject, id, characterHealth.Health, equipped, factionId, BeliefSource.Sight, 1f, Time.time);
+            var facingDirection = targetRoot ? (Vector3?)targetRoot.forward : null;
+            var motor = targetRoot ? targetRoot.GetComponentInChildren<TopDownMotor>(true) : null;
+            var stance = motor ? (TopDownMotor.Stance?)motor.CurrentStance : null;
+            var observation = Observation.ForCharacter(targetRoot, characterHealth.gameObject, id, characterHealth.Health, equipped, factionId, facingDirection, stance, BeliefSource.Sight, 1f, Time.time);
             buffer.Add(observation);
             lastObservations.Add(observation);
 

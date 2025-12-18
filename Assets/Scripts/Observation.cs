@@ -20,13 +20,17 @@ public readonly struct CharacterObservationData
     public float? Health { get; }
     public GameObject Equipped { get; }
     public string FactionId { get; }
+    public Vector3? FacingDirection { get; }
+    public TopDownMotor.Stance? Stance { get; }
 
-    public CharacterObservationData(string id, float? health, GameObject equipped, string factionId)
+    public CharacterObservationData(string id, float? health, GameObject equipped, string factionId, Vector3? facingDirection, TopDownMotor.Stance? stance)
     {
         Id = id;
         Health = health;
         Equipped = equipped;
         FactionId = factionId;
+        FacingDirection = facingDirection;
+        Stance = stance;
     }
 }
 
@@ -59,6 +63,6 @@ public sealed class Observation
     public static Observation ForEvent(Transform location, ObservationEventType eventType, BeliefSource source, float confidence, float timestamp) =>
         new(location, ObservationType.Event, null, eventType, source, confidence, timestamp, default);
 
-    public static Observation ForCharacter(Transform location, GameObject observedObject, string id, float? health, GameObject equipped, string factionId, BeliefSource source, float confidence, float timestamp) =>
-        new(location, ObservationType.Character, observedObject, ObservationEventType.Nothing, source, confidence, timestamp, new CharacterObservationData(id, health, equipped, factionId));
+    public static Observation ForCharacter(Transform location, GameObject observedObject, string id, float? health, GameObject equipped, string factionId, Vector3? facingDirection, TopDownMotor.Stance? stance, BeliefSource source, float confidence, float timestamp) =>
+        new(location, ObservationType.Character, observedObject, ObservationEventType.Nothing, source, confidence, timestamp, new CharacterObservationData(id, health, equipped, factionId, facingDirection, stance));
 }

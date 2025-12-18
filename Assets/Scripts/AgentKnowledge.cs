@@ -71,8 +71,11 @@ public class AgentKnowledge : MonoBehaviour
         var toolbelt = selfCharacter.GetComponentInChildren<ToolbeltNetworked>(true);
         var equipped = toolbelt ? toolbelt.CurrentEquippedObject : null;
         var factionId = selfCharacter.Faction ? selfCharacter.Faction.GetInstanceID().ToString() : null;
+        var facingDirection = selfCharacter.transform ? (Vector3?)selfCharacter.transform.forward : null;
+        var topDownMotor = selfCharacter.GetComponentInParent<TopDownMotor>(true);
+        var stance = topDownMotor ? (TopDownMotor.Stance?)topDownMotor.CurrentStance : null;
 
-        var selfObservation = Observation.ForCharacter(selfCharacter.transform, selfCharacter.gameObject, id, healthValue, equipped, factionId, BeliefSource.Inferred, 1f, Time.time);
+        var selfObservation = Observation.ForCharacter(selfCharacter.transform, selfCharacter.gameObject, id, healthValue, equipped, factionId, facingDirection, stance, BeliefSource.Inferred, 1f, Time.time);
         Self.UpdateFromObservation(selfObservation);
     }
 }

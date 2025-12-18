@@ -6,9 +6,11 @@ public class CharacterKnowledge
     public GameObject CharacterObject { get; }
 
     public Belief<Vector3>? Position { get; private set; }
+    public Belief<Vector3>? FacingDirection { get; private set; }
     public Belief<float>? Health { get; private set; }
     public Belief<GameObject>? Equipped { get; private set; }
     public Belief<string>? FactionId { get; private set; }
+    public Belief<TopDownMotor.Stance>? Stance { get; private set; }
 
     public CharacterKnowledge(string id, GameObject characterObject)
     {
@@ -24,11 +26,35 @@ public class CharacterKnowledge
         var timestamp = observation.Timestamp;
         var confidence = observation.Confidence;
 
+        if (observation.CharacterData.FacingDirection.HasValue)
+        {
+            var direction = observation.CharacterData.FacingDirection.Value;
+            var normalized = direction.sqrMagnitude > 0.0001f ? direction.normalized : direction;
+            FacingDirection = new Belief<Vector3>
+            {
+                Value = normalized,
+                Confidence = confidence,
+                TimeStamp = timestamp,
+                DecayPerSecond = 0f
+            };
+        }
+
         if (observation.Location)
         {
             Position = new Belief<Vector3>
             {
                 Value = observation.Location.position,
+                Confidence = confidence,
+                TimeStamp = timestamp,
+                DecayPerSecond = 0f
+            };
+        }
+
+        if (observation.CharacterData.Stance.HasValue)
+        {
+            Stance = new Belief<TopDownMotor.Stance>
+            {
+                Value = observation.CharacterData.Stance.Value,
                 Confidence = confidence,
                 TimeStamp = timestamp,
                 DecayPerSecond = 0f
