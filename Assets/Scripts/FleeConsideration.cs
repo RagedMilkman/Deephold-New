@@ -61,10 +61,10 @@ public sealed class FleeConsideration : Consideration
             if (character.FacingDirection.HasValue)
             {
                 var facing = character.FacingDirection.Value;
-                facing.y = 0f;
+                facing.Value.y = 0f;
 
-                if (facing.sqrMagnitude > 0.0001f)
-                    facingFactor = Mathf.Max(0f, Vector3.Dot(facing.normalized, normalizedAway));
+                if (facing.Value.sqrMagnitude > 0.0001f)
+                    facingFactor = Mathf.Max(0f, Vector3.Dot(facing.Value.normalized, normalizedAway));
             }
 
             var hasEquipped = character.Equipped.HasValue && character.Equipped.Value.Value != null;
