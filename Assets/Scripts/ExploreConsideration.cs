@@ -9,7 +9,7 @@ public sealed class ExploreConsideration : Consideration
     [SerializeField, Min(0f)] private float minDistance = 2f;
     [SerializeField, Min(0f)] private float maxDistance = 12f;
 
-    public override IIntent EvaluateIntent(AgentKnowledge knowledge)
+    public override IIntent EvaluateIntent(AgentKnowledge knowledge, Personality personality)
     {
         if (knowledge == null || maxDistance <= 0f)
             return null;

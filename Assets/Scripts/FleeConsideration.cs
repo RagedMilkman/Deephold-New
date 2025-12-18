@@ -12,7 +12,7 @@ public sealed class FleeConsideration : Consideration
     [SerializeField, Range(0f, 1f)] private float activeStanceThreatBonus = 0.25f;
     [SerializeField, Range(0f, 2f)] private float lowHealthUrgencyMultiplier = 1f;
 
-    public override IIntent EvaluateIntent(AgentKnowledge knowledge)
+    public override IIntent EvaluateIntent(AgentKnowledge knowledge, Personality personality)
     {
         if (knowledge == null || knowledge.Characters.Count == 0 || escapeDistance <= 0f)
             return null;
@@ -90,6 +90,13 @@ public sealed class FleeConsideration : Consideration
         var escapeTarget = selfPosition + normalizedDirection * escapeDistance;
         var threatUrgency = Mathf.Lerp(baseUrgency, 1f, highestThreat);
         var urgency = Mathf.Clamp01(threatUrgency * (1f + lowHealthFactor * lowHealthUrgencyMultiplier));
+
+        var bravery = personality?.Bravery ?? 0.5f;
+        var braveryModifier = Mathf.Clamp01(1f - bravery);
+        urgency *= braveryModifier;
+
+        if (urgency <= 0f)
+            return null;
 
         return new FleeIntent
         {

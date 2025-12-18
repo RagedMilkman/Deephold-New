@@ -11,11 +11,9 @@ public class AIBrain : MonoBehaviour
     [field: SerializeField] public GameObject Behaviours { get; private set; }
 
     [Header("Traits")]
-    [SerializeField, Range(0f, 1f)] private float aggression = 0.5f;
-    [SerializeField, Range(0f, 1f)] private float bravery = 0.5f;
+    [SerializeField] private Personality personality = new();
 
-    public float Aggression => aggression;
-    public float Bravery => bravery;
+    public Personality Personality => personality;
 
     public IIntent CurrentIntent { get; private set; }
 
@@ -27,6 +25,6 @@ public class AIBrain : MonoBehaviour
         var observations = Senses.GetObservations();
         Knowledge.RecieveObservations(observations);
 
-        CurrentIntent = Intelligence.ChooseIntent(Knowledge);
+        CurrentIntent = Intelligence.ChooseIntent(Knowledge, personality);
     }
 }

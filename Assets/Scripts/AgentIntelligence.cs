@@ -15,8 +15,9 @@ public class AgentIntelligence : MonoBehaviour
     /// Chooses the highest urgency intent produced by attached considerations.
     /// </summary>
     /// <param name="knowledge">The agent's current knowledge.</param>
+    /// <param name="personality">The agent's personality traits.</param>
     /// <returns>The chosen intent, or null if no valid intent was produced.</returns>
-    public IIntent ChooseIntent(AgentKnowledge knowledge)
+    public IIntent ChooseIntent(AgentKnowledge knowledge, Personality personality)
     {
         if (knowledge == null || considerations == null || considerations.Count == 0)
             return null;
@@ -28,7 +29,7 @@ public class AgentIntelligence : MonoBehaviour
             if (!consideration)
                 continue;
 
-            var intent = consideration.EvaluateIntent(knowledge);
+            var intent = consideration.EvaluateIntent(knowledge, personality);
             if (intent == null)
                 continue;
 
