@@ -11,9 +11,16 @@ public class SightSense : MonoBehaviour, ISense
     [SerializeField] private Color debugColor = Color.cyan;
     [SerializeField] private Color debugHitColor = Color.green;
     [SerializeField] private Color debugBlockedColor = Color.red;
+    [SerializeField] private CharacterHealth selfCharacter;
 
     private readonly List<Observation> buffer = new();
     private readonly List<Observation> lastObservations = new();
+
+    private void Awake()
+    {
+        if (!selfCharacter)
+            selfCharacter = GetComponentInParent<CharacterHealth>();
+    }
 
     public List<Observation> GetObservations()
     {
@@ -21,6 +28,7 @@ public class SightSense : MonoBehaviour, ISense
         lastObservations.Clear();
 
         var origin = transform.position;
+        var selfRoot = selfCharacter && selfCharacter.OwnerRoot ? selfCharacter.OwnerRoot : transform.root;
         var hits = Physics.OverlapSphere(origin, visionRange, observableLayers, QueryTriggerInteraction.Ignore);
         var seen = new HashSet<CharacterHealth>();
 
@@ -35,6 +43,8 @@ public class SightSense : MonoBehaviour, ISense
 
             var obstacleTarget = hit.transform;
             var targetRoot = characterHealth.OwnerRoot ? characterHealth.OwnerRoot : characterHealth.transform;
+            if (selfRoot && targetRoot == selfRoot)
+                continue;
             if (obstacleTarget == transform)
                 continue;
 
