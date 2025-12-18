@@ -80,6 +80,8 @@
     <Compile Include="Assets\Scripts\AIBrain.cs" />
     <Compile Include="Assets\Scripts\AgentIntelligence.cs" />
     <Compile Include="Assets\Scripts\Intent.cs" />
+    <Compile Include="Assets\Scripts\EngageIntent.cs" />
+    <Compile Include="Assets\Scripts\FleeIntent.cs" />
     <Compile Include="Assets\Scripts\Consideration.cs" />
     <Compile Include="Assets\Scripts\FleeConsideration.cs" />
     <Compile Include="Assets\Scripts\Items\ToolbeltItemCategory.cs" />
