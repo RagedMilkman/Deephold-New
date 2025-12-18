@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 8255345355901457682}
   - component: {fileID: 3942169823563837710}
   - component: {fileID: 3339654881966189159}
+  - component: {fileID: 61755719752392431}
+  - component: {fileID: 5922440137573515275}
   m_Layer: 0
   m_Name: Human
   m_TagString: Untagged
@@ -171,7 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AIBrain
   <Senses>k__BackingField: {fileID: 3942169823563837710}
   <Knowledge>k__BackingField: {fileID: 3339654881966189159}
-  <Intelligence>k__BackingField: {fileID: 0}
+  <Intelligence>k__BackingField: {fileID: 61755719752392431}
   <Behaviours>k__BackingField: {fileID: 0}
 --- !u!114 &3942169823563837710
 MonoBehaviour:
@@ -199,6 +201,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 454d2694a0eb4a93824e9985d189cf8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AgentKnowledge
+--- !u!114 &61755719752392431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6116119404708490174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f2d9f2dda1048f49e7d1b381105e0ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AgentIntelligence
+  considerations:
+  - {fileID: 5922440137573515275}
+--- !u!114 &5922440137573515275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6116119404708490174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f4c13a8e5c04d2f86061d38cd0a9e32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FleeConsideration
+  baseUrgency: 0.5
+  escapeDistance: 5
 --- !u!1001 &5953492238139108838
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -413,7 +443,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.01379764
+      value: 0.013797612
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
@@ -421,7 +451,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.033239212
+      value: -0.03323916
       objectReference: {fileID: 0}
     - target: {fileID: 6797074947291448208, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_Layer
@@ -581,7 +611,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013654995
+      value: 0.013655059
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
@@ -589,7 +619,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.033097416
+      value: 0.033097334
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
