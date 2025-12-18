@@ -1,7 +1,8 @@
 public enum IntentType
 {
     Engage,
-    Flee
+    Flee,
+    Explore
 }
 
 public interface IIntent
