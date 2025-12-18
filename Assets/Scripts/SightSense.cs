@@ -22,13 +22,21 @@ public class SightSense : MonoBehaviour, ISense
 
         var origin = transform.position;
         var hits = Physics.OverlapSphere(origin, visionRange, observableLayers, QueryTriggerInteraction.Ignore);
+        var seen = new HashSet<CharacterHealth>();
 
         foreach (var hit in hits)
         {
-            if (hit.transform == transform)
+            var characterHealth = hit.GetComponentInParent<CharacterHealth>();
+            if (characterHealth == null)
                 continue;
 
-            var target = hit.transform;
+            if (!seen.Add(characterHealth))
+                continue;
+
+            var target = characterHealth.OwnerRoot ? characterHealth.OwnerRoot : characterHealth.transform;
+            if (target == transform)
+                continue;
+
             var direction = target.position - origin;
             var distance = direction.magnitude;
 
@@ -46,7 +54,9 @@ public class SightSense : MonoBehaviour, ISense
             }
 
             var id = target ? target.GetInstanceID().ToString() : string.Empty;
-            var observation = Observation.ForCharacter(target, hit.gameObject, id, null, null, BeliefSource.Sight, 1f, Time.time);
+            var toolbelt = characterHealth.GetComponentInChildren<ToolbeltNetworked>(true);
+            var equipped = toolbelt ? toolbelt.CurrentEquippedObject : null;
+            var observation = Observation.ForCharacter(target, characterHealth.gameObject, id, characterHealth.Health, equipped, BeliefSource.Sight, 1f, Time.time);
             buffer.Add(observation);
             lastObservations.Add(observation);
 
