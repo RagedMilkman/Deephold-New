@@ -19,12 +19,14 @@ public readonly struct CharacterObservationData
     public string Id { get; }
     public float? Health { get; }
     public GameObject Equipped { get; }
+    public string FactionId { get; }
 
-    public CharacterObservationData(string id, float? health, GameObject equipped)
+    public CharacterObservationData(string id, float? health, GameObject equipped, string factionId)
     {
         Id = id;
         Health = health;
         Equipped = equipped;
+        FactionId = factionId;
     }
 }
 
@@ -57,6 +59,6 @@ public sealed class Observation
     public static Observation ForEvent(Transform location, ObservationEventType eventType, BeliefSource source, float confidence, float timestamp) =>
         new(location, ObservationType.Event, null, eventType, source, confidence, timestamp, default);
 
-    public static Observation ForCharacter(Transform location, GameObject observedObject, string id, float? health, GameObject equipped, BeliefSource source, float confidence, float timestamp) =>
-        new(location, ObservationType.Character, observedObject, ObservationEventType.Nothing, source, confidence, timestamp, new CharacterObservationData(id, health, equipped));
+    public static Observation ForCharacter(Transform location, GameObject observedObject, string id, float? health, GameObject equipped, string factionId, BeliefSource source, float confidence, float timestamp) =>
+        new(location, ObservationType.Character, observedObject, ObservationEventType.Nothing, source, confidence, timestamp, new CharacterObservationData(id, health, equipped, factionId));
 }

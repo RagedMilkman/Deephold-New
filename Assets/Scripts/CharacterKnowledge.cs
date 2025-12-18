@@ -8,6 +8,7 @@ public class CharacterKnowledge
     public Belief<Vector3>? Position { get; private set; }
     public Belief<float>? Health { get; private set; }
     public Belief<GameObject>? Equipped { get; private set; }
+    public Belief<string>? FactionId { get; private set; }
 
     public CharacterKnowledge(string id, GameObject characterObject)
     {
@@ -50,6 +51,17 @@ public class CharacterKnowledge
             Equipped = new Belief<GameObject>
             {
                 Value = observation.CharacterData.Equipped,
+                Confidence = confidence,
+                TimeStamp = timestamp,
+                DecayPerSecond = 0f
+            };
+        }
+
+        if (!string.IsNullOrWhiteSpace(observation.CharacterData.FactionId))
+        {
+            FactionId = new Belief<string>
+            {
+                Value = observation.CharacterData.FactionId,
                 Confidence = confidence,
                 TimeStamp = timestamp,
                 DecayPerSecond = 0f

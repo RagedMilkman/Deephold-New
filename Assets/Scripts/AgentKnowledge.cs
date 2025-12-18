@@ -4,11 +4,23 @@ using UnityEngine;
 public class AgentKnowledge : MonoBehaviour
 {
     private readonly Dictionary<string, CharacterKnowledge> characters = new();
+    [SerializeField] private CharacterData selfCharacter;
 
     public IReadOnlyDictionary<string, CharacterKnowledge> Characters => characters;
+    public CharacterKnowledge Self { get; private set; }
+
+    private void Awake()
+    {
+        if (!selfCharacter)
+            selfCharacter = GetComponentInParent<CharacterData>();
+
+        UpdateSelfKnowledge();
+    }
 
     public void RecieveObservations(List<Observation> observations)
     {
+        UpdateSelfKnowledge();
+
         if (observations == null || observations.Count == 0)
             return;
 
@@ -38,5 +50,29 @@ public class AgentKnowledge : MonoBehaviour
         }
 
         knowledge.UpdateFromObservation(observation);
+    }
+
+    private void UpdateSelfKnowledge()
+    {
+        if (!selfCharacter)
+            return;
+
+        var id = !string.IsNullOrWhiteSpace(selfCharacter.CharacterId)
+            ? selfCharacter.CharacterId
+            : selfCharacter.gameObject.GetInstanceID().ToString();
+
+        if (string.IsNullOrWhiteSpace(id))
+            return;
+
+        if (Self == null || Self.Id != id)
+            Self = new CharacterKnowledge(id, selfCharacter.gameObject);
+
+        var healthValue = selfCharacter.Health ? (float?)selfCharacter.Health.Health : null;
+        var toolbelt = selfCharacter.GetComponentInChildren<ToolbeltNetworked>(true);
+        var equipped = toolbelt ? toolbelt.CurrentEquippedObject : null;
+        var factionId = selfCharacter.Faction ? selfCharacter.Faction.GetInstanceID().ToString() : null;
+
+        var selfObservation = Observation.ForCharacter(selfCharacter.transform, selfCharacter.gameObject, id, healthValue, equipped, factionId, BeliefSource.Inferred, 1f, Time.time);
+        Self.UpdateFromObservation(selfObservation);
     }
 }

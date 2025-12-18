@@ -59,7 +59,8 @@ public class SightSense : MonoBehaviour, ISense
             var id = targetRoot ? targetRoot.GetInstanceID().ToString() : string.Empty;
             var toolbelt = characterHealth.GetComponentInChildren<ToolbeltNetworked>(true);
             var equipped = toolbelt ? toolbelt.CurrentEquippedObject : null;
-            var observation = Observation.ForCharacter(targetRoot, characterHealth.gameObject, id, characterHealth.Health, equipped, BeliefSource.Sight, 1f, Time.time);
+            var factionId = TryGetFactionId(targetRoot);
+            var observation = Observation.ForCharacter(targetRoot, characterHealth.gameObject, id, characterHealth.Health, equipped, factionId, BeliefSource.Sight, 1f, Time.time);
             buffer.Add(observation);
             lastObservations.Add(observation);
 
@@ -78,6 +79,15 @@ public class SightSense : MonoBehaviour, ISense
         var targetRoot = target.root;
 
         return hitRoot == targetRoot;
+    }
+
+    private string TryGetFactionId(Transform targetRoot)
+    {
+        if (!targetRoot)
+            return null;
+
+        var characterData = targetRoot.GetComponentInParent<CharacterData>();
+        return characterData && characterData.Faction ? characterData.Faction.GetInstanceID().ToString() : null;
     }
 
     private void OnDrawGizmosSelected()
