@@ -108,6 +108,7 @@
     <Compile Include="Assets\Scripts\World\Navigation\NavFieldService.cs" />
     <Compile Include="Assets\Scripts\Player\Network\BoneSnapshotReplicator.cs" />
     <Compile Include="Assets\Scripts\Player\Network\BoneSnapshotDebugUI.cs" />
+    <Compile Include="Assets\Scripts\Personality.cs" />
     <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\ProjectorSpawner_URP.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\HumanoidRigAnimator.cs" />
     <Compile Include="Assets\Scripts\World\Models\CellData.cs" />
