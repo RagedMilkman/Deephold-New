@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\SightSense.cs" />
     <Compile Include="Assets\Scripts\Items\ToolMountPoint.cs" />
     <Compile Include="Assets\Scripts\Player\ToolbeltVisualizer.cs" />
+    <Compile Include="Assets\Scripts\AI\Actuators\ToolbeltActuator.cs" />
     <Compile Include="Assets\Scripts\World\Generation\NoiseGenerator.cs" />
     <Compile Include="Assets\Scripts\World\MineableBlock.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\ProceduralMuzzleFlash.cs" />
@@ -104,9 +105,11 @@
     <Compile Include="Assets\Scripts\Player\Interaction\PlayerInteraction.cs" />
     <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\TrailProjectorSpawner.cs" />
     <Compile Include="Assets\Scripts\AgentKnowledge.cs" />
+    <Compile Include="Assets\Scripts\AI\Behaviours\PathingBehaviour.cs" />
     <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\ContinuousProjectorSpawner_URP.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\NavFieldService.cs" />
     <Compile Include="Assets\Scripts\Player\Network\BoneSnapshotReplicator.cs" />
+    <Compile Include="Assets\Scripts\AI\Behaviours\BehaviourBase.cs" />
     <Compile Include="Assets\Scripts\Player\Network\BoneSnapshotDebugUI.cs" />
     <Compile Include="Assets\Scripts\Personality.cs" />
     <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\ProjectorSpawner_URP.cs" />
@@ -138,10 +141,13 @@
     <Compile Include="Assets\Scripts\NetworkPlayerSpawner.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\PistolWeapon.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\Scripts\AI\Behaviours\ExploreBehaviour.cs" />
     <Compile Include="Assets\Scripts\Items\ItemDefinition.cs" />
     <Compile Include="Assets\BloodEffectsPack\Common\Script\KillEffect.cs" />
+    <Compile Include="Assets\Scripts\AI\Actuators\MotorActuator.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\BlockShootable.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\PuppetMasterExtensions.cs" />
+    <Compile Include="Assets\Scripts\AI\Behaviours\BehaviourModule.cs" />
     <Compile Include="Assets\Scripts\Items\ItemMountType.cs" />
     <Compile Include="Assets\Scripts\Player\ToolbeltVisualHelpers.cs" />
     <Compile Include="Assets\BloodEffectsPack\Common\Script\Scriptable\BloodPreset.cs" />
@@ -160,9 +166,11 @@
     <Compile Include="Assets\Scripts\Items\Tools\IPlayerTool.cs" />
     <Compile Include="Assets\Scripts\Items\MountTypeCategoryMap.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\IAIDigService.cs" />
+    <Compile Include="Assets\Scripts\AI\Behaviours\FleeBehaviour.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\ProjectileBullet.cs" />
     <Compile Include="Assets\Scripts\Items\Tools\PickaxeTool.cs" />
     <Compile Include="Assets\Scripts\Player\Network\YawReplicator.cs" />
+    <Compile Include="Assets\Scripts\AI\Actions\CombatActions.cs" />
     <Compile Include="Assets\Scripts\NetworkPlayerController.cs" />
     <Compile Include="Assets\Scripts\Intent.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\PathingService.cs" />
@@ -174,6 +182,7 @@
     <Compile Include="Assets\Scripts\Items\HandMount.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\ToolbeltInteraction.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\BespokePathService.cs" />
+    <Compile Include="Assets\Scripts\AI\Actions\MotorActions.cs" />
     <Compile Include="Assets\Scripts\FleeConsideration.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\RangedInteraction.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\IAIState.cs" />
