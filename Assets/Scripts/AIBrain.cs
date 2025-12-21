@@ -8,7 +8,7 @@ public class AIBrain : MonoBehaviour
     [field: SerializeField] public Senses Senses { get; private set; }
     [field: SerializeField] public AgentKnowledge Knowledge { get; private set; }
     [field: SerializeField] public AgentIntelligence Intelligence { get; private set; }
-    [field: SerializeField] public GameObject Behaviours { get; private set; }
+    [field: SerializeField] public BehaviourModule BehaviourModule { get; private set; }
 
     [Header("Traits")]
     [SerializeField] private Personality personality = new();
@@ -26,5 +26,8 @@ public class AIBrain : MonoBehaviour
         Knowledge.RecieveObservations(observations);
 
         CurrentIntent = Intelligence.ChooseIntent(Knowledge, personality);
+
+        if (BehaviourModule)
+            BehaviourModule.Tick(CurrentIntent);
     }
 }
