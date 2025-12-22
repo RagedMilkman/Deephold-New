@@ -74,6 +74,13 @@ public class GridDirector : NetworkBehaviour
             RebuildServerColliders();
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        Server_SendFullSnapshotToClient();
+    }
+
     void BuildInitialGrid()
     {
         cells = new CellData[width, height];

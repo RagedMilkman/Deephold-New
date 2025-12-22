@@ -98,10 +98,7 @@ public class BlockGenerator : MonoBehaviour
         float worldH = Mathf.Max(1, height) * cellSize;
         go.transform.localScale = new Vector3(worldW / 10f, 1f, worldH / 10f);
         go.transform.position = new Vector3(worldW * 0.5f, 0f, worldH * 0.5f);
-        go.layer = 8;
-
-       // var col = go.GetComponent<Collider>(); 
-        //if (col) Destroy(col);
+        go.layer = 3;
     }
 
     void BuildExposedFor(IEnumerable<Vector2Int> coords)

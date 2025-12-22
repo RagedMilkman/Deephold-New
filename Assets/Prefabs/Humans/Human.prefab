@@ -185,7 +185,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b52b0926ac39f344aa7604bd6d9ce44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BehaviourModule
-  behaviours: []
+  behaviours:
+  - {fileID: 5767128025176272578}
+  - {fileID: 6099138736242802060}
 --- !u!1 &4087126328367995121
 GameObject:
   m_ObjectHideFlags: 0
@@ -342,8 +344,8 @@ GameObject:
   - component: {fileID: 4630460447651833272}
   - component: {fileID: -1847501461699843864}
   - component: {fileID: 5858403481333311705}
-  - component: {fileID: 5340020552757736216}
   - component: {fileID: 2555694571077031807}
+  - component: {fileID: 5340020552757736216}
   - component: {fileID: 8255345355901457682}
   - component: {fileID: 3942169823563837710}
   - component: {fileID: 3339654881966189159}
@@ -458,22 +460,6 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 4630460447651833272}
   _networkObjectCache: {fileID: 0}
   _target: {fileID: 6116119404708490174}
---- !u!114 &5340020552757736216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6116119404708490174}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2398b3c6eb724702936948bfbc21ab5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TopDownChaseAI
-  _motor: {fileID: 5903944542015488180}
-  _target: {fileID: 0}
-  state: {fileID: 1459772520429387606}
-  _stopDistance: 1.12
 --- !u!114 &2555694571077031807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -490,7 +476,7 @@ MonoBehaviour:
   _faction: {fileID: 0}
   _forceEnableHierarchy: 1
   _health: {fileID: 1459772520429387606}
---- !u!114 &8255345355901457682
+--- !u!114 &5340020552757736216
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -498,6 +484,22 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6116119404708490174}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2398b3c6eb724702936948bfbc21ab5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TopDownChaseAI
+  _motor: {fileID: 5903944542015488180}
+  _target: {fileID: 0}
+  state: {fileID: 1459772520429387606}
+  _stopDistance: 1.12
+--- !u!114 &8255345355901457682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6116119404708490174}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8212ec89ee254f7392f75a4a787cb26b, type: 3}
   m_Name: 
@@ -535,7 +537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 454d2694a0eb4a93824e9985d189cf8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AgentKnowledge
-  selfCharacter: {fileID: 0}
+  selfCharacter: {fileID: 2555694571077031807}
 --- !u!1 &8286271094626822634
 GameObject:
   m_ObjectHideFlags: 0
@@ -1048,15 +1050,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013655204
+      value: 0.013655366
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.70536864
+      value: 0.7053687
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.033097137
+      value: 0.03309694
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
