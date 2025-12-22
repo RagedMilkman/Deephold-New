@@ -13,12 +13,10 @@ public class TopDownChaseAI : MonoBehaviour
     [Header("Behavior")]
     [SerializeField, Tooltip("Distance from the target where the AI stops moving.")]
     private float _stopDistance = 0.5f;
-    [SerializeField, Tooltip("Time in seconds to smooth sudden direction changes.")]
-    private float _directionSmoothTime = 0.08f;
     [SerializeField, Tooltip("Clamp for the deltaTime passed to the motor to avoid large movement steps on slow frames.")]
     private float _maxTickDeltaTime = 0.05f;
 
-    private Vector3 _smoothedMoveDirection;
+    private Vector3 _desiredMoveDirection;
 
     private void Awake()
     {
@@ -30,22 +28,28 @@ public class TopDownChaseAI : MonoBehaviour
         if (!_motor || !_target || (state && state.State == LifeState.Dead))
             return;
 
-        float dt = Mathf.Min(Time.deltaTime, _maxTickDeltaTime);
-
         Vector3 toTarget = _target.position - _motor.transform.position;
         toTarget.y = 0f;
 
         bool shouldMove = toTarget.sqrMagnitude > (_stopDistance * _stopDistance);
-        Vector3 desiredMoveDirection = shouldMove ? toTarget.normalized : Vector3.zero;
-
-        float smoothingFactor = 1f - Mathf.Exp(-dt / Mathf.Max(0.0001f, _directionSmoothTime));
-        _smoothedMoveDirection = Vector3.Lerp(_smoothedMoveDirection, desiredMoveDirection, smoothingFactor);
-
-        _motor.TickMove(_smoothedMoveDirection, false, dt);
+        _desiredMoveDirection = shouldMove ? toTarget.normalized : Vector3.zero;
 
         if (_motor.TryComputeYawFromPoint(_target.position, out float yawDeg))
         {
             _motor.ApplyYaw(yawDeg, _target.position);
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!_motor || !_target || (state && state.State == LifeState.Dead))
+            return;
+
+        float dt = Mathf.Min(Time.fixedDeltaTime, _maxTickDeltaTime);
+
+        // Drive movement in fixed time so acceleration and CharacterController integration stay stable even when
+        // the render loop hiccups. We use the last direction computed in Update to stay in sync with the current
+        // target position and yaw.
+        _motor.TickMove(_desiredMoveDirection, false, dt);
     }
 }
