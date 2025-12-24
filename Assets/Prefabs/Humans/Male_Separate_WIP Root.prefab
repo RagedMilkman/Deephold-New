@@ -667,7 +667,7 @@ Transform:
   m_GameObject: {fileID: 532942047596371228}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.070138454, y: -0.019999996, z: 0.07127833}
+  m_LocalPosition: {x: 0.07715225, y: -0.019999996, z: 0.078406096}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -730,7 +730,7 @@ Transform:
   m_GameObject: {fileID: 764529067890572250}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.070138454, y: -0.019999996, z: 0.07127833}
+  m_LocalPosition: {x: 0.07715225, y: -0.019999996, z: 0.078406096}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -761,7 +761,7 @@ Transform:
   m_GameObject: {fileID: 846384043992410267}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.068231344, y: -0.019999996, z: 0.07310605}
+  m_LocalPosition: {x: -0.07505441, y: -0.019999996, z: 0.08041644}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -890,7 +890,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 66cb654b4a9680145a9f1c96158f9f9a, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -1638,7 +1638,7 @@ Transform:
   m_GameObject: {fileID: 1732185637892849752}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.068231344, y: -0.019999996, z: 0.07310605}
+  m_LocalPosition: {x: -0.07505441, y: -0.019999996, z: 0.08041644}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5525,7 +5525,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6605094168032525342}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.013655904, y: 0.70536834, z: 0.033095613, w: 0.7079362}
+  m_LocalRotation: {x: 0.013655915, y: 0.70536834, z: 0.033095606, w: 0.7079362}
   m_LocalPosition: {x: -0.000000021755694, y: 0.19596447, z: -0.0000000011920929}
   m_LocalScale: {x: 0.99999994, y: 0.9999996, z: 0.99999964}
   m_ConstrainProportionsScale: 0
@@ -6568,10 +6568,10 @@ CharacterController:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 9
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 960
   m_LayerOverridePriority: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
@@ -6580,8 +6580,8 @@ CharacterController:
   m_Radius: 0.19
   m_SlopeLimit: 45
   m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
+  m_SkinWidth: 0.02
+  m_MinMoveDistance: 0
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &247711045251181906
 MonoBehaviour:
@@ -6609,6 +6609,7 @@ MonoBehaviour:
   activeStanceSpeedMultiplier: 0.65
   externalSpeedMultiplier: 1
   minAimDistance: 0.05
+  DebugForceStop: 0
   defaultStance: 0
   rigAnimator: {fileID: 7336559208925738163}
   headLookFallbackDistance: 5

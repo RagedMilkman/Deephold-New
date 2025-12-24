@@ -24,6 +24,8 @@ public class TopDownMotor : MonoBehaviour
     [Header("Aiming")]
     [SerializeField] float minAimDistance = 0.05f;
 
+    [SerializeField] bool DebugForceStop;
+
     public enum Stance
     {
         Passive,
@@ -109,9 +111,16 @@ public class TopDownMotor : MonoBehaviour
 
     public void TickMove(Vector2 input, bool wantsSprint, float dt, bool replicatePosition = true)
         => TickMove(new Vector3(input.x, 0f, input.y), wantsSprint, dt, replicatePosition);
-
+    
     public void TickMove(Vector3 moveInputWorld, bool wantsSprint, float dt, bool replicatePosition = true)
     {
+        if (DebugForceStop)
+        {
+            moveVel = Vector3.zero;
+            verticalVelocity = 0f;              // temporarily remove gravity too
+            return;                              // <- NO controller.Move call
+        }
+
         if (characterState && characterState.State == LifeState.Dead)
         {
             moveVel = Vector3.zero;
@@ -147,6 +156,9 @@ public class TopDownMotor : MonoBehaviour
             float speedMultiplier = dot >= 0f
                 ? Mathf.Lerp(sidewaysSpeedMultiplier, 1f, dot)
                 : Mathf.Lerp(sidewaysSpeedMultiplier, backwardSpeedMultiplier, -dot);
+
+            speedMultiplier = Mathf.Max(0f, speedMultiplier);
+
 
             float stanceSpeedMultiplier = currentStance == Stance.Active ? activeStanceSpeedMultiplier : 1f;
             float targetSpeed = moveSpeed * inputMagnitude * speedMultiplier * stanceSpeedMultiplier * externalSpeedMultiplier;

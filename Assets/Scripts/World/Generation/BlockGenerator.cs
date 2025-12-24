@@ -90,15 +90,32 @@ public class BlockGenerator : MonoBehaviour
 
     void BuildFloor()
     {
+        float worldW = Mathf.Max(1, width) * cellSize;
+        float worldH = Mathf.Max(1, height) * cellSize;
+
+        // Visuals: Plane mesh (fine)
         var go = GameObject.CreatePrimitive(PrimitiveType.Plane);
         go.name = "Floor";
         if (floorMaterial) go.GetComponent<MeshRenderer>().sharedMaterial = floorMaterial;
 
-        float worldW = Mathf.Max(1, width) * cellSize;
-        float worldH = Mathf.Max(1, height) * cellSize;
         go.transform.localScale = new Vector3(worldW / 10f, 1f, worldH / 10f);
         go.transform.position = new Vector3(worldW * 0.5f, 0f, worldH * 0.5f);
         go.layer = 3;
+
+        // Collision: replace MeshCollider with BoxCollider
+        var meshCol = go.GetComponent<MeshCollider>();
+        if (meshCol) Destroy(meshCol);
+
+        var box = go.AddComponent<BoxCollider>();
+
+        // Unity Plane is 10x10 units, but we're already scaling it to worldW/worldH,
+        // so set the box in *local* units to match the unscaled plane.
+        box.center = Vector3.zero;
+        box.size = new Vector3(10f, 1f, 10f); // thickness in Y
+
+        // Put the top surface at y=0 (so the box extends downward)
+        // Since size.y is 1, shift down by 0.5 in local space.
+        box.center = new Vector3(0f, -0.5f, 0f);
     }
 
     void BuildExposedFor(IEnumerable<Vector2Int> coords)

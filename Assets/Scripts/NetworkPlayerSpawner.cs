@@ -32,7 +32,10 @@ public sealed class NetworkPlayerSpawner : MonoBehaviour
             return;
 
         // Spawn actual networked player
-        NetworkObject player = Instantiate(playerPrefab);
+        var alteredPlayer = playerPrefab;
+        var newTransform = new Vector3(alteredPlayer.transform.position.x, 2, alteredPlayer.transform.position.z);
+        alteredPlayer.transform.SetPositionAndRotation(newTransform, alteredPlayer.transform.rotation);
+        NetworkObject player = Instantiate(alteredPlayer);
         networkManager.ServerManager.Spawn(player.gameObject, conn);
     }
 }

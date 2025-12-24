@@ -491,7 +491,7 @@ MonoBehaviour:
   _motor: {fileID: 5903944542015488180}
   _target: {fileID: 0}
   state: {fileID: 1459772520429387606}
-  _stopDistance: 1.12
+  _stopDistance: 4.93
 --- !u!114 &8255345355901457682
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -623,6 +623,10 @@ PrefabInstance:
     - target: {fileID: 483735115986841218, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 801833631192838038, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1404418296634193068, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1046,19 +1050,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.707936
+      value: 0.7079359
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013655366
+      value: 0.013655453
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7053687
+      value: 0.70536864
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.03309694
+      value: 0.033096664
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
