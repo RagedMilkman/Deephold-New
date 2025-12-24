@@ -7,6 +7,16 @@ public class MotorActions : MonoBehaviour
 {
     [SerializeField] private MotorActuator motorActuator;
 
+    [Header("Debug")]
+    [SerializeField] private bool debugDrawTarget;
+    [SerializeField] private Color debugTargetColor = Color.cyan;
+    [SerializeField, Min(0f)] private float debugTargetRadius = 0.15f;
+    [SerializeField] private Color debugStopRangeColor = new Color(0f, 1f, 1f, 0.35f);
+
+    private bool hasDebugTarget;
+    private Vector3 debugTargetPosition;
+    private float debugStopDistance;
+
     private void Awake()
     {
         if (!motorActuator)
@@ -19,6 +29,8 @@ public class MotorActions : MonoBehaviour
     /// </summary>
     public bool MoveToPosition(Vector3 currentPosition, Vector3 targetPosition, bool faceTarget, bool wantsSprint, float stopDistance = 0.1f)
     {
+        UpdateDebugTarget(targetPosition, stopDistance);
+
         if (!motorActuator)
             return false;
 
@@ -30,6 +42,8 @@ public class MotorActions : MonoBehaviour
                 motorActuator.ClearAim();
             else
                 motorActuator.AimAt(targetPosition);
+
+            ClearDebugTarget();
 
             return true;
         }
@@ -85,5 +99,38 @@ public class MotorActions : MonoBehaviour
             return;
 
         motorActuator.AimAt(target.position);
+    }
+
+    private void UpdateDebugTarget(Vector3 targetPosition, float stopDistance)
+    {
+        if (!debugDrawTarget)
+            return;
+
+        hasDebugTarget = true;
+        debugTargetPosition = targetPosition;
+        debugStopDistance = Mathf.Max(0f, stopDistance);
+    }
+
+    private void ClearDebugTarget()
+    {
+        if (!debugDrawTarget)
+            return;
+
+        hasDebugTarget = false;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!debugDrawTarget || !hasDebugTarget)
+            return;
+
+        Gizmos.color = debugTargetColor;
+        Gizmos.DrawSphere(debugTargetPosition, debugTargetRadius);
+
+        if (debugStopDistance > 0f && debugStopRangeColor.a > 0f)
+        {
+            Gizmos.color = debugStopRangeColor;
+            Gizmos.DrawWireSphere(debugTargetPosition, debugStopDistance);
+        }
     }
 }
