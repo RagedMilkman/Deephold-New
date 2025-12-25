@@ -12,8 +12,7 @@ public class ExploreBehaviour : PathingBehaviour
     private Vector2[] path = Array.Empty<Vector2>();
     private int pathIndex;
     private Vector3? resolvedDestination;
-    private Vector3? lastDesiredDirection;
-    private float lastDesiredDistance;
+    private bool HasActivePath => resolvedDestination.HasValue && path != null && path.Length > 0;
 
     public override IntentType IntentType => IntentType.Explore;
 
@@ -32,13 +31,13 @@ public class ExploreBehaviour : PathingBehaviour
         if (exploreIntent == null)
             return;
 
-        if (IntentChanged(exploreIntent) || !resolvedDestination.HasValue)
+        if (!HasActivePath)
         {
             RebuildPath(exploreIntent);
             pathIndex = 0;
         }
 
-        if (path == null || path.Length == 0)
+        if (!HasActivePath)
             return;
 
         var currentPosition = CurrentPosition;
@@ -63,8 +62,6 @@ public class ExploreBehaviour : PathingBehaviour
         path = Array.Empty<Vector2>();
         pathIndex = 0;
         resolvedDestination = null;
-        lastDesiredDirection = null;
-        lastDesiredDistance = 0f;
         ClearDebugPath();
     }
 
@@ -80,27 +77,10 @@ public class ExploreBehaviour : PathingBehaviour
         if (!TryFindDestination(intent, out var destination))
             return;
 
-        lastDesiredDirection = FlattenDirection(intent.DesiredDirection);
-        lastDesiredDistance = Mathf.Max(0f, intent.DesiredDistance);
         resolvedDestination = destination;
 
         path = BuildPath(destination);
         UpdateDebugPath(path);
-    }
-
-    private bool IntentChanged(ExploreIntent intent)
-    {
-        if (intent == null)
-            return false;
-
-        var direction = FlattenDirection(intent.DesiredDirection);
-        float distance = Mathf.Max(0f, intent.DesiredDistance);
-
-        bool directionChanged = !lastDesiredDirection.HasValue
-                                 || Vector3.SqrMagnitude(direction - lastDesiredDirection.Value) > 0.01f;
-        bool distanceChanged = Mathf.Abs(distance - lastDesiredDistance) > 0.01f;
-
-        return directionChanged || distanceChanged;
     }
 
     private bool TryFindDestination(ExploreIntent intent, out Vector3 destination)
