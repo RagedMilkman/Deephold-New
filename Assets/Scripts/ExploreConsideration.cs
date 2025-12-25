@@ -23,12 +23,12 @@ public sealed class ExploreConsideration : Consideration
         var lowerBound = Mathf.Min(minDistance, maxDistance);
         var upperBound = Mathf.Max(minDistance, maxDistance);
         var distance = Mathf.Clamp(Random.Range(lowerBound, upperBound), 0f, upperBound);
-        var destination = transform.position + direction.normalized * distance;
 
         return new ExploreIntent
         {
             Urgency = baseUrgency,
-            Destination = destination
+            DesiredDirection = direction.normalized,
+            DesiredDistance = distance
         };
     }
 }

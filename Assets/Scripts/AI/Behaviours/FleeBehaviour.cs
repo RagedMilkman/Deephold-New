@@ -8,7 +8,9 @@ public class FleeBehaviour : PathingBehaviour
 {
     private Vector2[] path = Array.Empty<Vector2>();
     private int pathIndex;
-    private Vector3? lastEscapeTarget;
+    private Vector3? resolvedEscapeTarget;
+    private Vector3? lastEscapeDirection;
+    private float lastEscapeDistance;
 
     public override IntentType IntentType => IntentType.Flee;
 
@@ -27,7 +29,7 @@ public class FleeBehaviour : PathingBehaviour
         if (fleeIntent == null)
             return;
 
-        if (!lastEscapeTarget.HasValue || (fleeIntent.EscapePos - lastEscapeTarget.Value).sqrMagnitude > 0.01f)
+        if (IntentChanged(fleeIntent) || !resolvedEscapeTarget.HasValue)
         {
             RebuildPath(fleeIntent);
             pathIndex = 0;
@@ -47,6 +49,7 @@ public class FleeBehaviour : PathingBehaviour
             {
                 path = Array.Empty<Vector2>();
                 pathIndex = 0;
+                resolvedEscapeTarget = null;
                 ClearDebugPath();
             }
         }
@@ -56,22 +59,79 @@ public class FleeBehaviour : PathingBehaviour
     {
         path = Array.Empty<Vector2>();
         pathIndex = 0;
-        lastEscapeTarget = null;
+        resolvedEscapeTarget = null;
+        lastEscapeDirection = null;
+        lastEscapeDistance = 0f;
         ClearDebugPath();
     }
 
     private void RebuildPath(FleeIntent intent)
     {
+        path = Array.Empty<Vector2>();
+        resolvedEscapeTarget = null;
+        ClearDebugPath();
+
         if (intent == null)
-        {
-            path = Array.Empty<Vector2>();
-            lastEscapeTarget = null;
-            ClearDebugPath();
             return;
+
+        if (!TryFindEscapeTarget(intent, out var destination))
+            return;
+
+        lastEscapeDirection = FlattenDirection(intent.EscapeDirection);
+        lastEscapeDistance = Mathf.Max(0f, intent.EscapeDistance);
+        resolvedEscapeTarget = destination;
+
+        path = BuildPath(destination);
+        UpdateDebugPath(path);
+    }
+
+    private bool IntentChanged(FleeIntent intent)
+    {
+        if (intent == null)
+            return false;
+
+        var direction = FlattenDirection(intent.EscapeDirection);
+        float distance = Mathf.Max(0f, intent.EscapeDistance);
+
+        bool directionChanged = !lastEscapeDirection.HasValue
+                                 || Vector3.SqrMagnitude(direction - lastEscapeDirection.Value) > 0.01f;
+        bool distanceChanged = Mathf.Abs(distance - lastEscapeDistance) > 0.01f;
+
+        return directionChanged || distanceChanged;
+    }
+
+    private bool TryFindEscapeTarget(FleeIntent intent, out Vector3 destination)
+    {
+        destination = Vector3.zero;
+
+        var direction = FlattenDirection(intent.EscapeDirection);
+        float distance = Mathf.Max(intent.EscapeDistance, waypointTolerance * 2f);
+        var origin = transform.position;
+
+        if (direction.sqrMagnitude > 0.0001f)
+        {
+            var desired = origin + direction.normalized * distance;
+            desired.y = origin.y;
+
+            if (TryResolveDestination(desired, out destination))
+                return true;
+
+            for (int i = 2; i >= 1; i--)
+            {
+                var shortened = origin + direction.normalized * (distance * i / 3f);
+                shortened.y = origin.y;
+
+                if (TryResolveDestination(shortened, out destination))
+                    return true;
+            }
         }
 
-        lastEscapeTarget = intent.EscapePos;
-        path = BuildPath(intent.EscapePos);
-        UpdateDebugPath(path);
+        return false;
+    }
+
+    private Vector3 FlattenDirection(Vector3 direction)
+    {
+        direction.y = 0f;
+        return direction;
     }
 }

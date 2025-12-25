@@ -64,6 +64,28 @@ public abstract class PathingBehaviour : BehaviourBase
         };
     }
 
+    /// <summary>
+    /// Attempts to snap a desired world position to a navigable cell center that exists on the map.
+    /// </summary>
+    protected bool TryResolveDestination(Vector3 desiredWorld, out Vector3 destination)
+    {
+        destination = desiredWorld;
+
+        if (!gridDirector)
+            return false;
+
+        float cellSize = gridDirector.CellSize;
+        int clampedX = Mathf.Clamp(Mathf.FloorToInt(desiredWorld.x / cellSize), 0, gridDirector.Width - 1);
+        int clampedY = Mathf.Clamp(Mathf.FloorToInt(desiredWorld.z / cellSize), 0, gridDirector.Height - 1);
+
+        var cell = gridDirector.GetCell(clampedX, clampedY);
+        if (!cell.IsConsideredForPathfinding)
+            return false;
+
+        destination = gridDirector.CellToWorldCenter(clampedX, clampedY);
+        return true;
+    }
+
     private Vector2[] ConvertCellsToPath(List<Vector2Int> cells)
     {
         var path = new Vector2[cells.Count];

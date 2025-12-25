@@ -8,5 +8,6 @@ public sealed class ExploreIntent : IIntent
     public IntentType Type => IntentType.Explore;
     public float Urgency { get; set; }
 
-    public Vector3 Destination;
+    public Vector3 DesiredDirection;
+    public float DesiredDistance;
 }

@@ -8,5 +8,6 @@ public sealed class FleeIntent : IIntent
     public IntentType Type => IntentType.Flee;
     public float Urgency { get; set; }
 
-    public Vector3 EscapePos;
+    public Vector3 EscapeDirection;
+    public float EscapeDistance;
 }

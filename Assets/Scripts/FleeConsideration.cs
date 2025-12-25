@@ -101,7 +101,8 @@ public sealed class FleeConsideration : Consideration
         return new FleeIntent
         {
             Urgency = urgency,
-            EscapePos = escapeTarget
+            EscapeDirection = normalizedDirection,
+            EscapeDistance = escapeDistance
         };
     }
 }
