@@ -139,7 +139,8 @@ public class SightSense : MonoBehaviour, ISense
             var origin = motor.transform ? motor.transform.position : (Vector3?)null;
             if (motor.HasCursorTarget && origin.HasValue)
             {
-                var direction = motor.PlayerTarget - origin.Value;
+                var elevatedTarget = motor.PlayerTarget + Vector3.up;
+                var direction = elevatedTarget - origin.Value;
                 if (direction.sqrMagnitude > 0.0001f)
                     return direction;
             }
