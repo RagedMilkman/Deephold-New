@@ -19,6 +19,7 @@ public sealed class FleeConsideration : Consideration
 
         var escapeDirection = Vector3.zero;
         var highestThreat = 0f;
+        var highestThreatPosition = Vector3.zero;
         var selfPosition = transform.position;
         var selfFactionId = knowledge.Self?.FactionId?.Value;
         var selfHealth = knowledge.Self?.Health?.Value;
@@ -80,7 +81,15 @@ public sealed class FleeConsideration : Consideration
             threat = Mathf.Clamp01(threat);
 
             escapeDirection += normalizedAway * threat;
-            highestThreat = Mathf.Max(highestThreat, threat);
+            if (threat > highestThreat)
+            {
+                highestThreat = threat;
+                highestThreatPosition = targetTransform.position;
+            }
+            else
+            {
+                highestThreat = Mathf.Max(highestThreat, threat);
+            }
         }
 
         if (escapeDirection == Vector3.zero)
@@ -102,7 +111,8 @@ public sealed class FleeConsideration : Consideration
         {
             Urgency = urgency,
             EscapeDirection = normalizedDirection,
-            EscapeDistance = escapeDistance
+            EscapeDistance = escapeDistance,
+            ThreatPosition = highestThreatPosition
         };
     }
 }

@@ -10,4 +10,5 @@ public sealed class FleeIntent : IIntent
 
     public Vector3 EscapeDirection;
     public float EscapeDistance;
+    public Vector3 ThreatPosition;
 }

@@ -11,6 +11,7 @@ public class FleeBehaviour : PathingBehaviour
     private Vector3? resolvedEscapeTarget;
     private Vector3? lastEscapeDirection;
     private float lastEscapeDistance;
+    private Vector3? lastThreatPosition;
 
     public override IntentType IntentType => IntentType.Flee;
 
@@ -62,6 +63,7 @@ public class FleeBehaviour : PathingBehaviour
         resolvedEscapeTarget = null;
         lastEscapeDirection = null;
         lastEscapeDistance = 0f;
+        lastThreatPosition = null;
         ClearDebugPath();
     }
 
@@ -79,6 +81,7 @@ public class FleeBehaviour : PathingBehaviour
 
         lastEscapeDirection = FlattenDirection(intent.EscapeDirection);
         lastEscapeDistance = Mathf.Max(0f, intent.EscapeDistance);
+        lastThreatPosition = intent.ThreatPosition;
         resolvedEscapeTarget = destination;
 
         path = BuildPath(destination);
@@ -92,12 +95,15 @@ public class FleeBehaviour : PathingBehaviour
 
         var direction = FlattenDirection(intent.EscapeDirection);
         float distance = Mathf.Max(0f, intent.EscapeDistance);
+        var threatPosition = intent.ThreatPosition;
 
         bool directionChanged = !lastEscapeDirection.HasValue
                                  || Vector3.SqrMagnitude(direction - lastEscapeDirection.Value) > 0.01f;
         bool distanceChanged = Mathf.Abs(distance - lastEscapeDistance) > 0.01f;
+        bool threatChanged = !lastThreatPosition.HasValue
+                             || Vector3.SqrMagnitude(threatPosition - lastThreatPosition.Value) > 0.01f;
 
-        return directionChanged || distanceChanged;
+        return directionChanged || distanceChanged || threatChanged;
     }
 
     private bool TryFindEscapeTarget(FleeIntent intent, out Vector3 destination)
@@ -105,6 +111,10 @@ public class FleeBehaviour : PathingBehaviour
         destination = Vector3.zero;
 
         var direction = FlattenDirection(intent.EscapeDirection);
+        if (direction == Vector3.zero && intent.ThreatPosition != Vector3.zero)
+        {
+            direction = FlattenDirection(CurrentPosition - intent.ThreatPosition);
+        }
         float distance = Mathf.Max(intent.EscapeDistance, waypointTolerance * 2f);
         var origin = CurrentPosition;
 
