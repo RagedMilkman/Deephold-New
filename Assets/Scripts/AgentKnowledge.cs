@@ -5,6 +5,8 @@ public class AgentKnowledge : MonoBehaviour
 {
     private readonly Dictionary<string, CharacterKnowledge> characters = new();
     [SerializeField] private CharacterData selfCharacter;
+    [SerializeField, Min(0f)] private float knowledgeRetentionSeconds = 15f;
+    [SerializeField, Min(0f)] private float defaultConfidenceDecayPerSecond = 0.05f;
 
     public IReadOnlyDictionary<string, CharacterKnowledge> Characters => characters;
     public CharacterKnowledge Self { get; private set; }
@@ -20,6 +22,7 @@ public class AgentKnowledge : MonoBehaviour
     public void RecieveObservations(List<Observation> observations)
     {
         UpdateSelfKnowledge();
+        DecayKnownCharacters();
 
         if (observations == null || observations.Count == 0)
             return;
@@ -50,6 +53,28 @@ public class AgentKnowledge : MonoBehaviour
         }
 
         knowledge.UpdateFromObservation(observation);
+    }
+
+    private void DecayKnownCharacters()
+    {
+        if (knowledgeRetentionSeconds <= 0f && defaultConfidenceDecayPerSecond <= 0f)
+            return;
+
+        if (characters.Count == 0)
+            return;
+
+        var currentTime = Time.time;
+        var idsToForget = new List<string>();
+
+        foreach (var kvp in characters)
+        {
+            kvp.Value.ApplyDecay(currentTime, knowledgeRetentionSeconds, defaultConfidenceDecayPerSecond);
+            if (!kvp.Value.HasAnyBeliefs)
+                idsToForget.Add(kvp.Key);
+        }
+
+        foreach (var id in idsToForget)
+            characters.Remove(id);
     }
 
     private void UpdateSelfKnowledge()

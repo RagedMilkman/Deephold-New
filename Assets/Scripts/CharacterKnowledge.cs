@@ -12,6 +12,9 @@ public class CharacterKnowledge
     public Belief<string>? FactionId { get; private set; }
     public Belief<TopDownMotor.Stance>? Stance { get; private set; }
 
+    public bool HasAnyBeliefs => Position.HasValue || FacingDirection.HasValue || Health.HasValue || Equipped.HasValue ||
+                                 FactionId.HasValue || Stance.HasValue;
+
     public CharacterKnowledge(string id, GameObject characterObject)
     {
         Id = id;
@@ -93,5 +96,32 @@ public class CharacterKnowledge
                 DecayPerSecond = 0f
             };
         }
+    }
+
+    public void ApplyDecay(float currentTime, float retentionSeconds, float defaultDecayPerSecond)
+    {
+        Position = ApplyDecayToBelief(Position, currentTime, retentionSeconds, defaultDecayPerSecond);
+        FacingDirection = ApplyDecayToBelief(FacingDirection, currentTime, retentionSeconds, defaultDecayPerSecond);
+        Health = ApplyDecayToBelief(Health, currentTime, retentionSeconds, defaultDecayPerSecond);
+        Equipped = ApplyDecayToBelief(Equipped, currentTime, retentionSeconds, defaultDecayPerSecond);
+        FactionId = ApplyDecayToBelief(FactionId, currentTime, retentionSeconds, defaultDecayPerSecond);
+        Stance = ApplyDecayToBelief(Stance, currentTime, retentionSeconds, defaultDecayPerSecond);
+    }
+
+    private static Belief<T>? ApplyDecayToBelief<T>(Belief<T>? belief, float currentTime, float retentionSeconds,
+        float defaultDecayPerSecond)
+    {
+        if (!belief.HasValue)
+            return belief;
+
+        var data = belief.Value;
+        var elapsed = Mathf.Max(0f, (float)(currentTime - data.TimeStamp));
+        var decayRate = data.DecayPerSecond > 0f ? data.DecayPerSecond : defaultDecayPerSecond;
+
+        if (decayRate > 0f)
+            data.Confidence = Mathf.Clamp01(data.Confidence - decayRate * elapsed);
+
+        var shouldForget = (retentionSeconds > 0f && elapsed >= retentionSeconds) || data.Confidence <= 0.01f;
+        return shouldForget ? null : data;
     }
 }
