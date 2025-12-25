@@ -47,6 +47,7 @@ public class FleeBehaviour : PathingBehaviour
             {
                 path = Array.Empty<Vector2>();
                 pathIndex = 0;
+                ClearDebugPath();
             }
         }
     }
@@ -56,6 +57,7 @@ public class FleeBehaviour : PathingBehaviour
         path = Array.Empty<Vector2>();
         pathIndex = 0;
         lastEscapeTarget = null;
+        ClearDebugPath();
     }
 
     private void RebuildPath(FleeIntent intent)
@@ -64,10 +66,12 @@ public class FleeBehaviour : PathingBehaviour
         {
             path = Array.Empty<Vector2>();
             lastEscapeTarget = null;
+            ClearDebugPath();
             return;
         }
 
         lastEscapeTarget = intent.EscapePos;
         path = BuildPath(intent.EscapePos);
+        UpdateDebugPath(path);
     }
 }

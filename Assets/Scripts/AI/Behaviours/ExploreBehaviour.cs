@@ -50,6 +50,7 @@ public class ExploreBehaviour : PathingBehaviour
             {
                 path = Array.Empty<Vector2>();
                 pathIndex = 0;
+                ClearDebugPath();
             }
         }
     }
@@ -59,6 +60,7 @@ public class ExploreBehaviour : PathingBehaviour
         path = Array.Empty<Vector2>();
         pathIndex = 0;
         lastDestination = null;
+        ClearDebugPath();
     }
 
     private void RebuildPath(ExploreIntent intent)
@@ -67,10 +69,12 @@ public class ExploreBehaviour : PathingBehaviour
         {
             path = Array.Empty<Vector2>();
             lastDestination = null;
+            ClearDebugPath();
             return;
         }
 
         lastDestination = intent.Destination;
         path = BuildPath(intent.Destination);
+        UpdateDebugPath(path);
     }
 }

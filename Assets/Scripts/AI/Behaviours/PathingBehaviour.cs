@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +15,15 @@ public abstract class PathingBehaviour : BehaviourBase
     [Header("Pathing")]
     [SerializeField, Min(0f)] protected float waypointTolerance = 0.15f;
 
+    [Header("Debug")]
+    [SerializeField] private bool debugDrawPath;
+    [SerializeField] private Color debugPathColor = Color.green;
+    [SerializeField, Min(0f)] private float debugNodeRadius = 0.07f;
+    [SerializeField] private Color debugDestinationColor = Color.yellow;
+
     private readonly List<Vector2Int> pathCells = new();
+    private Vector3[] debugPath = Array.Empty<Vector3>();
+    private bool hasDebugPath;
 
     protected virtual void Awake()
     {
@@ -66,5 +75,50 @@ public abstract class PathingBehaviour : BehaviourBase
         }
 
         return path;
+    }
+
+    protected void UpdateDebugPath(Vector2[] path)
+    {
+        if (!debugDrawPath || path == null || path.Length == 0)
+        {
+            ClearDebugPath();
+            return;
+        }
+
+        hasDebugPath = true;
+
+        if (debugPath.Length != path.Length)
+            debugPath = new Vector3[path.Length];
+
+        float y = transform.position.y;
+        for (int i = 0; i < path.Length; i++)
+            debugPath[i] = new Vector3(path[i].x, y, path[i].y);
+    }
+
+    protected void ClearDebugPath()
+    {
+        if (!debugDrawPath)
+            return;
+
+        hasDebugPath = false;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!debugDrawPath || !hasDebugPath || debugPath == null || debugPath.Length == 0)
+            return;
+
+        Gizmos.color = debugPathColor;
+        for (int i = 0; i < debugPath.Length; i++)
+        {
+            Vector3 point = debugPath[i];
+            Gizmos.DrawSphere(point, debugNodeRadius);
+
+            if (i < debugPath.Length - 1)
+                Gizmos.DrawLine(point, debugPath[i + 1]);
+        }
+
+        Gizmos.color = debugDestinationColor;
+        Gizmos.DrawSphere(debugPath[^1], debugNodeRadius * 1.25f);
     }
 }
