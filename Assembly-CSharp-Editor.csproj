@@ -72,6 +72,7 @@
     <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\Editor\ProjectorSpawner_Editor.cs" />
     <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\Projector\Editor\TrailProjectorSpawner_Editor.cs" />
     <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\Editor\ContinuousProjectorSpawner_URP_Editor.cs" />
+    <Compile Include="Assets\Scripts\AI\Behaviours\Editor\BehaviourModuleEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
