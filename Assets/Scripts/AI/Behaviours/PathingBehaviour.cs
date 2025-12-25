@@ -11,6 +11,7 @@ public abstract class PathingBehaviour : BehaviourBase
     [SerializeField] protected MotorActions motorActions;
     [SerializeField] protected PathingService pathingService;
     [SerializeField] protected GridDirector gridDirector;
+    [SerializeField] protected CharacterController characterController;
 
     [Header("Pathing")]
     [SerializeField, Min(0f)] protected float waypointTolerance = 0.15f;
@@ -25,6 +26,8 @@ public abstract class PathingBehaviour : BehaviourBase
     private Vector3[] debugPath = Array.Empty<Vector3>();
     private bool hasDebugPath;
 
+    protected Vector3 CurrentPosition => characterController ? characterController.transform.position : transform.position;
+
     protected virtual void Awake()
     {
         if (!motorActions)
@@ -35,6 +38,9 @@ public abstract class PathingBehaviour : BehaviourBase
 
         if (!gridDirector)
             gridDirector = FindFirstObjectByType<GridDirector>();
+
+        if (!characterController)
+            characterController = GetComponentInParent<CharacterController>();
     }
 
     /// <summary>
@@ -45,7 +51,8 @@ public abstract class PathingBehaviour : BehaviourBase
     {
         if (pathingService && gridDirector)
         {
-            if (gridDirector.TryWorldToCell(transform.position, out int startX, out int startY)
+            Vector3 origin = CurrentPosition;
+            if (gridDirector.TryWorldToCell(origin, out int startX, out int startY)
                 && gridDirector.TryWorldToCell(destination, out int destX, out int destY))
             {
                 pathCells.Clear();
@@ -59,7 +66,7 @@ public abstract class PathingBehaviour : BehaviourBase
 
         return new[]
         {
-            new Vector2(transform.position.x, transform.position.z),
+            new Vector2(CurrentPosition.x, CurrentPosition.z),
             new Vector2(destination.x, destination.z)
         };
     }
@@ -112,7 +119,7 @@ public abstract class PathingBehaviour : BehaviourBase
         if (debugPath.Length != path.Length)
             debugPath = new Vector3[path.Length];
 
-        float y = transform.position.y;
+        float y = CurrentPosition.y;
         for (int i = 0; i < path.Length; i++)
             debugPath[i] = new Vector3(path[i].x, y, path[i].y);
     }

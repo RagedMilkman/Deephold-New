@@ -38,7 +38,7 @@ public class FleeBehaviour : PathingBehaviour
         if (path == null || path.Length == 0)
             return;
 
-        var currentPosition = transform.position;
+        var currentPosition = CurrentPosition;
         pathIndex = motorActions.MoveToPathPosition(currentPosition, path, pathIndex, true, true, waypointTolerance);
 
         if (pathIndex >= path.Length - 1)
@@ -106,7 +106,7 @@ public class FleeBehaviour : PathingBehaviour
 
         var direction = FlattenDirection(intent.EscapeDirection);
         float distance = Mathf.Max(intent.EscapeDistance, waypointTolerance * 2f);
-        var origin = transform.position;
+        var origin = CurrentPosition;
 
         if (direction.sqrMagnitude > 0.0001f)
         {
