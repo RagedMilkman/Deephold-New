@@ -6,6 +6,7 @@ using UnityEngine;
 public class MotorActions : MonoBehaviour
 {
     [SerializeField] private MotorActuator motorActuator;
+    [SerializeField, Min(0f)] private float aimTargetElevation = 1f;
 
     [Header("Debug")]
     [SerializeField] private bool debugDrawTarget;
@@ -41,7 +42,7 @@ public class MotorActions : MonoBehaviour
             if (!faceTarget)
                 motorActuator.ClearAim();
             else
-                motorActuator.AimAt(targetPosition);
+                motorActuator.AimAt(GetAimTarget(targetPosition));
 
             ClearDebugTarget();
 
@@ -52,7 +53,7 @@ public class MotorActions : MonoBehaviour
         motorActuator.Move(direction, wantsSprint);
 
         if (faceTarget)
-            motorActuator.AimAt(targetPosition);
+            motorActuator.AimAt(GetAimTarget(targetPosition));
 
         return false;
     }
@@ -87,7 +88,15 @@ public class MotorActions : MonoBehaviour
         currentIndex = Mathf.Clamp(currentIndex, 0, path.Length - 1);
         Vector2 waypoint = path[currentIndex];
         Vector3 waypoint3D = new Vector3(waypoint.x, currentPosition.y, waypoint.y);
-        motorActuator.AimAt(waypoint3D);
+        motorActuator.AimAt(GetAimTarget(waypoint3D));
+    }
+
+    private Vector3 GetAimTarget(Vector3 targetPosition)
+    {
+        if (aimTargetElevation <= 0f)
+            return targetPosition;
+
+        return targetPosition + Vector3.up * aimTargetElevation;
     }
 
     /// <summary>
