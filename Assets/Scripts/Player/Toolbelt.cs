@@ -1683,7 +1683,10 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     public IReadOnlyList<ItemDefinition> ItemRegistry => itemRegistry;
 
-    private bool ShouldRenderVisuals => renderVisuals && (!renderVisualsIfOwner || IsOwner);
+    private bool ShouldRenderVisuals => renderVisuals && (
+        !renderVisualsIfOwner
+        || IsOwner
+        || (NetworkObject != null && !NetworkObject.Owner.IsValid));
     private bool ShouldMaintainVisualInstances => (IsClient && ShouldRenderVisuals) || (IsServer && hasPuppetMasterPropRoots);
     private bool ShouldAnimateVisuals => IsClient && ShouldRenderVisuals;
 
