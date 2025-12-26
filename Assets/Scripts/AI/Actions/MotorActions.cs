@@ -91,6 +91,22 @@ public class MotorActions : MonoBehaviour
         motorActuator.AimAt(GetAimTarget(waypoint3D));
     }
 
+    /// <summary>
+    /// Aim toward a direction from the current position without applying translation.
+    /// </summary>
+    public void AimFromPosition(Vector3 originPosition, Vector3 lookDirection)
+    {
+        if (!motorActuator)
+            return;
+
+        lookDirection.y = 0f;
+        if (lookDirection.sqrMagnitude < 0.0001f)
+            return;
+
+        Vector3 target = originPosition + lookDirection.normalized;
+        motorActuator.AimAt(GetAimTarget(target));
+    }
+
     private Vector3 GetAimTarget(Vector3 targetPosition)
     {
         if (aimTargetElevation <= 0f)

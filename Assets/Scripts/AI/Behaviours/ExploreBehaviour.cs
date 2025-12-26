@@ -8,10 +8,25 @@ public class ExploreBehaviour : PathingBehaviour
 {
     [SerializeField] private bool sprintWhileExploring;
     [SerializeField] private bool faceMovementDirection = true;
+    [SerializeField, Min(0f)] private float minLookDuration = 0.5f;
+    [SerializeField, Min(0f)] private float maxLookDuration = 1.25f;
+    [SerializeField, Min(1)] private int lookStepsPerDecision = 3;
 
+    private enum ExploreState
+    {
+        Looking,
+        Traveling
+    }
+
+    private ExploreState state = ExploreState.Looking;
     private Vector2[] path = Array.Empty<Vector2>();
     private int pathIndex;
     private Vector3? resolvedDestination;
+    private Vector3? queuedTravelDirection;
+    private float lookTimer;
+    private float lookDuration;
+    private int currentLookIndex;
+    private Vector3[] lookDirections = Array.Empty<Vector3>();
     private bool HasActivePath => resolvedDestination.HasValue && path != null && path.Length > 0;
 
     public override IntentType IntentType => IntentType.Explore;
@@ -19,7 +34,7 @@ public class ExploreBehaviour : PathingBehaviour
     public override void BeginBehaviour(IIntent intent)
     {
         pathIndex = 0;
-        RebuildPath(intent as ExploreIntent);
+        StartLooking(intent as ExploreIntent);
     }
 
     public override void TickBehaviour(IIntent intent)
@@ -31,14 +46,65 @@ public class ExploreBehaviour : PathingBehaviour
         if (exploreIntent == null)
             return;
 
-        if (!HasActivePath)
+        if (state == ExploreState.Looking)
         {
-            RebuildPath(exploreIntent);
-            pathIndex = 0;
+            TickLooking(exploreIntent);
+        }
+        else
+        {
+            TickTravel(exploreIntent);
+        }
+    }
+
+    public override void EndBehaviour()
+    {
+        path = Array.Empty<Vector2>();
+        pathIndex = 0;
+        resolvedDestination = null;
+        queuedTravelDirection = null;
+        lookTimer = 0f;
+        lookDuration = 0f;
+        currentLookIndex = 0;
+        lookDirections = Array.Empty<Vector3>();
+        ClearDebugPath();
+    }
+
+    private void TickLooking(ExploreIntent intent)
+    {
+        if (lookDirections == null || lookDirections.Length == 0)
+            PrepareLookDirections(intent);
+
+        if (lookDirections.Length == 0)
+        {
+            BeginTravel(intent);
+            return;
         }
 
+        currentLookIndex = Mathf.Clamp(currentLookIndex, 0, lookDirections.Length - 1);
+        motorActions.AimFromPosition(CurrentPosition, lookDirections[currentLookIndex]);
+
+        lookTimer += Time.deltaTime;
+        if (lookTimer >= lookDuration)
+        {
+            lookTimer = 0f;
+            lookDuration = GetNextLookDuration();
+            currentLookIndex++;
+
+            if (currentLookIndex >= lookDirections.Length)
+            {
+                queuedTravelDirection = lookDirections[^1];
+                BeginTravel(intent);
+            }
+        }
+    }
+
+    private void TickTravel(ExploreIntent intent)
+    {
         if (!HasActivePath)
+        {
+            StartLooking(intent);
             return;
+        }
 
         var currentPosition = CurrentPosition;
         pathIndex = motorActions.MoveToPathPosition(currentPosition, path, pathIndex, faceMovementDirection, sprintWhileExploring, waypointTolerance);
@@ -53,15 +119,36 @@ public class ExploreBehaviour : PathingBehaviour
                 pathIndex = 0;
                 resolvedDestination = null;
                 ClearDebugPath();
+
+                StartLooking(intent);
             }
         }
     }
 
-    public override void EndBehaviour()
+    private void BeginTravel(ExploreIntent intent)
     {
-        path = Array.Empty<Vector2>();
+        RebuildPath(intent);
         pathIndex = 0;
+        if (HasActivePath)
+        {
+            state = ExploreState.Traveling;
+        }
+        else
+        {
+            StartLooking(intent);
+        }
+    }
+
+    private void StartLooking(ExploreIntent intent)
+    {
+        state = ExploreState.Looking;
+        path = Array.Empty<Vector2>();
         resolvedDestination = null;
+        queuedTravelDirection = null;
+        lookTimer = 0f;
+        lookDuration = GetNextLookDuration();
+        currentLookIndex = 0;
+        PrepareLookDirections(intent);
         ClearDebugPath();
     }
 
@@ -87,7 +174,8 @@ public class ExploreBehaviour : PathingBehaviour
     {
         destination = Vector3.zero;
 
-        var direction = FlattenDirection(intent.DesiredDirection);
+        var direction = queuedTravelDirection ?? intent.DesiredDirection;
+        direction = FlattenDirection(direction);
         float distance = Mathf.Max(intent.DesiredDistance, waypointTolerance * 2f);
         var origin = CurrentPosition;
 
@@ -127,5 +215,40 @@ public class ExploreBehaviour : PathingBehaviour
     {
         direction.y = 0f;
         return direction;
+    }
+
+    private void PrepareLookDirections(ExploreIntent intent)
+    {
+        int lookCount = Mathf.Max(1, lookStepsPerDecision);
+        if (lookDirections == null || lookDirections.Length != lookCount)
+            lookDirections = new Vector3[lookCount];
+
+        Vector3 baseDirection = intent != null ? intent.DesiredDirection : Vector3.zero;
+        if (baseDirection.sqrMagnitude < 0.0001f)
+            baseDirection = UnityEngine.Random.insideUnitSphere;
+
+        baseDirection = FlattenDirection(baseDirection);
+        if (baseDirection.sqrMagnitude < 0.0001f)
+            baseDirection = Vector3.forward;
+
+        lookDirections[0] = baseDirection;
+        for (int i = 1; i < lookCount; i++)
+        {
+            var randomDirection = UnityEngine.Random.insideUnitSphere;
+            randomDirection.y = 0f;
+
+            if (randomDirection.sqrMagnitude < 0.0001f)
+                randomDirection = UnityEngine.Random.onUnitSphere;
+
+            randomDirection.y = 0f;
+            lookDirections[i] = randomDirection;
+        }
+    }
+
+    private float GetNextLookDuration()
+    {
+        float min = Mathf.Max(0f, minLookDuration);
+        float max = Mathf.Max(min, maxLookDuration);
+        return UnityEngine.Random.Range(min, max);
     }
 }
