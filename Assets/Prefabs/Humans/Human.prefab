@@ -62,6 +62,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MotorActions
   motorActuator: {fileID: 8654670045454078360}
+  aimTargetElevation: 1.5
   debugDrawTarget: 0
   debugTargetColor: {r: 0, g: 1, b: 1, a: 1}
   debugTargetRadius: 0.15
@@ -552,6 +553,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AgentKnowledge
   selfCharacter: {fileID: 2555694571077031807}
+  knowledgeRetentionSeconds: 15
+  defaultConfidenceDecayPerSecond: 0.05
 --- !u!1 &8286271094626822634
 GameObject:
   m_ObjectHideFlags: 0
@@ -1068,19 +1071,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.707936
+      value: 0.70793605
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013655563
+      value: 0.0136556635
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7053686
+      value: 0.7053685
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.03309647
+      value: 0.033096254
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
