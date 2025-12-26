@@ -53,6 +53,12 @@ public class ToolbeltVisualizer : MonoBehaviour
     [Header("Registry (match order with source)")]
     [SerializeField] private List<ItemDefinition> itemRegistry = new();
 
+    [Header("Slot Mount Overrides")]
+    [SerializeField] private Transform primaryMountOverride;
+    [SerializeField] private Transform secondaryMountOverride;
+    [SerializeField] private Transform tertiaryMountOverride;
+    [SerializeField] private Transform consumableMountOverride;
+
     [Header("Visual Transitions")]
     [SerializeField, Min(0f)] private float defaultStanceTransitionDuration = 0.1f;
 
@@ -211,14 +217,15 @@ public class ToolbeltVisualizer : MonoBehaviour
             return;
 
         var def = GetRegistryDefinition(slot.RegistryIndex);
+        Transform slotMountRoot = ResolveSlotMountRoot(slot);
         slot.EnsureVisual(
-            mountRoot,
+            slotMountRoot ? slotMountRoot : mountRoot,
             def,
             DetermineMountType,
-            ResolveMountTarget,
+            (definition, mountType, stance) => ResolveMountTarget(definition, mountType, stance, slotMountRoot),
             ApplyDefinitionTransform,
             null,
-            (instance, _) => AssignWeaponMountPoints(instance, slot.CurrentMount ?? mountRoot),
+            (instance, _) => AssignWeaponMountPoints(instance, slot.CurrentMount ?? slotMountRoot ?? mountRoot),
             null,
             this);
     }
@@ -255,7 +262,7 @@ public class ToolbeltVisualizer : MonoBehaviour
                 || desiredStance == ToolMountPoint.MountStance.Reloading) && instance)
                 equippedInstance = instance;
 
-            AssignWeaponMountPoints(instance, slot.CurrentMount ?? mountRoot);
+            AssignWeaponMountPoints(instance, slot.CurrentMount ?? ResolveSlotMountRoot(slot) ?? mountRoot);
         }
 
         ApplyItemVisibility();
@@ -305,7 +312,11 @@ public class ToolbeltVisualizer : MonoBehaviour
         return provider != null ? provider.ToolbeltMountType : ToolMountPoint.MountType.Fallback;
     }
 
-    private Transform ResolveMountTarget(ItemDefinition def, ToolMountPoint.MountType mountType, ToolMountPoint.MountStance stance)
+    private Transform ResolveMountTarget(
+        ItemDefinition def,
+        ToolMountPoint.MountType mountType,
+        ToolMountPoint.MountStance stance,
+        Transform slotMountRoot)
     {
         string itemName = def ? def.name : "<unknown>";
 
@@ -331,8 +342,53 @@ public class ToolbeltVisualizer : MonoBehaviour
         if (fallbackAway)
             return fallbackAway;
 
+        Transform fallbackRoot = slotMountRoot ? slotMountRoot : mountRoot;
         Debug.LogWarning($"ToolbeltVisualizer: defaulting {itemName} to mount root for {stance} stance", this);
-        return mountRoot;
+        return fallbackRoot;
+    }
+
+    private Transform ResolveSlotMountRoot(ToolBeltSlot slot)
+    {
+        if (slot == null)
+            return mountRoot;
+
+        return slot.Slot switch
+        {
+            ToolbeltSlotName.Primary => GetOrFindSlotMountOverride(ref primaryMountOverride, "PrimaryItem"),
+            ToolbeltSlotName.Secondary => GetOrFindSlotMountOverride(ref secondaryMountOverride, "SecondaryItem"),
+            ToolbeltSlotName.Tertiary => GetOrFindSlotMountOverride(ref tertiaryMountOverride, "TertiaryItem"),
+            ToolbeltSlotName.Consumable => GetOrFindSlotMountOverride(ref consumableMountOverride, "ConsumableItem"),
+            _ => mountRoot,
+        };
+    }
+
+    private Transform GetOrFindSlotMountOverride(ref Transform slotMount, string fallbackName)
+    {
+        if (slotMount)
+            return slotMount;
+
+        if (!mountRoot || string.IsNullOrWhiteSpace(fallbackName))
+            return mountRoot;
+
+        Transform found = FindChildTransformByName(mountRoot, fallbackName);
+        if (found)
+            slotMount = found;
+
+        return slotMount ? slotMount : mountRoot;
+    }
+
+    private Transform FindChildTransformByName(Transform root, string name)
+    {
+        if (!root || string.IsNullOrWhiteSpace(name))
+            return null;
+
+        foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
+        {
+            if (child && child.name == name)
+                return child;
+        }
+
+        return null;
     }
 
     private Transform FindMountPoint(ToolMountPoint.MountType type, ToolMountPoint.MountStance stance)
