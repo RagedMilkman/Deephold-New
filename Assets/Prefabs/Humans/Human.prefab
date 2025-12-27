@@ -149,6 +149,9 @@ MonoBehaviour:
   debugDestinationColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   sprintWhileExploring: 0
   faceMovementDirection: 1
+  minLookDuration: 0.5
+  maxLookDuration: 1.25
+  lookStepsPerDecision: 3
 --- !u!1 &2946854088809555854
 GameObject:
   m_ObjectHideFlags: 0
@@ -514,7 +517,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6116119404708490174}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8212ec89ee254f7392f75a4a787cb26b, type: 3}
   m_Name: 
@@ -1075,7 +1078,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0136556635
+      value: 0.013655703
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
@@ -1083,7 +1086,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.033096254
+      value: 0.033096176
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

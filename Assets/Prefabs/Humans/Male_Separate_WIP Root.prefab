@@ -875,6 +875,8 @@ Transform:
   - {fileID: 6949899922934012761}
   - {fileID: 5973385079983274211}
   - {fileID: 5839085565920024735}
+  - {fileID: 4464435670693354958}
+  - {fileID: 9085053161226291542}
   m_Father: {fileID: 2995738668064062231}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &801833631192838038
@@ -3419,7 +3421,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5973385079983274211}
-  - component: {fileID: 4675828233762988686}
   m_Layer: 8
   m_Name: TertiaryItem
   m_TagString: Untagged
@@ -3442,21 +3443,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6512080644292543530}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4675828233762988686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2910440626958810956}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ce8c6ececc4043119b246f80bb45d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp-firstpass::RootMotion.Dynamics.PropRoot
-  puppetMaster: {fileID: 4984505607652927022}
-  connectTo: {fileID: 0}
-  currentProp: {fileID: 0}
 --- !u!1 &2915585978262687184
 GameObject:
   m_ObjectHideFlags: 0
@@ -3498,7 +3484,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6949899922934012761}
-  - component: {fileID: 5357341481545543586}
   m_Layer: 8
   m_Name: SecondaryItem
   m_TagString: Untagged
@@ -3521,21 +3506,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6512080644292543530}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5357341481545543586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2995796857328864334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ce8c6ececc4043119b246f80bb45d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp-firstpass::RootMotion.Dynamics.PropRoot
-  puppetMaster: {fileID: 4984505607652927022}
-  connectTo: {fileID: 0}
-  currentProp: {fileID: 0}
 --- !u!1 &3008456576199736156
 GameObject:
   m_ObjectHideFlags: 0
@@ -4286,7 +4256,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5839085565920024735}
-  - component: {fileID: 5763888781227934832}
   m_Layer: 8
   m_Name: ConsumableItem
   m_TagString: Untagged
@@ -4309,21 +4278,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6512080644292543530}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5763888781227934832
-MonoBehaviour:
+--- !u!1 &4440139075644553198
+GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4434773274095681486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ce8c6ececc4043119b246f80bb45d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp-firstpass::RootMotion.Dynamics.PropRoot
-  puppetMaster: {fileID: 4984505607652927022}
-  connectTo: {fileID: 0}
-  currentProp: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9085053161226291542}
+  m_Layer: 0
+  m_Name: Right Arm Bend Goal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9085053161226291542
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4440139075644553198}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.37805825, y: 0.62101036, z: -0.46344364, w: 0.50659466}
+  m_LocalPosition: {x: 19.166813, y: 1.0242828, z: 19.201015}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6512080644292543530}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4453726212180132183
 GameObject:
   m_ObjectHideFlags: 0
@@ -4333,7 +4318,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4254748825539365288}
-  - component: {fileID: 7588108411029342562}
   m_Layer: 8
   m_Name: PrimaryItem
   m_TagString: Untagged
@@ -4356,21 +4340,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6512080644292543530}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7588108411029342562
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4453726212180132183}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ce8c6ececc4043119b246f80bb45d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp-firstpass::RootMotion.Dynamics.PropRoot
-  puppetMaster: {fileID: 4984505607652927022}
-  connectTo: {fileID: 0}
-  currentProp: {fileID: 0}
 --- !u!1 &4635751832331883175
 GameObject:
   m_ObjectHideFlags: 0
@@ -5119,6 +5088,37 @@ Transform:
   m_Children:
   - {fileID: 1801868475072856405}
   m_Father: {fileID: 6602382449375955848}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6180430572809188120
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4464435670693354958}
+  m_Layer: 0
+  m_Name: Left Arm Bend Goal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4464435670693354958
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6180430572809188120}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.38846955, y: -0.6070272, z: 0.440514, w: 0.5353101}
+  m_LocalPosition: {x: 18.41589, y: 1.026778, z: 19.20676}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6512080644292543530}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6267655807985359499
 GameObject:
