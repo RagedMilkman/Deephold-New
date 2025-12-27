@@ -50,18 +50,6 @@ public class ToolbeltNetworked : NetworkBehaviour
     private bool defaultLeftWristErrorLogged;
     private bool defaultRightWristErrorLogged;
 
-    [SerializeField, Tooltip("Optional default PuppetMaster PropRoot. Falls back to searching the character hierarchy if unset.")]
-    private Component defaultPuppetMasterPropRoot;
-
-    [SerializeField, Tooltip("PropRoot overrides per slot when using multiple PuppetMaster PropRoots.")]
-    private List<PuppetMasterPropRootBinding> puppetMasterPropRoots = new();
-
-    private readonly Dictionary<ToolbeltSlotName, Component> resolvedPuppetMasterPropRoots = new();
-    private readonly Dictionary<GameObject, Component> puppetMasterPropRootByInstance = new();
-    private Type puppetMasterPropType;
-    private Type puppetMasterPropRootType;
-    private bool hasPuppetMasterPropRoots;
-
     private ToolMountPoint[] mountPoints = System.Array.Empty<ToolMountPoint>();
     private GameObject equippedInstance;
     private KineticProjectileWeapon equippedWeapon;
@@ -116,8 +104,6 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (!humanoidRigAnimator && transform.root)
             humanoidRigAnimator = transform.root.GetComponentInChildren<HumanoidRigAnimator>(true);
 
-        ResolvePuppetMasterPropRoots();
-
     }
 
     public override void OnStartNetwork()
@@ -131,8 +117,6 @@ public class ToolbeltNetworked : NetworkBehaviour
             Debug.LogError("Toolbelt: unable to resolve mount root", this);
             return;
         }
-
-        ResolvePuppetMasterPropRoots();
 
         AttachStanceSource();
         RefreshMountPoints();
@@ -585,8 +569,8 @@ public class ToolbeltNetworked : NetworkBehaviour
             ResolveMountTarget,
             ApplyDefinitionTransform,
             AssignOwnerToolbelt,
-            RegisterInstanceWithPuppetMaster,
-            UnregisterInstanceFromPuppetMaster,
+            null,
+            null,
             this);
     }
 
@@ -655,7 +639,7 @@ public class ToolbeltNetworked : NetworkBehaviour
     void ClearVisuals()
     {
         foreach (var slot in EnumerateSlots())
-            slot?.DestroyVisual(AssignOwnerToolbelt, UnregisterInstanceFromPuppetMaster);
+            slot?.DestroyVisual(AssignOwnerToolbelt);
 
         equippedInstance = null;
         equippedWeapon = null;
@@ -678,7 +662,7 @@ public class ToolbeltNetworked : NetworkBehaviour
             if (slot?.Instance != equippedInstance)
                 continue;
 
-            detached = slot.DetachVisual(AssignOwnerToolbelt, UnregisterInstanceFromPuppetMaster);
+            detached = slot.DetachVisual(AssignOwnerToolbelt);
             sourceSlot = slot;
             break;
         }
@@ -787,116 +771,9 @@ public class ToolbeltNetworked : NetworkBehaviour
         instanceTransform.localScale = (scale == Vector3.zero) ? Vector3.one : scale;
     }
 
-    [Serializable]
-    private struct PuppetMasterPropRootBinding
-    {
-        public ToolbeltSlotName slot;
-        public Component propRoot;
-    }
-
-    void ResolvePuppetMasterPropRoots()
-    {
-        puppetMasterPropType ??= Type.GetType("RootMotion.Dynamics.Prop, Assembly-CSharp-firstpass")
-            ?? Type.GetType("RootMotion.Dynamics.Prop");
-        puppetMasterPropRootType ??= Type.GetType("RootMotion.Dynamics.PropRoot, Assembly-CSharp-firstpass")
-            ?? Type.GetType("RootMotion.Dynamics.PropRoot");
-
-        resolvedPuppetMasterPropRoots.Clear();
-        hasPuppetMasterPropRoots = false;
-
-        if (puppetMasterPropRootType == null || !transform.root)
-            return;
-
-        defaultPuppetMasterPropRoot = CoercePropRoot(defaultPuppetMasterPropRoot)
-            ?? transform.root.GetComponentInChildren(puppetMasterPropRootType, true);
-
-        if (defaultPuppetMasterPropRoot)
-            hasPuppetMasterPropRoots = true;
-
-        for (int i = 0; i < puppetMasterPropRoots.Count; i++)
-        {
-            var binding = puppetMasterPropRoots[i];
-            var resolvedRoot = CoercePropRoot(binding.propRoot);
-            if (resolvedRoot)
-            {
-                resolvedPuppetMasterPropRoots[binding.slot] = resolvedRoot;
-                hasPuppetMasterPropRoots = true;
-            }
-        }
-    }
-
-    Component CoercePropRoot(Component candidate)
-    {
-        if (puppetMasterPropRootType == null || !candidate)
-            return null;
-
-        if (puppetMasterPropRootType.IsInstanceOfType(candidate))
-            return candidate;
-
-        var onGameObject = candidate.TryGetComponent(puppetMasterPropRootType, out var propRoot)
-            ? propRoot
-            : null;
-
-        return onGameObject;
-    }
-
-    Component GetPuppetMasterPropRoot(ToolbeltSlotName slot)
-    {
-        if (puppetMasterPropRootType == null)
-            return null;
-
-        if (resolvedPuppetMasterPropRoots.TryGetValue(slot, out var root) && root)
-            return root;
-
-        return CoercePropRoot(defaultPuppetMasterPropRoot);
-    }
-
     Transform ResolveSlotMountRoot(ToolbeltSlotName slot)
     {
-        var propRoot = GetPuppetMasterPropRoot(slot);
-        if (propRoot != null)
-            return ((Component)propRoot).transform;
-
         return mountRoot;
-    }
-
-    void RegisterInstanceWithPuppetMaster(GameObject instance, ToolbeltSlotName slot)
-    {
-        if (!instance || puppetMasterPropType == null)
-            return;
-
-        var prop = instance.GetComponent(puppetMasterPropType);
-        if (prop == null)
-            return;
-
-        var propRoot = GetPuppetMasterPropRoot(slot);
-        if (propRoot == null)
-            return;
-
-        propRoot.SendMessage("AddProp", prop, SendMessageOptions.DontRequireReceiver);
-        puppetMasterPropRootByInstance[instance] = propRoot;
-    }
-
-    void UnregisterInstanceFromPuppetMaster(GameObject instance, ToolbeltSlotName slot)
-    {
-        if (!instance || puppetMasterPropType == null)
-            return;
-
-        puppetMasterPropRootByInstance.TryGetValue(instance, out var propRoot);
-        if (propRoot == null)
-            propRoot = GetPuppetMasterPropRoot(slot);
-
-        if (propRoot == null)
-        {
-            puppetMasterPropRootByInstance.Remove(instance);
-            return;
-        }
-
-        var prop = instance.GetComponent(puppetMasterPropType);
-        if (prop != null)
-            propRoot.SendMessage("RemoveProp", prop, SendMessageOptions.DontRequireReceiver);
-
-        puppetMasterPropRootByInstance.Remove(instance);
     }
 
     ToolMountPoint.MountType DetermineMountType(ItemDefinition def)
@@ -1687,7 +1564,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         !renderVisualsIfOwner
         || IsOwner
         || (NetworkObject != null && !NetworkObject.Owner.IsValid));
-    private bool ShouldMaintainVisualInstances => (IsClient && ShouldRenderVisuals) || (IsServer && hasPuppetMasterPropRoots);
+    private bool ShouldMaintainVisualInstances => IsClient && ShouldRenderVisuals;
     private bool ShouldAnimateVisuals => IsClient && ShouldRenderVisuals;
 
     public bool VisualsEnabled

@@ -6824,16 +6824,6 @@ MonoBehaviour:
   humanoidRigAnimator: {fileID: 0}
   defaultLeftWristTarget: {fileID: 2733287110205977188}
   defaultRightWristTarget: {fileID: 4383181461148833860}
-  defaultPuppetMasterPropRoot: {fileID: 0}
-  puppetMasterPropRoots:
-  - slot: 1
-    propRoot: {fileID: 4254748825539365288}
-  - slot: 2
-    propRoot: {fileID: 6949899922934012761}
-  - slot: 3
-    propRoot: {fileID: 5973385079983274211}
-  - slot: 4
-    propRoot: {fileID: 5839085565920024735}
   slot0Net:
     NetworkManager: {fileID: 0}
     NetworkBehaviour: {fileID: 0}
