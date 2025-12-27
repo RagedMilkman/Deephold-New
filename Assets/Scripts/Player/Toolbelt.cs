@@ -42,6 +42,16 @@ public class ToolbeltNetworked : NetworkBehaviour
     [SerializeField, Tooltip("Only render toolbelt visuals on the owning client.")]
     private bool renderVisualsIfOwner = true;
 
+    [Header("Mount Roots")]
+    [SerializeField, Tooltip("Transform used as the mount root for the primary slot.")]
+    private Transform primaryMountRoot;
+    [SerializeField, Tooltip("Transform used as the mount root for the secondary slot.")]
+    private Transform secondaryMountRoot;
+    [SerializeField, Tooltip("Transform used as the mount root for the tertiary slot.")]
+    private Transform tertiaryMountRoot;
+    [SerializeField, Tooltip("Transform used as the mount root for the consumable slot.")]
+    private Transform consumableMountRoot;
+
     private Transform mountRoot;
     [Header("Animation")]
     [SerializeField] private HumanoidRigAnimator humanoidRigAnimator;
@@ -773,7 +783,14 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     Transform ResolveSlotMountRoot(ToolbeltSlotName slot)
     {
-        return mountRoot;
+        return slot switch
+        {
+            ToolbeltSlotName.Primary => primaryMountRoot ? primaryMountRoot : mountRoot,
+            ToolbeltSlotName.Secondary => secondaryMountRoot ? secondaryMountRoot : mountRoot,
+            ToolbeltSlotName.Tertiary => tertiaryMountRoot ? tertiaryMountRoot : mountRoot,
+            ToolbeltSlotName.Consumable => consumableMountRoot ? consumableMountRoot : mountRoot,
+            _ => mountRoot,
+        };
     }
 
     ToolMountPoint.MountType DetermineMountType(ItemDefinition def)

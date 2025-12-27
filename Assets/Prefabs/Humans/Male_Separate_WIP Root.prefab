@@ -6824,6 +6824,10 @@ MonoBehaviour:
   humanoidRigAnimator: {fileID: 0}
   defaultLeftWristTarget: {fileID: 2733287110205977188}
   defaultRightWristTarget: {fileID: 4383181461148833860}
+  primaryMountRoot: {fileID: 4254748825539365288}
+  secondaryMountRoot: {fileID: 6949899922934012761}
+  tertiaryMountRoot: {fileID: 5973385079983274211}
+  consumableMountRoot: {fileID: 5839085565920024735}
   slot0Net:
     NetworkManager: {fileID: 0}
     NetworkBehaviour: {fileID: 0}
