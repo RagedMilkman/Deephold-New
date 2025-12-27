@@ -1581,7 +1581,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         !renderVisualsIfOwner
         || IsOwner
         || (NetworkObject != null && !NetworkObject.Owner.IsValid));
-    private bool ShouldMaintainVisualInstances => IsClient && ShouldRenderVisuals;
+    private bool ShouldMaintainVisualInstances => IsClient && renderVisuals;
     private bool ShouldAnimateVisuals => IsClient && ShouldRenderVisuals;
 
     public bool VisualsEnabled
