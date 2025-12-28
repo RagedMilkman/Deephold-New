@@ -587,10 +587,7 @@ public class ToolbeltVisualizer : MonoBehaviour
 
     private bool ShouldEnableItemMeshes()
     {
-        if (isGhostVisualizer)
-            return true;
-
-        return source != null && source.IsOwner;
+        return true;
     }
 
     private void ApplyItemVisibility()

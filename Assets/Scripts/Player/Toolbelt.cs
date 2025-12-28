@@ -38,9 +38,8 @@ public class ToolbeltNetworked : NetworkBehaviour
     [SerializeField] private bool enableEquipDebugLogs = false;
 
     [Header("Visualization")]
-    [SerializeField] private bool renderVisuals = true;
-    [SerializeField, Tooltip("Only render toolbelt visuals on the owning client.")]
-    private bool renderVisualsIfOwner = true;
+    [SerializeField, Tooltip("Toggle mesh visibility on the toolbelt instance.")]
+    private bool renderVisuals = true;
 
     [Header("Mount Roots")]
     [SerializeField, Tooltip("Transform used as the mount root for the primary slot.")]
@@ -1551,26 +1550,17 @@ public class ToolbeltNetworked : NetworkBehaviour
 
         needsRebuild |= mountRootChanged;
 
-        bool allowVisuals = ShouldMaintainVisualInstances;
-        if (!allowVisuals)
-        {
-            if (equippedInstance)
-                ClearVisuals();
-        }
-        else
-        {
-            if (needsRebuild)
-                RebuildVisual(equippedSlot);
+        if (needsRebuild && ShouldMaintainVisualInstances)
+            RebuildVisual(equippedSlot);
 
-            if (ShouldAnimateVisuals)
-            {
-                float now = Time.time;
-                foreach (var slot in EnumerateSlots())
-                    slot?.UpdateVisual(now);
-            }
-
-            ApplyItemVisibility();
+        if (ShouldAnimateVisuals)
+        {
+            float now = Time.time;
+            foreach (var slot in EnumerateSlots())
+                slot?.UpdateVisual(now);
         }
+
+        ApplyItemVisibility();
 
         if (equippedWeaponReloading && reloadStanceEndsAt > 0f && Time.time >= reloadStanceEndsAt)
             ResolveReloadTimeout();
@@ -1578,12 +1568,8 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     public IReadOnlyList<ItemDefinition> ItemRegistry => itemRegistry;
 
-    private bool ShouldRenderVisuals => renderVisuals && (
-        !renderVisualsIfOwner
-        || IsOwner
-        || (NetworkObject != null && !NetworkObject.Owner.IsValid));
-    private bool ShouldMaintainVisualInstances => IsClient && renderVisuals;
-    private bool ShouldAnimateVisuals => IsClient && ShouldRenderVisuals;
+    private bool ShouldMaintainVisualInstances => IsClient;
+    private bool ShouldAnimateVisuals => IsClient;
 
     public bool VisualsEnabled
     {
@@ -1594,15 +1580,7 @@ public class ToolbeltNetworked : NetworkBehaviour
                 return;
 
             renderVisuals = value;
-
-            if (!ShouldMaintainVisualInstances)
-            {
-                ClearVisuals();
-            }
-            else
-            {
-                RebuildVisual(equippedSlot);
-            }
+            ApplyItemVisibility();
         }
     }
 
@@ -1642,7 +1620,7 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     private bool ShouldEnableItemMeshes()
     {
-        return IsOwner;
+        return renderVisuals && IsOwner && !IsServer;
     }
 
     private void ApplyItemVisibility()
