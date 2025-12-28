@@ -572,14 +572,15 @@ public class ToolbeltNetworked : NetworkBehaviour
             return;
 
         var def = GetRegistryDefinition(slot.RegistryIndex);
+        var slotMountRoot = ResolveSlotMountRoot(slot.Slot);
         slot.EnsureVisual(
-            ResolveSlotMountRoot(slot.Slot),
+            slotMountRoot,
             def,
             DetermineMountType,
             ResolveMountTarget,
             ApplyDefinitionTransform,
             AssignOwnerToolbelt,
-            null,
+            (instance, _) => AssignWeaponMountPoints(instance, slot.CurrentMount ?? slotMountRoot ?? mountRoot),
             null,
             this);
     }
