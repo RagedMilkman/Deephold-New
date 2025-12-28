@@ -1620,7 +1620,7 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     private bool ShouldEnableItemMeshes()
     {
-        return renderVisuals && IsOwner && !IsServer;
+        return renderVisuals && IsOwner;
     }
 
     private void ApplyItemVisibility()
