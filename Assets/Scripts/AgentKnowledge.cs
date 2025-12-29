@@ -115,7 +115,17 @@ public class AgentKnowledge : MonoBehaviour
             return;
 
         var facingBelief = knowledge.FacingDirection.Value;
-        var direction = facingBelief.Value.sqrMagnitude > 0.0001f ? facingBelief.Value.normalized : Vector3.forward;
+        var direction = facingBelief.Value;
+
+        if (direction.sqrMagnitude > 0.0001f)
+        {
+            direction = Vector3.ProjectOnPlane(direction, Vector3.up);
+            direction = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.forward;
+        }
+        else
+        {
+            direction = Vector3.forward;
+        }
         var facingLength = Mathf.Lerp(0.5f, 2f, Mathf.Clamp01(facingBelief.Confidence));
 
         Gizmos.DrawLine(positionBelief.Value, positionBelief.Value + direction * facingLength);
