@@ -172,14 +172,6 @@ public class AgentKnowledge : MonoBehaviour
                     return direction;
             }
 
-            if (motor.HasCursorTarget && origin.HasValue)
-            {
-                var elevatedTarget = motor.PlayerTarget + Vector3.up * 1.5f;
-                var direction = elevatedTarget - origin.Value;
-                if (direction.sqrMagnitude > 0.0001f)
-                    return direction;
-            }
-
             return motor.FacingForward;
         }
 
