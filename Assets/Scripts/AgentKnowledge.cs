@@ -7,6 +7,9 @@ public class AgentKnowledge : MonoBehaviour
     [SerializeField] private CharacterData selfCharacter;
     [SerializeField, Min(0f)] private float knowledgeRetentionSeconds = 15f;
     [SerializeField, Min(0f)] private float defaultConfidenceHalfLifeSeconds = 10f;
+    [SerializeField] private bool drawKnowledgeGizmos = false;
+    [SerializeField] private Color selfKnowledgeColor = new(0.25f, 0.9f, 0.65f, 0.5f);
+    [SerializeField] private Color knownCharacterColor = new(1f, 0.75f, 0.1f, 0.5f);
 
     public IReadOnlyDictionary<string, CharacterKnowledge> Characters => characters;
     public CharacterKnowledge Self { get; private set; }
@@ -75,6 +78,47 @@ public class AgentKnowledge : MonoBehaviour
 
         foreach (var id in idsToForget)
             characters.Remove(id);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (!drawKnowledgeGizmos)
+            return;
+
+        if (Self != null)
+            DrawCharacterKnowledge(Self, selfKnowledgeColor);
+
+        foreach (var kvp in characters)
+        {
+            if (kvp.Value != null)
+                DrawCharacterKnowledge(kvp.Value, knownCharacterColor);
+        }
+    }
+
+    private static void DrawCharacterKnowledge(CharacterKnowledge knowledge, Color baseColor)
+    {
+        if (!knowledge.Position.HasValue)
+            return;
+
+        var positionBelief = knowledge.Position.Value;
+        var confidence = Mathf.Clamp01(positionBelief.Confidence);
+        var radius = Mathf.Lerp(0.15f, 0.45f, confidence);
+        var fadedColor = new Color(baseColor.r, baseColor.g, baseColor.b, baseColor.a * 0.6f);
+
+        Gizmos.color = baseColor;
+        Gizmos.DrawSphere(positionBelief.Value, radius);
+
+        Gizmos.color = fadedColor;
+        Gizmos.DrawWireSphere(positionBelief.Value, radius + 0.05f);
+
+        if (!knowledge.FacingDirection.HasValue)
+            return;
+
+        var facingBelief = knowledge.FacingDirection.Value;
+        var direction = facingBelief.Value.sqrMagnitude > 0.0001f ? facingBelief.Value.normalized : Vector3.forward;
+        var facingLength = Mathf.Lerp(0.5f, 2f, Mathf.Clamp01(facingBelief.Confidence));
+
+        Gizmos.DrawLine(positionBelief.Value, positionBelief.Value + direction * facingLength);
     }
 
     private void UpdateSelfKnowledge()
