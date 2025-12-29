@@ -136,6 +136,8 @@ public class TopDownMovementInteraction : NetworkBehaviour
                 return false;
             }
 
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
             RaycastHit? selectedHit = null;
             foreach (var hit in hits)
             {
@@ -150,10 +152,8 @@ public class TopDownMovementInteraction : NetworkBehaviour
                     continue;
                 }
 
-                if (!selectedHit.HasValue || hit.distance < selectedHit.Value.distance)
-                {
-                    selectedHit = hit;
-                }
+                selectedHit = hit;
+                break;
             }
 
             if (!selectedHit.HasValue)
@@ -166,6 +166,8 @@ public class TopDownMovementInteraction : NetworkBehaviour
             if (hasFloorMask)
             {
                 var firstHits = Physics.RaycastAll(ray, _aimRayMaxDistance, ~0, QueryTriggerInteraction.Ignore);
+                System.Array.Sort(firstHits, (a, b) => a.distance.CompareTo(b.distance));
+
                 RaycastHit? firstNonSelfHit = null;
 
                 foreach (var hit in firstHits)
@@ -181,10 +183,8 @@ public class TopDownMovementInteraction : NetworkBehaviour
                         continue;
                     }
 
-                    if (!firstNonSelfHit.HasValue || hit.distance < firstNonSelfHit.Value.distance)
-                    {
-                        firstNonSelfHit = hit;
-                    }
+                    firstNonSelfHit = hit;
+                    break;
                 }
 
                 if (firstNonSelfHit.HasValue &&
