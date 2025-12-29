@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1660181265867297599}
   - component: {fileID: 6899591500005416550}
   - component: {fileID: -7350077746161477732}
-  m_Layer: 3
+  m_Layer: 10
   m_Name: TerrainBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,11 +123,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 40b4dec414d8caf4484f2c52f28dab9c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  maxHealth: 3000
+  m_Name: 
+  m_EditorClassIdentifier: 
   invincible: 0
-  grid: {fileID: 0}
 --- !u!114 &-7350077746161477732
 MonoBehaviour:
   m_ObjectHideFlags: 0
