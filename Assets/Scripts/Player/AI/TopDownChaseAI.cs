@@ -13,6 +13,7 @@ public class TopDownChaseAI : MonoBehaviour
 
     [Header("Behavior")]
     [SerializeField] private float _stopDistance = 0.5f;
+    [SerializeField] [Min(0f)] private float _minLookDistance = 1.5f;
 
     private CharacterController _controller;
 
@@ -49,6 +50,12 @@ public class TopDownChaseAI : MonoBehaviour
         // Flatten look point to reduce vertical jitter/odd yaw inputs
         Vector3 lookPoint = _target.position;
         lookPoint.y = origin.y;
+
+        Vector3 lookDirection = lookPoint - origin;
+        if (lookDirection.sqrMagnitude > 0.0001f)
+        {
+            lookPoint = origin + lookDirection.normalized * Mathf.Max(_minLookDistance, lookDirection.magnitude);
+        }
 
         if (_motor.TryComputeYawFromPoint(lookPoint, out float yawDeg))
             _motor.ApplyYaw(yawDeg, lookPoint);
