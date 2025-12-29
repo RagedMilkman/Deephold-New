@@ -153,7 +153,7 @@ public class AgentKnowledge : MonoBehaviour
     {
         if (motor)
         {
-            var origin = motor.transform ? motor.transform.position : (Vector3?)null;
+            var origin = (Vector3?)motor.FacingOrigin;
             if (motor.HasCursorTarget && origin.HasValue)
             {
                 var elevatedTarget = motor.PlayerTarget + Vector3.up * 1.5f;
@@ -162,8 +162,7 @@ public class AgentKnowledge : MonoBehaviour
                     return direction;
             }
 
-            if (motor.transform)
-                return motor.transform.forward;
+            return motor.FacingForward;
         }
 
         return fallback ? (Vector3?)fallback.forward : null;

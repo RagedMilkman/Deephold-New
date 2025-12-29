@@ -195,6 +195,8 @@ public class TopDownMotor : MonoBehaviour
     public Vector3 CursorTarget { get; private set; }
     public Vector3 PlayerTarget { get; private set; }
     public bool HasCursorTarget { get; private set; }
+    public Vector3 FacingForward => rotateTarget ? rotateTarget.forward : transform.forward;
+    public Vector3 FacingOrigin => rotateTarget ? rotateTarget.position : transform.position;
 
     public void SetAimTargets(Vector3 cursorTarget, Vector3 playerTarget)
     {
