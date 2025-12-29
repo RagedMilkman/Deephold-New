@@ -6,6 +6,7 @@ using UnityEngine;
 public class MotorActions : MonoBehaviour
 {
     [SerializeField] private MotorActuator motorActuator;
+    [SerializeField, Min(0f)] private float minAimDistance = 1.5f;
     [SerializeField, Min(0f)] private float aimTargetElevation = 1f;
 
     [Header("Debug")]
@@ -42,7 +43,7 @@ public class MotorActions : MonoBehaviour
             if (!faceTarget)
                 motorActuator.ClearAim();
             else
-                motorActuator.AimAt(GetAimTarget(targetPosition));
+                motorActuator.AimAt(GetAimTarget(targetPosition, currentPosition));
 
             ClearDebugTarget();
 
@@ -53,7 +54,7 @@ public class MotorActions : MonoBehaviour
         motorActuator.Move(direction, wantsSprint);
 
         if (faceTarget)
-            motorActuator.AimAt(GetAimTarget(targetPosition));
+            motorActuator.AimAt(GetAimTarget(targetPosition, currentPosition));
 
         return false;
     }
@@ -88,7 +89,7 @@ public class MotorActions : MonoBehaviour
         currentIndex = Mathf.Clamp(currentIndex, 0, path.Length - 1);
         Vector2 waypoint = path[currentIndex];
         Vector3 waypoint3D = new Vector3(waypoint.x, currentPosition.y, waypoint.y);
-        motorActuator.AimAt(GetAimTarget(waypoint3D));
+        motorActuator.AimAt(GetAimTarget(waypoint3D, currentPosition));
     }
 
     /// <summary>
@@ -104,15 +105,45 @@ public class MotorActions : MonoBehaviour
             return;
 
         Vector3 target = originPosition + lookDirection.normalized;
-        motorActuator.AimAt(GetAimTarget(target));
+        motorActuator.AimAt(GetAimTarget(target, originPosition));
     }
 
-    private Vector3 GetAimTarget(Vector3 targetPosition)
+    private Vector3 GetAimTarget(Vector3 targetPosition, Vector3? originOverride = null)
     {
-        if (aimTargetElevation <= 0f)
-            return targetPosition;
+        Vector3 origin = GetAimOrigin(originOverride);
+        targetPosition.y = origin.y;
 
-        return targetPosition + Vector3.up * aimTargetElevation;
+        Vector3 aimTarget = targetPosition;
+        Vector3 toTarget = aimTarget - origin;
+        if (toTarget.sqrMagnitude > 0.0001f)
+        {
+            float clampedDistance = Mathf.Max(minAimDistance, toTarget.magnitude);
+            aimTarget = origin + toTarget.normalized * clampedDistance;
+        }
+        else if (minAimDistance > 0f)
+        {
+            Vector3 forward = motorActuator ? motorActuator.transform.forward : transform.forward;
+            forward.y = 0f;
+
+            if (forward.sqrMagnitude > 0.0001f)
+                aimTarget = origin + forward.normalized * minAimDistance;
+        }
+
+        if (aimTargetElevation > 0f)
+            aimTarget += Vector3.up * aimTargetElevation;
+
+        return aimTarget;
+    }
+
+    private Vector3 GetAimOrigin(Vector3? originOverride)
+    {
+        if (originOverride.HasValue)
+            return originOverride.Value;
+
+        if (motorActuator)
+            return motorActuator.transform.position;
+
+        return transform.position;
     }
 
     /// <summary>
@@ -123,7 +154,7 @@ public class MotorActions : MonoBehaviour
         if (!motorActuator || !target)
             return;
 
-        motorActuator.AimAt(target.position);
+        motorActuator.AimAt(GetAimTarget(target.position));
     }
 
     private void UpdateDebugTarget(Vector3 targetPosition, float stopDistance)
