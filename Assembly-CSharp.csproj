@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\EngageConsideration.cs" />
     <Compile Include="Assets\Scripts\World\GridDirector.cs" />
     <Compile Include="Assets\Scripts\SightSense.cs" />
+    <Compile Include="Assets\Scripts\FacingDirectionResolver.cs" />
     <Compile Include="Assets\Scripts\Items\ToolMountPoint.cs" />
     <Compile Include="Assets\Scripts\Player\ToolbeltVisualizer.cs" />
     <Compile Include="Assets\Scripts\AI\Actuators\ToolbeltActuator.cs" />
