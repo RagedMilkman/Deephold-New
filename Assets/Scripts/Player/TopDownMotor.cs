@@ -195,6 +195,7 @@ public class TopDownMotor : MonoBehaviour
     public Vector3 CursorTarget { get; private set; }
     public Vector3 PlayerTarget { get; private set; }
     public bool HasCursorTarget { get; private set; }
+    public Vector3? HeadPosition => rigAnimator ? rigAnimator.HeadPosition : null;
     public Vector3? CurrentHeadLookTarget => rigAnimator ? rigAnimator.CurrentHeadLookTarget : null;
     public Vector3 FacingForward => rotateTarget ? rotateTarget.forward : transform.forward;
     public Vector3 FacingOrigin => rotateTarget ? rotateTarget.position : transform.position;

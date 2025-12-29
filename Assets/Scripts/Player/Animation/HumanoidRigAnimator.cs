@@ -273,6 +273,15 @@ public class HumanoidRigAnimator : MonoBehaviour
         characterYawTransform = yawTransform ? yawTransform : transform.root;
     }
 
+    public Vector3? HeadPosition
+    {
+        get
+        {
+            var head = GetHeadTransform();
+            return head ? (Vector3?)head.position : null;
+        }
+    }
+
     public Vector3? CurrentHeadLookTarget => hasHeadLookTarget ? currentHeadLookTarget : null;
 
     public void SetHeadLookTarget(Vector3 worldPosition)
@@ -301,6 +310,17 @@ public class HumanoidRigAnimator : MonoBehaviour
         ResetCharacterYawSmoothing();
         RestoreBoneDefaultPose(HumanBodyBones.Head);
         RestoreBoneDefaultPose(HumanBodyBones.Spine);
+    }
+
+    private Transform GetHeadTransform()
+    {
+        if (bonePoses.TryGetValue(HumanBodyBones.Head, out var headPose) && headPose.Transform != null)
+        {
+            return headPose.Transform;
+        }
+
+        CacheBones();
+        return bonePoses.TryGetValue(HumanBodyBones.Head, out headPose) ? headPose.Transform : null;
     }
 
     private void CacheAnimator()
