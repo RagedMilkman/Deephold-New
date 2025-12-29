@@ -62,6 +62,7 @@
     <Analyzer Include="E:\Code\Unity\Deephold\Assets\FishNet\Runtime\Plugins\CodeAnalysis\FishNet.CodeAnalysis.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\EngageConsideration.cs" />
     <Compile Include="Assets\Scripts\World\GridDirector.cs" />
     <Compile Include="Assets\Scripts\SightSense.cs" />
     <Compile Include="Assets\Scripts\Items\ToolMountPoint.cs" />
@@ -178,6 +179,7 @@
     <Compile Include="Assets\Scripts\Consideration.cs" />
     <Compile Include="Assets\Scripts\ExploreConsideration.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\KineticProjectileWeapon.cs" />
+    <Compile Include="Assets\Scripts\AI\Behaviours\EngageBehaviour.cs" />
     <Compile Include="Assets\Scripts\World\Generation\PerlinNoiseGenerator.cs" />
     <Compile Include="Assets\Scripts\Items\HandMount.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\ToolbeltInteraction.cs" />
