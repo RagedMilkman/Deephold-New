@@ -163,9 +163,35 @@ public class TopDownMovementInteraction : NetworkBehaviour
 
             var validHit = selectedHit.Value;
             cursorTarget = validHit.point;
-            if (hasFloorMask && IsLayerInMask(validHit.collider.gameObject.layer, _floorMask))
+            if (hasFloorMask)
             {
-                floorHit = true;
+                var firstHits = Physics.RaycastAll(ray, _aimRayMaxDistance, ~0, QueryTriggerInteraction.Ignore);
+                RaycastHit? firstNonSelfHit = null;
+
+                foreach (var hit in firstHits)
+                {
+                    var hitTransform = hit.collider ? hit.collider.transform : null;
+                    if (!hitTransform)
+                    {
+                        continue;
+                    }
+
+                    if (hitTransform == _motor.transform || hitTransform.IsChildOf(_motor.transform))
+                    {
+                        continue;
+                    }
+
+                    if (!firstNonSelfHit.HasValue || hit.distance < firstNonSelfHit.Value.distance)
+                    {
+                        firstNonSelfHit = hit;
+                    }
+                }
+
+                if (firstNonSelfHit.HasValue &&
+                    IsLayerInMask(firstNonSelfHit.Value.collider.gameObject.layer, _floorMask))
+                {
+                    floorHit = true;
+                }
             }
         }
         else
