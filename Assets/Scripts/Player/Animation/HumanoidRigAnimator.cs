@@ -273,6 +273,8 @@ public class HumanoidRigAnimator : MonoBehaviour
         characterYawTransform = yawTransform ? yawTransform : transform.root;
     }
 
+    public Vector3? CurrentHeadLookTarget => hasHeadLookTarget ? currentHeadLookTarget : null;
+
     public void SetHeadLookTarget(Vector3 worldPosition)
     {
         desiredHeadLookTarget = worldPosition;
