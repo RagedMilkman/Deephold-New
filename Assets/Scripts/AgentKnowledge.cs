@@ -141,10 +141,11 @@ public class AgentKnowledge : MonoBehaviour
         var equipped = toolbelt ? toolbelt.CurrentEquippedObject : null;
         var factionId = selfCharacter.Faction ? selfCharacter.Faction.GetInstanceID().ToString() : null;
         var topDownMotor = selfCharacter.GetComponentInParent<TopDownMotor>(true);
+        var positionTransform = ResolvePositionRoot(selfCharacter, topDownMotor);
         var facingDirection = ResolveFacingDirection(topDownMotor, selfCharacter.transform);
         var stance = topDownMotor ? (TopDownMotor.Stance?)topDownMotor.CurrentStance : null;
 
-        var selfObservation = Observation.ForCharacter(selfCharacter.transform, selfCharacter.gameObject, id, healthValue, equipped, factionId, facingDirection, stance, BeliefSource.Inferred, 1f, Time.time);
+        var selfObservation = Observation.ForCharacter(positionTransform, selfCharacter.gameObject, id, healthValue, equipped, factionId, facingDirection, stance, BeliefSource.Inferred, 1f, Time.time);
         Self.UpdateFromObservation(selfObservation);
     }
 
@@ -166,5 +167,20 @@ public class AgentKnowledge : MonoBehaviour
         }
 
         return fallback ? (Vector3?)fallback.forward : null;
+    }
+
+    private static Transform ResolvePositionRoot(CharacterData character, TopDownMotor motor)
+    {
+        if (motor)
+        {
+            var controller = motor.GetComponent<CharacterController>();
+            if (controller)
+                return controller.transform;
+        }
+
+        if (character && character.Health && character.Health.OwnerRoot)
+            return character.Health.OwnerRoot;
+
+        return character ? character.transform : null;
     }
 }

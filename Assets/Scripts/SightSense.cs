@@ -28,7 +28,8 @@ public class SightSense : MonoBehaviour, ISense
         lastObservations.Clear();
 
         var origin = transform.position;
-        var selfRoot = selfCharacter && selfCharacter.OwnerRoot ? selfCharacter.OwnerRoot : transform.root;
+        var selfMotor = selfCharacter ? selfCharacter.GetComponentInChildren<TopDownMotor>(true) : null;
+        var selfRoot = ResolvePositionRoot(selfCharacter, selfMotor) ?? transform.root;
         var hits = Physics.OverlapSphere(origin, visionRange, observableLayers, QueryTriggerInteraction.Ignore);
         var seen = new HashSet<CharacterHealth>();
 
@@ -42,7 +43,8 @@ public class SightSense : MonoBehaviour, ISense
                 continue;
 
             var obstacleTarget = hit.transform;
-            var targetRoot = characterHealth.OwnerRoot ? characterHealth.OwnerRoot : characterHealth.transform;
+            var motor = characterHealth.GetComponentInChildren<TopDownMotor>(true);
+            var targetRoot = ResolvePositionRoot(characterHealth, motor);
             if (selfRoot && targetRoot == selfRoot)
                 continue;
             if (obstacleTarget == transform)
@@ -70,7 +72,6 @@ public class SightSense : MonoBehaviour, ISense
             var toolbelt = characterHealth.GetComponentInChildren<ToolbeltNetworked>(true);
             var equipped = toolbelt ? toolbelt.CurrentEquippedObject : null;
             var factionId = TryGetFactionId(targetRoot);
-            var motor = targetRoot ? targetRoot.GetComponentInChildren<TopDownMotor>(true) : null;
             var facingDirection = ResolveFacingDirection(motor, targetRoot);
             var stance = motor ? (TopDownMotor.Stance?)motor.CurrentStance : null;
             var observation = Observation.ForCharacter(targetRoot, characterHealth.gameObject, id, characterHealth.Health, equipped, factionId, facingDirection, stance, BeliefSource.Sight, 1f, Time.time);
@@ -150,5 +151,25 @@ public class SightSense : MonoBehaviour, ISense
         }
 
         return fallback ? (Vector3?)fallback.forward : null;
+    }
+
+    private static Transform ResolvePositionRoot(CharacterHealth characterHealth, TopDownMotor motor)
+    {
+        if (motor)
+        {
+            var controller = motor.GetComponent<CharacterController>();
+            if (controller)
+                return controller.transform;
+        }
+
+        if (characterHealth)
+        {
+            if (characterHealth.OwnerRoot)
+                return characterHealth.OwnerRoot;
+
+            return characterHealth.transform;
+        }
+
+        return null;
     }
 }
