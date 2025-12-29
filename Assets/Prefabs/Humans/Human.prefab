@@ -622,7 +622,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AgentKnowledge
   selfCharacter: {fileID: 2555694571077031807}
   knowledgeRetentionSeconds: 15
-  defaultConfidenceDecayPerSecond: 0.05
+  defaultConfidenceHalfLifeSeconds: 10
 --- !u!1 &6313827607821438453
 GameObject:
   m_ObjectHideFlags: 0

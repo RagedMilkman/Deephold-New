@@ -6,7 +6,7 @@ public class AgentKnowledge : MonoBehaviour
     private readonly Dictionary<string, CharacterKnowledge> characters = new();
     [SerializeField] private CharacterData selfCharacter;
     [SerializeField, Min(0f)] private float knowledgeRetentionSeconds = 15f;
-    [SerializeField, Min(0f)] private float defaultConfidenceDecayPerSecond = 0.05f;
+    [SerializeField, Min(0f)] private float defaultConfidenceHalfLifeSeconds = 10f;
 
     public IReadOnlyDictionary<string, CharacterKnowledge> Characters => characters;
     public CharacterKnowledge Self { get; private set; }
@@ -57,7 +57,7 @@ public class AgentKnowledge : MonoBehaviour
 
     private void DecayKnownCharacters()
     {
-        if (knowledgeRetentionSeconds <= 0f && defaultConfidenceDecayPerSecond <= 0f)
+        if (knowledgeRetentionSeconds <= 0f && defaultConfidenceHalfLifeSeconds <= 0f)
             return;
 
         if (characters.Count == 0)
@@ -68,7 +68,7 @@ public class AgentKnowledge : MonoBehaviour
 
         foreach (var kvp in characters)
         {
-            kvp.Value.ApplyDecay(currentTime, knowledgeRetentionSeconds, defaultConfidenceDecayPerSecond);
+            kvp.Value.ApplyDecay(currentTime, knowledgeRetentionSeconds, defaultConfidenceHalfLifeSeconds);
             if (!kvp.Value.HasAnyBeliefs)
                 idsToForget.Add(kvp.Key);
         }

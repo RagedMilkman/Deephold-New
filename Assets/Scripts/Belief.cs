@@ -13,5 +13,5 @@ public struct Belief<T>
     public T Value;
     public float Confidence;     // 0..1
     public double TimeStamp;     // Time.timeAsDouble
-    public float DecayPerSecond; // optional for now
+    public float HalfLifeSeconds; // optional for now
 }

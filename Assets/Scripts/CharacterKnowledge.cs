@@ -38,7 +38,7 @@ public class CharacterKnowledge
                 Value = normalized,
                 Confidence = confidence,
                 TimeStamp = timestamp,
-                DecayPerSecond = 0f
+                HalfLifeSeconds = 0f
             };
         }
 
@@ -49,7 +49,7 @@ public class CharacterKnowledge
                 Value = observation.Location.position,
                 Confidence = confidence,
                 TimeStamp = timestamp,
-                DecayPerSecond = 0f
+                HalfLifeSeconds = 0f
             };
         }
 
@@ -60,7 +60,7 @@ public class CharacterKnowledge
                 Value = observation.CharacterData.Stance.Value,
                 Confidence = confidence,
                 TimeStamp = timestamp,
-                DecayPerSecond = 0f
+                HalfLifeSeconds = 0f
             };
         }
 
@@ -71,7 +71,7 @@ public class CharacterKnowledge
                 Value = observation.CharacterData.Health.Value,
                 Confidence = confidence,
                 TimeStamp = timestamp,
-                DecayPerSecond = 0f
+                HalfLifeSeconds = 0f
             };
         }
 
@@ -82,7 +82,7 @@ public class CharacterKnowledge
                 Value = observation.CharacterData.Equipped,
                 Confidence = confidence,
                 TimeStamp = timestamp,
-                DecayPerSecond = 0f
+                HalfLifeSeconds = 0f
             };
         }
 
@@ -93,33 +93,36 @@ public class CharacterKnowledge
                 Value = observation.CharacterData.FactionId,
                 Confidence = confidence,
                 TimeStamp = timestamp,
-                DecayPerSecond = 0f
+                HalfLifeSeconds = 0f
             };
         }
     }
 
-    public void ApplyDecay(float currentTime, float retentionSeconds, float defaultDecayPerSecond)
+    public void ApplyDecay(float currentTime, float retentionSeconds, float defaultHalfLifeSeconds)
     {
-        Position = ApplyDecayToBelief(Position, currentTime, retentionSeconds, defaultDecayPerSecond);
-        FacingDirection = ApplyDecayToBelief(FacingDirection, currentTime, retentionSeconds, defaultDecayPerSecond);
-        Health = ApplyDecayToBelief(Health, currentTime, retentionSeconds, defaultDecayPerSecond);
-        Equipped = ApplyDecayToBelief(Equipped, currentTime, retentionSeconds, defaultDecayPerSecond);
-        FactionId = ApplyDecayToBelief(FactionId, currentTime, retentionSeconds, defaultDecayPerSecond);
-        Stance = ApplyDecayToBelief(Stance, currentTime, retentionSeconds, defaultDecayPerSecond);
+        Position = ApplyDecayToBelief(Position, currentTime, retentionSeconds, defaultHalfLifeSeconds);
+        FacingDirection = ApplyDecayToBelief(FacingDirection, currentTime, retentionSeconds, defaultHalfLifeSeconds);
+        Health = ApplyDecayToBelief(Health, currentTime, retentionSeconds, defaultHalfLifeSeconds);
+        Equipped = ApplyDecayToBelief(Equipped, currentTime, retentionSeconds, defaultHalfLifeSeconds);
+        FactionId = ApplyDecayToBelief(FactionId, currentTime, retentionSeconds, defaultHalfLifeSeconds);
+        Stance = ApplyDecayToBelief(Stance, currentTime, retentionSeconds, defaultHalfLifeSeconds);
     }
 
     private static Belief<T>? ApplyDecayToBelief<T>(Belief<T>? belief, float currentTime, float retentionSeconds,
-        float defaultDecayPerSecond)
+        float defaultHalfLifeSeconds)
     {
         if (!belief.HasValue)
             return belief;
 
         var data = belief.Value;
         var elapsed = Mathf.Max(0f, (float)(currentTime - data.TimeStamp));
-        var decayRate = data.DecayPerSecond > 0f ? data.DecayPerSecond : defaultDecayPerSecond;
+        var halfLife = data.HalfLifeSeconds > 0f ? data.HalfLifeSeconds : defaultHalfLifeSeconds;
 
-        if (decayRate > 0f)
-            data.Confidence = Mathf.Clamp01(data.Confidence - decayRate * elapsed);
+        if (halfLife > 0f)
+        {
+            var decayFactor = Mathf.Pow(0.5f, elapsed / halfLife);
+            data.Confidence = Mathf.Clamp01(data.Confidence * decayFactor);
+        }
 
         var shouldForget = (retentionSeconds > 0f && elapsed >= retentionSeconds) || data.Confidence <= 0.01f;
         return shouldForget ? null : data;
