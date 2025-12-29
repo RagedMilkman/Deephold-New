@@ -164,7 +164,7 @@ public class AgentKnowledge : MonoBehaviour
         if (motor)
         {
             var origin = motor.HeadPosition ?? (Vector3?)motor.FacingOrigin;
-            var headLookTarget = motor.CurrentHeadLookTarget;
+            var headLookTarget = motor.PresentHeadLookTarget ?? motor.CurrentHeadLookTarget;
             if (headLookTarget.HasValue && origin.HasValue)
             {
                 var direction = headLookTarget.Value - origin.Value;

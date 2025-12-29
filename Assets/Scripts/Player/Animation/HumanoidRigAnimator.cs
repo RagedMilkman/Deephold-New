@@ -283,6 +283,37 @@ public class HumanoidRigAnimator : MonoBehaviour
     }
 
     public Vector3? CurrentHeadLookTarget => hasHeadLookTarget ? currentHeadLookTarget : null;
+    public Vector3? DesiredHeadLookTarget => hasHeadLookTarget ? desiredHeadLookTarget : null;
+
+    public Vector3? PresentHeadLookTarget
+    {
+        get
+        {
+            var head = GetHeadTransform();
+            if (!head)
+            {
+                return CurrentHeadLookTarget;
+            }
+
+            if (!hasHeadLookTarget)
+            {
+                return null;
+            }
+
+            var distanceToTarget = (currentHeadLookTarget - head.position).magnitude;
+            if (distanceToTarget < 0.0001f)
+            {
+                distanceToTarget = (desiredHeadLookTarget - head.position).magnitude;
+            }
+
+            if (distanceToTarget < 0.0001f)
+            {
+                distanceToTarget = 1f;
+            }
+
+            return head.position + head.forward.normalized * distanceToTarget;
+        }
+    }
 
     public void SetHeadLookTarget(Vector3 worldPosition)
     {
