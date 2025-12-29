@@ -72,7 +72,7 @@ public class SightSense : MonoBehaviour, ISense
             var toolbelt = characterHealth.GetComponentInChildren<ToolbeltNetworked>(true);
             var equipped = toolbelt ? toolbelt.CurrentEquippedObject : null;
             var factionId = TryGetFactionId(targetRoot);
-            var facingDirection = ResolveFacingDirection(motor, targetRoot);
+            var facingDirection = FacingDirectionResolver.ResolveFacingDirection(motor, targetRoot);
             var stance = motor ? (TopDownMotor.Stance?)motor.CurrentStance : null;
             var observation = Observation.ForCharacter(targetRoot, characterHealth.gameObject, id, characterHealth.Health, equipped, factionId, facingDirection, stance, BeliefSource.Sight, 1f, Time.time);
             buffer.Add(observation);
@@ -131,25 +131,6 @@ public class SightSense : MonoBehaviour, ISense
             return;
 
         Debug.DrawLine(start, end, color, 0.1f);
-    }
-
-    private static Vector3? ResolveFacingDirection(TopDownMotor motor, Transform fallback)
-    {
-        if (motor)
-        {
-            var origin = (Vector3?)motor.FacingOrigin;
-            if (motor.HasCursorTarget && origin.HasValue)
-            {
-                var elevatedTarget = motor.PlayerTarget + Vector3.up * 1.5f;
-                var direction = elevatedTarget - origin.Value;
-                if (direction.sqrMagnitude > 0.0001f)
-                    return direction;
-            }
-
-            return motor.FacingForward;
-        }
-
-        return fallback ? (Vector3?)fallback.forward : null;
     }
 
     private static Transform ResolvePositionRoot(CharacterHealth characterHealth, TopDownMotor motor)
