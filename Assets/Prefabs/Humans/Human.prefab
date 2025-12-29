@@ -582,7 +582,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6116119404708490174}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8212ec89ee254f7392f75a4a787cb26b, type: 3}
   m_Name: 
@@ -623,6 +623,9 @@ MonoBehaviour:
   selfCharacter: {fileID: 2555694571077031807}
   knowledgeRetentionSeconds: 15
   defaultConfidenceHalfLifeSeconds: 10
+  drawKnowledgeGizmos: 0
+  selfKnowledgeColor: {r: 0.25, g: 0.9, b: 0.65, a: 0.5}
+  knownCharacterColor: {r: 1, g: 0.75, b: 0.1, a: 0.5}
 --- !u!1 &6313827607821438453
 GameObject:
   m_ObjectHideFlags: 0
@@ -1193,19 +1196,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7079361
+      value: 0.70793617
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013655687
+      value: 0.013655715
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.70536846
+      value: 0.7053685
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.033096097
+      value: 0.033096023
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
