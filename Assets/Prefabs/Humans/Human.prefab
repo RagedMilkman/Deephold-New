@@ -1196,19 +1196,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.70793617
+      value: 0.7079361
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013655715
+      value: 0.013655786
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7053685
+      value: 0.70536846
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.033096023
+      value: 0.033095874
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1261,10 +1261,10 @@ MonoBehaviour:
   fieldOfView: 90
   observableLayers:
     serializedVersion: 2
-    m_Bits: 640
+    m_Bits: 768
   obstacleLayers:
     serializedVersion: 2
-    m_Bits: 1019
+    m_Bits: 1024
   debugDraw: 1
   debugColor: {r: 0, g: 1, b: 1, a: 1}
   debugHitColor: {r: 0, g: 1, b: 0, a: 1}
