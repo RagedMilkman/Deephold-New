@@ -150,7 +150,7 @@ public class AgentKnowledge : MonoBehaviour
         var toolbelt = selfCharacter.GetComponentInChildren<ToolbeltNetworked>(true);
         var equipped = toolbelt ? toolbelt.CurrentEquippedObject : null;
         var factionId = selfCharacter.Faction ? selfCharacter.Faction.GetInstanceID().ToString() : null;
-        var topDownMotor = selfCharacter.GetComponentInParent<TopDownMotor>(true);
+        var topDownMotor = selfCharacter.GetComponentInChildren<TopDownMotor>();
         var positionTransform = ResolvePositionRoot(selfCharacter, topDownMotor);
         var facingDirection = ResolveFacingDirection(topDownMotor, selfCharacter.transform);
         var stance = topDownMotor ? (TopDownMotor.Stance?)topDownMotor.CurrentStance : null;
