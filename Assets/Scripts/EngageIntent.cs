@@ -10,6 +10,26 @@ public sealed class EngageIntent : IIntent
 
     public string TargetId;
     public Vector3 TargetPosition;
-    public float DesiredRange;
+    public EngageTactics Tactics;
+}
+
+public enum EngageTactic
+{
+    Pursue
+}
+
+[System.Serializable]
+public sealed class EngageTactics
+{
+    public EngageTactic Tactic = EngageTactic.Pursue;
+    public PursueTactic Pursue;
+}
+
+[System.Serializable]
+public sealed class PursueTactic
+{
+    public float MinDesiredRange;
+    public float PreferredDistance;
+    public float MaxDesiredRange;
     public bool UseCover;
 }

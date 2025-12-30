@@ -12,7 +12,6 @@ public class EngageBehaviour : PathingBehaviour
 
     [Header("Engagement")]
     [SerializeField, Min(0f)] private float repathDistance = 0.75f;
-    [SerializeField, Range(0f, 1f)] private float rangeTolerance = 0.1f;
     [SerializeField, Range(0f, 2f)] private float cautiousRangeMultiplier = 1.1f;
     [SerializeField] private bool sprintToTarget = true;
     [SerializeField] private bool faceTargetWhileMoving = true;
@@ -21,7 +20,7 @@ public class EngageBehaviour : PathingBehaviour
     private int pathIndex;
     private string currentTargetId;
     private Vector3 lastKnownTargetPosition;
-    private float lastDesiredRange;
+    private float lastPreferredRange;
 
     protected override void Awake()
     {
@@ -56,56 +55,17 @@ public class EngageBehaviour : PathingBehaviour
             return;
         }
 
-        float desiredRange = Mathf.Max(engageIntent.DesiredRange, waypointTolerance * 2f);
-        if (engageIntent.UseCover)
-            desiredRange *= cautiousRangeMultiplier;
+        var tactics = engageIntent.Tactics ?? new EngageTactics { Tactic = EngageTactic.Pursue };
 
-        float toleranceDistance = desiredRange * rangeTolerance;
-        float minDesiredRange = Mathf.Max(desiredRange - toleranceDistance, waypointTolerance * 0.5f);
-        float maxDesiredRange = desiredRange + toleranceDistance;
-
-        bool intentChanged = IntentChanged(engageIntent, targetPosition, desiredRange);
-        if (intentChanged)
+        switch (tactics.Tactic)
         {
-            RebuildPath(engageIntent, targetPosition, desiredRange);
-            pathIndex = 0;
+            case EngageTactic.Pursue:
+                TickPursue(engageIntent, tactics.Pursue, targetPosition, targetTransform);
+                break;
+            default:
+                TickPursue(engageIntent, tactics.Pursue, targetPosition, targetTransform);
+                break;
         }
-
-        var currentPosition = CurrentPosition;
-        Vector3 toTarget = targetPosition - currentPosition;
-        toTarget.y = 0f;
-        float distanceSqr = toTarget.sqrMagnitude;
-        bool withinActiveStanceRange = distanceSqr <= desiredRange * desiredRange;
-        bool tooClose = distanceSqr < minDesiredRange * minDesiredRange;
-        bool tooFar = distanceSqr > maxDesiredRange * maxDesiredRange;
-        bool withinDesiredBand = !tooClose && !tooFar;
-
-        if (combatActions)
-            combatActions.SetActiveStance(withinActiveStanceRange);
-
-        if (withinDesiredBand)
-        {
-            motorActions.MoveToPosition(currentPosition, targetPosition, true, false, Mathf.Max(minDesiredRange, waypointTolerance * 0.5f));
-            path = Array.Empty<Vector2>();
-            ClearDebugPath();
-            if (targetTransform)
-                motorActions.RotateToTarget(ResolveAimTransform(targetTransform));
-            else
-                motorActions.AimFromPosition(currentPosition, toTarget);
-            return;
-        }
-
-        if (path == null || path.Length == 0)
-            RebuildPath(engageIntent, targetPosition, desiredRange);
-
-        if (path == null || path.Length == 0)
-            return;
-
-        pathIndex = motorActions.MoveToPathPosition(currentPosition, path, pathIndex, faceTargetWhileMoving, sprintToTarget, waypointTolerance);
-        if (targetTransform)
-            motorActions.RotateToTarget(ResolveAimTransform(targetTransform));
-        else
-            motorActions.AimFromPosition(currentPosition, toTarget);
     }
 
     public override void EndBehaviour()
@@ -113,7 +73,7 @@ public class EngageBehaviour : PathingBehaviour
         StopPursuit();
         currentTargetId = null;
         lastKnownTargetPosition = Vector3.zero;
-        lastDesiredRange = 0f;
+        lastPreferredRange = 0f;
     }
 
     private void StopPursuit()
@@ -135,16 +95,14 @@ public class EngageBehaviour : PathingBehaviour
         }
 
         if (TryResolveTargetPosition(intent, out var targetPosition, out _))
-        {
-            RebuildPath(intent, targetPosition, intent.DesiredRange);
-        }
+            RebuildPath(intent, targetPosition, ResolvePreferredRange(intent));
         else
         {
             StopPursuit();
         }
     }
 
-    private void RebuildPath(EngageIntent intent, Vector3 targetPosition, float desiredRange)
+    private void RebuildPath(EngageIntent intent, Vector3 targetPosition, float preferredRange)
     {
         path = Array.Empty<Vector2>();
         ClearDebugPath();
@@ -159,7 +117,7 @@ public class EngageBehaviour : PathingBehaviour
         if (toTarget.sqrMagnitude <= 0.0001f)
             return;
 
-        var approachDistance = Mathf.Max(desiredRange, waypointTolerance * 2f);
+        var approachDistance = Mathf.Max(preferredRange, waypointTolerance * 2f);
         var desiredDestination = targetPosition - toTarget.normalized * approachDistance;
         desiredDestination.y = currentPosition.y;
 
@@ -172,7 +130,7 @@ public class EngageBehaviour : PathingBehaviour
 
         currentTargetId = intent.TargetId;
         lastKnownTargetPosition = targetPosition;
-        lastDesiredRange = desiredRange;
+        lastPreferredRange = preferredRange;
     }
 
     private bool TryResolveTargetPosition(EngageIntent intent, out Vector3 targetPosition, out Transform targetTransform)
@@ -204,13 +162,87 @@ public class EngageBehaviour : PathingBehaviour
         return hasPosition;
     }
 
-    private bool IntentChanged(EngageIntent intent, Vector3 targetPosition, float desiredRange)
+    private bool IntentChanged(EngageIntent intent, Vector3 targetPosition, float preferredRange)
     {
         bool targetChanged = currentTargetId != intent.TargetId;
         bool positionChanged = Vector3.SqrMagnitude(targetPosition - lastKnownTargetPosition) > repathDistance * repathDistance;
-        bool rangeChanged = Math.Abs(desiredRange - lastDesiredRange) > 0.01f;
+        bool rangeChanged = Math.Abs(preferredRange - lastPreferredRange) > 0.01f;
 
         return targetChanged || positionChanged || rangeChanged;
+    }
+
+    private void TickPursue(EngageIntent engageIntent, PursueTactic pursue, Vector3 targetPosition, Transform targetTransform)
+    {
+        pursue ??= new PursueTactic();
+
+        var currentPosition = CurrentPosition;
+        Vector3 toTarget = targetPosition - currentPosition;
+        toTarget.y = 0f;
+
+        float minRange = Mathf.Max(pursue.MinDesiredRange, waypointTolerance * 0.5f);
+        float maxRange = Mathf.Max(minRange, pursue.MaxDesiredRange);
+        float preferredRange = Mathf.Clamp(pursue.PreferredDistance, minRange, maxRange);
+
+        if (pursue.UseCover)
+        {
+            minRange *= cautiousRangeMultiplier;
+            maxRange *= cautiousRangeMultiplier;
+            preferredRange *= cautiousRangeMultiplier;
+        }
+
+        bool intentChanged = IntentChanged(engageIntent, targetPosition, preferredRange);
+        if (intentChanged)
+        {
+            RebuildPath(engageIntent, targetPosition, preferredRange);
+            pathIndex = 0;
+        }
+
+        float distanceSqr = toTarget.sqrMagnitude;
+        bool withinActiveStanceRange = distanceSqr <= maxRange * maxRange;
+        bool withinDesiredRange = distanceSqr >= minRange * minRange && distanceSqr <= maxRange * maxRange;
+
+        if (combatActions)
+            combatActions.SetActiveStance(withinActiveStanceRange);
+
+        if (withinDesiredRange)
+        {
+            motorActions.MoveToPosition(currentPosition, targetPosition, true, false, Mathf.Max(minRange, waypointTolerance * 0.5f));
+            path = Array.Empty<Vector2>();
+            ClearDebugPath();
+            if (targetTransform)
+                motorActions.RotateToTarget(ResolveAimTransform(targetTransform));
+            else
+                motorActions.AimFromPosition(currentPosition, toTarget);
+            return;
+        }
+
+        if (path == null || path.Length == 0)
+            RebuildPath(engageIntent, targetPosition, preferredRange);
+
+        if (path == null || path.Length == 0)
+            return;
+
+        pathIndex = motorActions.MoveToPathPosition(currentPosition, path, pathIndex, faceTargetWhileMoving, sprintToTarget, waypointTolerance);
+        if (targetTransform)
+            motorActions.RotateToTarget(ResolveAimTransform(targetTransform));
+        else
+            motorActions.AimFromPosition(currentPosition, toTarget);
+    }
+
+    private float ResolvePreferredRange(EngageIntent intent)
+    {
+        var pursue = intent?.Tactics?.Pursue;
+        if (pursue == null)
+            return waypointTolerance * 2f;
+
+        float minRange = Mathf.Max(pursue.MinDesiredRange, waypointTolerance * 0.5f);
+        float maxRange = Mathf.Max(minRange, pursue.MaxDesiredRange);
+        float preferredRange = Mathf.Clamp(pursue.PreferredDistance, minRange, maxRange);
+
+        if (pursue.UseCover)
+            preferredRange *= cautiousRangeMultiplier;
+
+        return preferredRange;
     }
 
     private static Transform ResolveAimTransform(Transform target)

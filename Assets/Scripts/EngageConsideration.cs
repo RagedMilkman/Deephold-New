@@ -100,7 +100,8 @@ public sealed class EngageConsideration : Consideration
         if (bestTarget == null)
             return null;
 
-        float desiredRange = Mathf.Lerp(maxDesiredRange, minDesiredRange, Mathf.Clamp01((aggression + bravery) * 0.5f));
+        float preferredRange = Mathf.Lerp(maxDesiredRange, minDesiredRange, Mathf.Clamp01((aggression + bravery) * 0.5f));
+        float clampedPreferred = Mathf.Clamp(preferredRange, minDesiredRange, maxDesiredRange);
         bool useCover = bravery < 0.45f;
         float urgency = Mathf.Clamp01(baseUrgency + bestScore * 0.75f);
 
@@ -112,8 +113,17 @@ public sealed class EngageConsideration : Consideration
             Urgency = urgency,
             TargetId = bestTarget.Id,
             TargetPosition = bestTargetPosition,
-            DesiredRange = desiredRange,
-            UseCover = useCover
+            Tactics = new EngageTactics
+            {
+                Tactic = EngageTactic.Pursue,
+                Pursue = new PursueTactic
+                {
+                    MinDesiredRange = minDesiredRange,
+                    PreferredDistance = clampedPreferred,
+                    MaxDesiredRange = maxDesiredRange,
+                    UseCover = useCover
+                }
+            }
         };
     }
 }
