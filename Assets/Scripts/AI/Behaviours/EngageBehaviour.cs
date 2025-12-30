@@ -13,7 +13,6 @@ public class EngageBehaviour : PathingBehaviour
     [Header("Engagement")]
     [SerializeField, Min(0f)] private float repathDistance = 0.75f;
     [SerializeField, Range(0f, 1f)] private float rangeTolerance = 0.1f;
-    [SerializeField, Min(0f)] private float retreatHysteresis = 0.35f;
     [SerializeField, Range(0f, 2f)] private float cautiousRangeMultiplier = 1.1f;
     [SerializeField] private bool sprintToTarget = true;
     [SerializeField] private bool faceTargetWhileMoving = true;
@@ -23,7 +22,6 @@ public class EngageBehaviour : PathingBehaviour
     private string currentTargetId;
     private Vector3 lastKnownTargetPosition;
     private float lastDesiredRange;
-    private bool backingOff;
 
     protected override void Awake()
     {
@@ -40,7 +38,6 @@ public class EngageBehaviour : PathingBehaviour
     public override void BeginBehaviour(IIntent intent)
     {
         pathIndex = 0;
-        backingOff = false;
         RebuildPath(intent as EngageIntent);
     }
 
@@ -86,35 +83,6 @@ public class EngageBehaviour : PathingBehaviour
         if (combatActions)
             combatActions.SetActiveStance(withinActiveStanceRange);
 
-        float resumeDistance = minDesiredRange + retreatHysteresis;
-
-        if (backingOff && distanceSqr >= resumeDistance * resumeDistance)
-            backingOff = false;
-
-        if (!backingOff && tooClose)
-            backingOff = true;
-
-        if (backingOff)
-        {
-            if (path == null || path.Length == 0)
-            {
-                RebuildPath(engageIntent, targetPosition, desiredRange);
-                pathIndex = 0;
-            }
-
-            if (path == null || path.Length == 0)
-                return;
-
-            pathIndex = motorActions.MoveToPathPosition(currentPosition, path, pathIndex, faceTargetWhileMoving, sprintToTarget, waypointTolerance);
-
-            if (targetTransform)
-                motorActions.RotateToTarget(ResolveAimTransform(targetTransform));
-            else
-                motorActions.AimFromPosition(currentPosition, toTarget);
-
-            return;
-        }
-
         if (withinDesiredBand)
         {
             motorActions.MoveToPosition(currentPosition, targetPosition, true, false, Mathf.Max(minDesiredRange, waypointTolerance * 0.5f));
@@ -152,7 +120,6 @@ public class EngageBehaviour : PathingBehaviour
     {
         path = Array.Empty<Vector2>();
         pathIndex = 0;
-        backingOff = false;
         ClearDebugPath();
 
         if (combatActions)
