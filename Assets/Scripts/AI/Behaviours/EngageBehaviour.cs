@@ -8,6 +8,7 @@ public class EngageBehaviour : PathingBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private AgentKnowledge knowledge;
+    [SerializeField] private CombatActions combatActions;
 
     [Header("Engagement")]
     [SerializeField, Min(0f)] private float repathDistance = 0.75f;
@@ -27,6 +28,9 @@ public class EngageBehaviour : PathingBehaviour
         base.Awake();
         if (!knowledge)
             knowledge = GetComponentInParent<AgentKnowledge>();
+
+        if (!combatActions)
+            combatActions = GetComponentInParent<CombatActions>();
     }
 
     public override IntentType IntentType => IntentType.Engage;
@@ -66,9 +70,13 @@ public class EngageBehaviour : PathingBehaviour
         var currentPosition = CurrentPosition;
         Vector3 toTarget = targetPosition - currentPosition;
         toTarget.y = 0f;
+        bool inRange = toTarget.sqrMagnitude <= desiredRange * desiredRange;
+
+        if (combatActions)
+            combatActions.SetActiveStance(inRange);
 
         float stopDistance = Mathf.Max(desiredRange - stopBuffer, waypointTolerance * 0.5f);
-        if (toTarget.sqrMagnitude <= desiredRange * desiredRange)
+        if (inRange)
         {
             motorActions.MoveToPosition(currentPosition, targetPosition, true, false, stopDistance);
             path = Array.Empty<Vector2>();
@@ -102,6 +110,9 @@ public class EngageBehaviour : PathingBehaviour
         path = Array.Empty<Vector2>();
         pathIndex = 0;
         ClearDebugPath();
+
+        if (combatActions)
+            combatActions.SetActiveStance(false);
     }
 
     private void RebuildPath(EngageIntent intent)
