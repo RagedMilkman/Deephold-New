@@ -13,6 +13,7 @@ public class EngageBehaviour : PathingBehaviour
     [Header("Engagement")]
     [SerializeField, Min(0f)] private float repathDistance = 0.75f;
     [SerializeField, Min(0f)] private float stopBuffer = 0.35f;
+    [SerializeField, Min(0f)] private float retreatHysteresis = 0.35f;
     [SerializeField, Range(0f, 2f)] private float cautiousRangeMultiplier = 1.1f;
     [SerializeField] private bool sprintToTarget = true;
     [SerializeField] private bool faceTargetWhileMoving = true;
@@ -22,6 +23,7 @@ public class EngageBehaviour : PathingBehaviour
     private string currentTargetId;
     private Vector3 lastKnownTargetPosition;
     private float lastDesiredRange;
+    private bool backingOff;
 
     protected override void Awake()
     {
@@ -38,6 +40,7 @@ public class EngageBehaviour : PathingBehaviour
     public override void BeginBehaviour(IIntent intent)
     {
         pathIndex = 0;
+        backingOff = false;
         RebuildPath(intent as EngageIntent);
     }
 
@@ -70,14 +73,23 @@ public class EngageBehaviour : PathingBehaviour
         var currentPosition = CurrentPosition;
         Vector3 toTarget = targetPosition - currentPosition;
         toTarget.y = 0f;
-        bool inRange = toTarget.sqrMagnitude <= desiredRange * desiredRange;
+        float distanceSqr = toTarget.sqrMagnitude;
+        bool inRange = distanceSqr <= desiredRange * desiredRange;
 
         if (combatActions)
             combatActions.SetActiveStance(inRange);
 
         float stopDistance = Mathf.Max(desiredRange - stopBuffer, waypointTolerance * 0.5f);
-        bool tooClose = toTarget.sqrMagnitude < stopDistance * stopDistance;
-        if (tooClose)
+        float stopDistanceSqr = stopDistance * stopDistance;
+        float resumeDistance = stopDistance + retreatHysteresis;
+
+        if (backingOff && distanceSqr >= resumeDistance * resumeDistance)
+            backingOff = false;
+
+        if (!backingOff && distanceSqr < stopDistanceSqr)
+            backingOff = true;
+
+        if (backingOff)
         {
             if (path == null || path.Length == 0)
             {
@@ -131,6 +143,7 @@ public class EngageBehaviour : PathingBehaviour
     {
         path = Array.Empty<Vector2>();
         pathIndex = 0;
+        backingOff = false;
         ClearDebugPath();
 
         if (combatActions)
