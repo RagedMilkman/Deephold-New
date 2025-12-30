@@ -622,7 +622,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AgentKnowledge
   selfCharacter: {fileID: 2555694571077031807}
   knowledgeRetentionSeconds: 15
-  defaultConfidenceHalfLifeSeconds: 10
+  defaultConfidenceHalfLifeSeconds: 1000
   drawKnowledgeGizmos: 0
   selfKnowledgeColor: {r: 0.25, g: 0.9, b: 0.65, a: 0.5}
   knownCharacterColor: {r: 1, g: 0.75, b: 0.1, a: 0.5}
@@ -1200,7 +1200,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013655786
+      value: 0.013655818
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
@@ -1208,7 +1208,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.033095874
+      value: 0.03309585
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
