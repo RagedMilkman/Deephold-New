@@ -49,14 +49,20 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         float maxRange = Mathf.Max(minRange, ResolveValue(pursueIntent?.MaxDesiredRange, maxDesiredRange));
         float preferredRange = Mathf.Clamp(ResolveValue(pursueIntent?.PreferredDistance, preferredDistance), minRange, maxRange);
 
+        float minRangeSqr = minRange * minRange;
+        float maxRangeSqr = maxRange * maxRange;
+
         Vector3 currentPosition = CurrentPosition;
         Vector3 toTarget = targetPosition - currentPosition;
         toTarget.y = 0f;
 
         float distanceSqr = toTarget.sqrMagnitude;
-        bool withinActiveStanceRange = distanceSqr <= maxRange * maxRange;
-        bool withinDesiredRange = distanceSqr >= minRange * minRange && distanceSqr <= maxRange * maxRange;
+        bool tooClose = distanceSqr < minRangeSqr;
+        bool tooFar = distanceSqr > maxRangeSqr;
+        bool withinDesiredRange = !tooClose && !tooFar;
 
+        // Within max range: Enter active stance
+        bool withinActiveStanceRange = distanceSqr <= maxRangeSqr;
         if (combatActions)
             combatActions.SetActiveStance(withinActiveStanceRange);
 
@@ -70,6 +76,7 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         {
             motorActions.MoveToPosition(currentPosition, targetPosition, true, false, Mathf.Max(minRange, waypointTolerance * 0.5f));
             ClearPath();
+            // Look at target
             AimAtTarget(targetTransform, currentPosition, toTarget);
             return;
         }
@@ -80,7 +87,10 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         if (path == null || path.Length == 0)
             return;
 
+        // Too close: move to preferred distance
+        // Too far: move to preferred distance
         pathIndex = motorActions.MoveToPathPosition(currentPosition, path, pathIndex, faceTargetWhileMoving, sprintToTarget, waypointTolerance);
+        // Look at target
         AimAtTarget(targetTransform, currentPosition, toTarget);
     }
 
