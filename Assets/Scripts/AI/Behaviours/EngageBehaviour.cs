@@ -12,7 +12,7 @@ public class EngageBehaviour : PathingBehaviour
 
     [Header("Engagement")]
     [SerializeField, Min(0f)] private float repathDistance = 0.75f;
-    [SerializeField, Min(0f)] private float stopBuffer = 0.35f;
+    [SerializeField, Range(0f, 1f)] private float rangeTolerance = 0.1f;
     [SerializeField, Min(0f)] private float retreatHysteresis = 0.35f;
     [SerializeField, Range(0f, 2f)] private float cautiousRangeMultiplier = 1.1f;
     [SerializeField] private bool sprintToTarget = true;
@@ -63,6 +63,10 @@ public class EngageBehaviour : PathingBehaviour
         if (engageIntent.UseCover)
             desiredRange *= cautiousRangeMultiplier;
 
+        float toleranceDistance = desiredRange * rangeTolerance;
+        float minDesiredRange = Mathf.Max(desiredRange - toleranceDistance, waypointTolerance * 0.5f);
+        float maxDesiredRange = desiredRange + toleranceDistance;
+
         bool intentChanged = IntentChanged(engageIntent, targetPosition, desiredRange);
         if (intentChanged)
         {
@@ -74,19 +78,20 @@ public class EngageBehaviour : PathingBehaviour
         Vector3 toTarget = targetPosition - currentPosition;
         toTarget.y = 0f;
         float distanceSqr = toTarget.sqrMagnitude;
-        bool inRange = distanceSqr <= desiredRange * desiredRange;
+        bool withinActiveStanceRange = distanceSqr <= desiredRange * desiredRange;
+        bool tooClose = distanceSqr < minDesiredRange * minDesiredRange;
+        bool tooFar = distanceSqr > maxDesiredRange * maxDesiredRange;
+        bool withinDesiredBand = !tooClose && !tooFar;
 
         if (combatActions)
-            combatActions.SetActiveStance(inRange);
+            combatActions.SetActiveStance(withinActiveStanceRange);
 
-        float stopDistance = Mathf.Max(desiredRange - stopBuffer, waypointTolerance * 0.5f);
-        float stopDistanceSqr = stopDistance * stopDistance;
-        float resumeDistance = stopDistance + retreatHysteresis;
+        float resumeDistance = minDesiredRange + retreatHysteresis;
 
         if (backingOff && distanceSqr >= resumeDistance * resumeDistance)
             backingOff = false;
 
-        if (!backingOff && distanceSqr < stopDistanceSqr)
+        if (!backingOff && tooClose)
             backingOff = true;
 
         if (backingOff)
@@ -110,11 +115,15 @@ public class EngageBehaviour : PathingBehaviour
             return;
         }
 
-        if (inRange)
+        if (withinDesiredBand)
         {
-            motorActions.MoveToPosition(currentPosition, targetPosition, true, false, stopDistance);
+            motorActions.MoveToPosition(currentPosition, targetPosition, true, false, Mathf.Max(minDesiredRange, waypointTolerance * 0.5f));
             path = Array.Empty<Vector2>();
             ClearDebugPath();
+            if (targetTransform)
+                motorActions.RotateToTarget(ResolveAimTransform(targetTransform));
+            else
+                motorActions.AimFromPosition(currentPosition, toTarget);
             return;
         }
 
