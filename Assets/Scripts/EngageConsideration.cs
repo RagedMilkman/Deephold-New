@@ -102,7 +102,6 @@ public sealed class EngageConsideration : Consideration
 
         float preferredRange = Mathf.Lerp(maxDesiredRange, minDesiredRange, Mathf.Clamp01((aggression + bravery) * 0.5f));
         float clampedPreferred = Mathf.Clamp(preferredRange, minDesiredRange, maxDesiredRange);
-        bool useCover = bravery < 0.45f;
         float urgency = Mathf.Clamp01(baseUrgency + bestScore * 0.75f);
 
         if (urgency <= 0f)
@@ -120,8 +119,7 @@ public sealed class EngageConsideration : Consideration
                 {
                     MinDesiredRange = minDesiredRange,
                     PreferredDistance = clampedPreferred,
-                    MaxDesiredRange = maxDesiredRange,
-                    UseCover = useCover
+                    MaxDesiredRange = maxDesiredRange
                 }
             }
         };

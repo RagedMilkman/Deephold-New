@@ -31,5 +31,4 @@ public sealed class PursueTactic
     public float MinDesiredRange;
     public float PreferredDistance;
     public float MaxDesiredRange;
-    public bool UseCover;
 }

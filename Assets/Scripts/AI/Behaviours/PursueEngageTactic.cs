@@ -7,8 +7,6 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
     [SerializeField, Min(0f)] private float minDesiredRange = 1.5f;
     [SerializeField, Min(0f)] private float preferredDistance = 3.5f;
     [SerializeField, Min(0f)] private float maxDesiredRange = 6f;
-    [SerializeField] private bool useCover = false;
-    [SerializeField, Range(0f, 2f)] private float cautiousRangeMultiplier = 1.1f;
 
     [Header("Movement")]
     [SerializeField, Min(0f)] private float repathDistance = 0.75f;
@@ -50,14 +48,6 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         float minRange = Mathf.Max(ResolveValue(pursueIntent?.MinDesiredRange, minDesiredRange), waypointTolerance * 0.5f);
         float maxRange = Mathf.Max(minRange, ResolveValue(pursueIntent?.MaxDesiredRange, maxDesiredRange));
         float preferredRange = Mathf.Clamp(ResolveValue(pursueIntent?.PreferredDistance, preferredDistance), minRange, maxRange);
-        bool useIntentCover = pursueIntent?.UseCover ?? useCover;
-
-        if (useIntentCover)
-        {
-            minRange *= cautiousRangeMultiplier;
-            maxRange *= cautiousRangeMultiplier;
-            preferredRange *= cautiousRangeMultiplier;
-        }
 
         Vector3 currentPosition = CurrentPosition;
         Vector3 toTarget = targetPosition - currentPosition;
