@@ -84,7 +84,7 @@ public class EngageBehaviour : PathingBehaviour
 
         pathIndex = motorActions.MoveToPathPosition(currentPosition, path, pathIndex, faceTargetWhileMoving, sprintToTarget, waypointTolerance);
         if (targetTransform)
-            motorActions.RotateToTarget(targetTransform);
+            motorActions.RotateToTarget(ResolveAimTransform(targetTransform));
         else
             motorActions.AimFromPosition(currentPosition, toTarget);
     }
@@ -189,5 +189,24 @@ public class EngageBehaviour : PathingBehaviour
         bool rangeChanged = Math.Abs(desiredRange - lastDesiredRange) > 0.01f;
 
         return targetChanged || positionChanged || rangeChanged;
+    }
+
+    private static Transform ResolveAimTransform(Transform target)
+    {
+        if (!target)
+            return target;
+
+        var health = target.GetComponentInParent<CharacterHealth>();
+        if (health && health.Animator)
+        {
+            var chest = health.Animator.GetBoneTransform(HumanBodyBones.Chest)
+                        ?? health.Animator.GetBoneTransform(HumanBodyBones.UpperChest)
+                        ?? health.Animator.GetBoneTransform(HumanBodyBones.Spine);
+
+            if (chest)
+                return chest;
+        }
+
+        return target;
     }
 }
