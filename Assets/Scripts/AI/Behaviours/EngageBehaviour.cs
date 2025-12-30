@@ -76,6 +76,28 @@ public class EngageBehaviour : PathingBehaviour
             combatActions.SetActiveStance(inRange);
 
         float stopDistance = Mathf.Max(desiredRange - stopBuffer, waypointTolerance * 0.5f);
+        bool tooClose = toTarget.sqrMagnitude < stopDistance * stopDistance;
+        if (tooClose)
+        {
+            if (path == null || path.Length == 0)
+            {
+                RebuildPath(engageIntent, targetPosition, desiredRange);
+                pathIndex = 0;
+            }
+
+            if (path == null || path.Length == 0)
+                return;
+
+            pathIndex = motorActions.MoveToPathPosition(currentPosition, path, pathIndex, faceTargetWhileMoving, sprintToTarget, waypointTolerance);
+
+            if (targetTransform)
+                motorActions.RotateToTarget(ResolveAimTransform(targetTransform));
+            else
+                motorActions.AimFromPosition(currentPosition, toTarget);
+
+            return;
+        }
+
         if (inRange)
         {
             motorActions.MoveToPosition(currentPosition, targetPosition, true, false, stopDistance);
