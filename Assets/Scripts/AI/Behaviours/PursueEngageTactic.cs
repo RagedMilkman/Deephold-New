@@ -38,13 +38,6 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         if (motorActions == null)
             return;
 
-        // 1) Resolve target (transform if available, else last-known/belief position)
-        //if (!TryResolveTargetPosition(intent, out var targetPosition, out var targetTransform))
-        //{
-        //    StopPursuit();
-        //    return;
-        //}
-
         // 2) Resolve range settings (intent overrides -> defaults)
         var pursueIntent = intent.Tactics?.Pursue;
         float minRange = Mathf.Max(ResolveValue(pursueIntent?.MinDesiredRange, minDesiredRange), waypointTolerance * 0.5f);
@@ -56,7 +49,7 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
 
         // 3) Basic geometry
         Vector3 currentPosition = CurrentPosition;
-        Vector3 toTarget = intent.TargetPosition - currentPosition;
+        Vector3 toTarget = intent.TargetLocationVector - currentPosition;
         toTarget.y = 0f;
 
         float distanceSqr = toTarget.sqrMagnitude;
@@ -65,17 +58,18 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         bool withinDesiredRange = !tooClose && !tooFar;
 
         // 4) Always aim (even while moving)
-        AimAtTarget(intent., currentPosition, toTarget);
+        AimAtTarget(intent.TargetLocationTransform, currentPosition, toTarget);
 
         // 5) Active stance is based on max range (your previous behaviour)
-        combatActions?.SetActiveStance(distanceSqr <= maxRangeSqr);
+        var isActiveStance = distanceSqr <= maxRangeSqr;
+        combatActions?.SetActiveStance(isActiveStance);
 
         // 6) Decide whether to rebuild path:
         //    - If intent changed -> rebuild
         //    - If we're not in range:
         //        - If we have no path -> rebuild
         //        - If our path endpoint would still not be in range -> rebuild
-        bool intentChanged = IntentChanged(intent, intent.TargetPosition, preferredRange);
+        bool intentChanged = IntentChanged(intent, intent.TargetLocationVector, preferredRange);
 
         bool hasPath = path != null && path.Length > 0;
         bool hasEnd = hasPath && path.Length > 0;
@@ -88,7 +82,7 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         bool endWithinDesiredRange = false;
         if (hasEnd)
         {
-            Vector3 endToTarget = intent.TargetPosition - pathEndWorld;
+            Vector3 endToTarget = intent.TargetLocationVector - pathEndWorld;
             endToTarget.y = 0f;
             float endDistSqr = endToTarget.sqrMagnitude;
             endWithinDesiredRange = endDistSqr >= minRangeSqr && endDistSqr <= maxRangeSqr;
@@ -100,23 +94,8 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
 
         if (shouldRepath)
         {
-            RebuildPath(intent, intent.TargetPosition, preferredRange);
+            RebuildPath(intent, intent.TargetLocationVector, preferredRange);
             pathIndex = 0;
-            hasPath = path != null && path.Length > 0;
-        }
-
-        // 7) If we're in band, hold and clear path (optional)
-        if (withinDesiredRange)
-        {
-            ClearPath();
-            motorActions.MoveToPosition(
-                currentPosition,
-                intent.TargetPosition,
-                true,
-                false,
-                Mathf.Max(minRange, waypointTolerance * 0.5f)
-            );
-            return;
         }
 
         // 8) Otherwise follow path if we have one
@@ -127,7 +106,7 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
             currentPosition,
             path,
             pathIndex,
-            faceTargetWhileMoving,
+            !isActiveStance,
             sprintToTarget,
             waypointTolerance
         );

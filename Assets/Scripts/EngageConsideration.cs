@@ -34,7 +34,6 @@ public sealed class EngageConsideration : Consideration
         var bravery = personality?.Bravery ?? 0.5f;
 
         CharacterKnowledge bestTarget = null;
-        Vector3 bestTargetPosition = Vector3.zero;
         float bestScore = 0f;
 
         foreach (var character in knowledge.Characters.Values)
@@ -46,7 +45,7 @@ public sealed class EngageConsideration : Consideration
                 continue;
 
             var position = character.Position.Value.Value;
-            var distance = Vector3.Distance(selfPosition, position);
+            var distance = Vector3.Distance(selfPosition.Vector, position.Vector);
             if (distance <= Mathf.Epsilon || distance > maxEngageDistance)
                 continue;
 
@@ -64,7 +63,7 @@ public sealed class EngageConsideration : Consideration
                 var facing = character.FacingDirection.Value.Value;
                 facing.y = 0f;
 
-                var toSelf = selfPosition - position;
+                var toSelf = selfPosition.Vector - position.Vector;
                 toSelf.y = 0f;
 
                 if (facing.sqrMagnitude > 0.0001f && toSelf.sqrMagnitude > 0.0001f)
@@ -92,7 +91,6 @@ public sealed class EngageConsideration : Consideration
 
             bestScore = score;
             bestTarget = character;
-            bestTargetPosition = position;
         }
 
         if (bestTarget == null)
@@ -107,7 +105,7 @@ public sealed class EngageConsideration : Consideration
         {
             Urgency = urgency,
             TargetId = bestTarget.Id,
-            TargetPosition = bestTargetPosition,
+            Target = bestTarget,
             Tactics = new EngageTactics
             {
                 Tactic = EngageTactic.Pursue

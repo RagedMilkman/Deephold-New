@@ -74,7 +74,7 @@ public class SightSense : MonoBehaviour, ISense
             var factionId = TryGetFactionId(targetRoot);
             var facingDirection = FacingDirectionResolver.ResolveFacingDirection(motor, targetRoot);
             var stance = motor ? (TopDownMotor.Stance?)motor.CurrentStance : null;
-            var observation = Observation.ForCharacter(targetRoot, characterHealth.gameObject, id, characterHealth.Health, equipped, factionId, facingDirection, stance, BeliefSource.Sight, 1f, Time.time);
+            var observation = Observation.ForCharacter(ResolvePositionRoot(characterHealth, motor), characterHealth.gameObject, id, characterHealth.Health, equipped, factionId, facingDirection, stance, BeliefSource.Sight, 1f, Time.time);
             buffer.Add(observation);
             lastObservations.Add(observation);
 

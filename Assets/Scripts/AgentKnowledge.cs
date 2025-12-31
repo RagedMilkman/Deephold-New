@@ -106,10 +106,10 @@ public class AgentKnowledge : MonoBehaviour
         var fadedColor = new Color(baseColor.r, baseColor.g, baseColor.b, baseColor.a * 0.6f);
 
         Gizmos.color = baseColor;
-        Gizmos.DrawSphere(positionBelief.Value, radius);
+        Gizmos.DrawSphere(positionBelief.Value.Vector, radius);
 
         Gizmos.color = fadedColor;
-        Gizmos.DrawWireSphere(positionBelief.Value, radius + 0.05f);
+        Gizmos.DrawWireSphere(positionBelief.Value.Vector, radius + 0.05f);
 
         if (!knowledge.FacingDirection.HasValue)
             return;
@@ -128,7 +128,7 @@ public class AgentKnowledge : MonoBehaviour
         }
         var facingLength = Mathf.Lerp(0.5f, 2f, Mathf.Clamp01(facingBelief.Confidence));
 
-        Gizmos.DrawLine(positionBelief.Value, positionBelief.Value + direction * facingLength);
+        Gizmos.DrawLine(positionBelief.Value.Vector, positionBelief.Value.Vector + direction * facingLength);
     }
 
     private void UpdateSelfKnowledge()

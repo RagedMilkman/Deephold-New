@@ -9,8 +9,11 @@ public sealed class EngageIntent : IIntent
     public float Urgency { get; set; }
 
     public string TargetId;
-    public Vector3 TargetPosition;
+    public CharacterKnowledge Target;    
     public EngageTactics Tactics;
+
+    public Vector3 TargetLocationVector => Target.Position.Value.Value.Vector;
+    public Transform TargetLocationTransform => Target.Position.Value.Value.Transform;
 }
 
 public enum EngageTactic

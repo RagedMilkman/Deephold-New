@@ -5,7 +5,7 @@ public class CharacterKnowledge
     public string Id { get; }
     public GameObject CharacterObject { get; }
 
-    public Belief<Vector3>? Position { get; private set; }
+    public Belief<Location>? Position { get; private set; }
     public Belief<Vector3>? FacingDirection { get; private set; }
     public Belief<float>? Health { get; private set; }
     public Belief<GameObject>? Equipped { get; private set; }
@@ -19,6 +19,18 @@ public class CharacterKnowledge
     {
         Id = id;
         CharacterObject = characterObject;
+    }
+
+    public struct Location
+    {
+        public Vector3 Vector;
+        public Transform Transform;
+
+        public Location(Transform Transform)
+        {
+            this.Vector = Transform.position;
+            this.Transform = Transform;
+        }
     }
 
     public void UpdateFromObservation(Observation observation)
@@ -44,9 +56,9 @@ public class CharacterKnowledge
 
         if (observation.Location)
         {
-            Position = new Belief<Vector3>
+            Position = new Belief<Location>
             {
-                Value = observation.Location.position,
+                Value = new Location(observation.Location),
                 Confidence = confidence,
                 TimeStamp = timestamp,
                 HalfLifeSeconds = 0f
