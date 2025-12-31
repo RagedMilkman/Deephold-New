@@ -8,8 +8,6 @@ public sealed class EngageConsideration : Consideration
     [Header("Engagement")]
     [SerializeField, Range(0f, 1f)] private float baseUrgency = 0.35f;
     [SerializeField, Min(0f)] private float maxEngageDistance = 12f;
-    [SerializeField, Min(0f)] private float minDesiredRange = 1.5f;
-    [SerializeField, Min(0f)] private float maxDesiredRange = 6f;
 
     [Header("Threat Evaluation")]
     [SerializeField, Range(0f, 1f)] private float proximityWeight = 0.55f;
@@ -100,8 +98,6 @@ public sealed class EngageConsideration : Consideration
         if (bestTarget == null)
             return null;
 
-        float preferredRange = Mathf.Lerp(maxDesiredRange, minDesiredRange, Mathf.Clamp01((aggression + bravery) * 0.5f));
-        float clampedPreferred = Mathf.Clamp(preferredRange, minDesiredRange, maxDesiredRange);
         float urgency = Mathf.Clamp01(baseUrgency + bestScore * 0.75f);
 
         if (urgency <= 0f)
@@ -114,13 +110,7 @@ public sealed class EngageConsideration : Consideration
             TargetPosition = bestTargetPosition,
             Tactics = new EngageTactics
             {
-                Tactic = EngageTactic.Pursue,
-                Pursue = new PursueTactic
-                {
-                    MinDesiredRange = minDesiredRange,
-                    PreferredDistance = clampedPreferred,
-                    MaxDesiredRange = maxDesiredRange
-                }
+                Tactic = EngageTactic.Pursue
             }
         };
     }
