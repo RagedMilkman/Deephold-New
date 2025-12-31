@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ public class ExploreBehaviour : PathingBehaviour
     [SerializeField, Min(0f)] private float minLookDuration = 0.5f;
     [SerializeField, Min(0f)] private float maxLookDuration = 1.25f;
     [SerializeField, Min(1)] private int lookStepsPerDecision = 3;
+    [SerializeField, Min(1)] private int lookRegionRadius = 3;
 
     private enum ExploreState
     {
@@ -29,6 +31,7 @@ public class ExploreBehaviour : PathingBehaviour
     private float lookDuration;
     private int currentLookIndex;
     private Vector3[] lookDirections = Array.Empty<Vector3>();
+    private readonly List<CellData> candidateCells = new();
     private bool HasActivePath => resolvedDestination.HasValue && path != null && path.Length > 0;
 
     public override IntentType IntentType => IntentType.Explore;
@@ -150,7 +153,7 @@ public class ExploreBehaviour : PathingBehaviour
         lookTimer = 0f;
         lookDuration = GetNextLookDuration();
         currentLookIndex = 0;
-        PrepareLookDirections(intent, null);
+        PrepareLookDirections(intent);
         ClearDebugPath();
     }
 
@@ -219,31 +222,83 @@ public class ExploreBehaviour : PathingBehaviour
         return direction;
     }
 
-    private void PrepareLookDirections(ExploreIntent intent, Transform currenPosition)
+    private void PrepareLookDirections(ExploreIntent intent)
     {
         int lookCount = Mathf.Max(1, lookStepsPerDecision);
         if (lookDirections == null || lookDirections.Length != lookCount)
             lookDirections = new Vector3[lookCount];
 
+        if (TryPopulateLookDirectionsFromGrid(lookCount))
+            return;
+
+        PopulateRandomLookDirections(intent, lookCount);
+    }
+
+    private bool TryPopulateLookDirectionsFromGrid(int lookCount)
+    {
+        if (!gridDirector)
+            return false;
+
+        if (!gridDirector.TryWorldToCell(CurrentPosition, out int cellX, out int cellY))
+            return false;
+
+        var region = new RectInt(cellX - lookRegionRadius, cellY - lookRegionRadius,
+            lookRegionRadius * 2 + 1, lookRegionRadius * 2 + 1);
+
+        var regionCells = gridDirector.GetRegion(region);
+        if (regionCells == null || regionCells.Count == 0)
+            return false;
+
+        candidateCells.Clear();
+        foreach (var cell in regionCells)
+        {
+            if (cell.IsConsideredForPathfinding)
+                candidateCells.Add(cell);
+        }
+
+        if (candidateCells.Count == 0)
+            return false;
+
+        var origin = CurrentPosition;
+        for (int i = 0; i < lookCount; i++)
+        {
+            var cell = candidateCells[UnityEngine.Random.Range(0, candidateCells.Count)];
+            var target = gridDirector.CellToWorldCenter(cell.x, cell.y);
+            target.y = origin.y + lookHeight;
+            lookDirections[i] = target;
+        }
+
+        return true;
+    }
+
+    private void PopulateRandomLookDirections(ExploreIntent intent, int lookCount)
+    {
+        var origin = CurrentPosition;
         Vector3 baseDirection = intent != null ? intent.DesiredDirection : Vector3.zero;
         if (baseDirection.sqrMagnitude < 0.0001f)
             baseDirection = UnityEngine.Random.insideUnitSphere;
 
-        baseDirection = FlattenDirection(baseDirection);
+        baseDirection.y = 0f;
         if (baseDirection.sqrMagnitude < 0.0001f)
             baseDirection = Vector3.forward;
 
-        lookDirections[0] = baseDirection;
+        var desiredDistance = Mathf.Max(intent?.DesiredDistance ?? 1f, waypointTolerance * 2f);
+        var baseTarget = origin + baseDirection.normalized * desiredDistance;
+        baseTarget.y = origin.y + lookHeight;
+        lookDirections[0] = baseTarget;
+
         for (int i = 1; i < lookCount; i++)
         {
             var randomDirection = UnityEngine.Random.insideUnitSphere;
-            randomDirection.y = lookHeight;
+            randomDirection.y = 0f;
 
             if (randomDirection.sqrMagnitude < 0.0001f)
                 randomDirection = UnityEngine.Random.onUnitSphere;
 
-            randomDirection.y = lookHeight;
-            lookDirections[i] = currenPosition.position + randomDirection.normalized * 4;
+            randomDirection.y = 0f;
+            var target = origin + randomDirection.normalized * Mathf.Max(lookHeight * 2f, 3f);
+            target.y = origin.y + lookHeight;
+            lookDirections[i] = target;
         }
     }
 

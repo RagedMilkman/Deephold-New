@@ -6,7 +6,6 @@ using UnityEngine;
 public class EngageBehaviour : BehaviourBase
 {
     [Header("Dependencies")]
-    [SerializeField] private AgentKnowledge knowledge;
     [SerializeField] private CombatActions combatActions;
     [SerializeField] private EngageTacticBehaviour[] tactics;
 
@@ -14,10 +13,9 @@ public class EngageBehaviour : BehaviourBase
         = new System.Collections.Generic.Dictionary<EngageTactic, EngageTacticBehaviour>();
     private EngageTacticBehaviour activeTactic;
 
-    protected void Awake()
+    protected override void Awake()
     {
-        if (!knowledge)
-            knowledge = GetComponentInParent<AgentKnowledge>();
+        base.Awake();
 
         if (!combatActions)
             combatActions = GetComponentInParent<CombatActions>();
@@ -35,7 +33,7 @@ public class EngageBehaviour : BehaviourBase
                 if (tacticLookup.ContainsKey(tactic.TacticType))
                     continue;
 
-                tactic.Initialize(this, knowledge, combatActions);
+                tactic.Initialize(this, Knowledge, combatActions);
                 tacticLookup.Add(tactic.TacticType, tactic);
             }
         }

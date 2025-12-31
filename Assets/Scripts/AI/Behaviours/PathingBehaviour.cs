@@ -28,8 +28,10 @@ public abstract class PathingBehaviour : BehaviourBase
 
     protected Vector3 CurrentPosition => characterController ? characterController.transform.position : transform.position;
 
-    protected virtual void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         if (!motorActions)
             motorActions = GetComponentInChildren<MotorActions>();
 

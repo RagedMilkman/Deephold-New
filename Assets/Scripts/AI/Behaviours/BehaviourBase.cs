@@ -5,10 +5,24 @@ using UnityEngine;
 /// </summary>
 public abstract class BehaviourBase : MonoBehaviour
 {
+    [Header("Knowledge")]
+    [SerializeField] protected AgentKnowledge agentKnowledge;
+
     /// <summary>
     /// The intent type this behaviour knows how to handle.
     /// </summary>
     public abstract IntentType IntentType { get; }
+
+    /// <summary>
+    /// Knowledge component associated with the agent.
+    /// </summary>
+    public AgentKnowledge Knowledge => agentKnowledge;
+
+    protected virtual void Awake()
+    {
+        if (!agentKnowledge)
+            agentKnowledge = GetComponentInParent<AgentKnowledge>();
+    }
 
     /// <summary>
     /// Called when the behaviour becomes active for a new intent.
