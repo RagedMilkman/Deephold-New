@@ -38,12 +38,14 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         if (motorActions == null)
             return;
 
-        if (!TryResolveTargetPosition(intent, out var targetPosition, out var targetTransform))
-        {
-            StopPursuit();
-            return;
-        }
+        // 1) Resolve target (transform if available, else last-known/belief position)
+        //if (!TryResolveTargetPosition(intent, out var targetPosition, out var targetTransform))
+        //{
+        //    StopPursuit();
+        //    return;
+        //}
 
+        // 2) Resolve range settings (intent overrides -> defaults)
         var pursueIntent = intent.Tactics?.Pursue;
         float minRange = Mathf.Max(ResolveValue(pursueIntent?.MinDesiredRange, minDesiredRange), waypointTolerance * 0.5f);
         float maxRange = Mathf.Max(minRange, ResolveValue(pursueIntent?.MaxDesiredRange, maxDesiredRange));
@@ -52,8 +54,9 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         float minRangeSqr = minRange * minRange;
         float maxRangeSqr = maxRange * maxRange;
 
+        // 3) Basic geometry
         Vector3 currentPosition = CurrentPosition;
-        Vector3 toTarget = targetPosition - currentPosition;
+        Vector3 toTarget = intent.TargetPosition - currentPosition;
         toTarget.y = 0f;
 
         float distanceSqr = toTarget.sqrMagnitude;
@@ -61,37 +64,73 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         bool tooFar = distanceSqr > maxRangeSqr;
         bool withinDesiredRange = !tooClose && !tooFar;
 
-        // Within max range: Enter active stance
-        bool withinActiveStanceRange = distanceSqr <= maxRangeSqr;
-        if (combatActions)
-            combatActions.SetActiveStance(withinActiveStanceRange);
+        // 4) Always aim (even while moving)
+        AimAtTarget(intent., currentPosition, toTarget);
 
-        if (IntentChanged(intent, targetPosition, preferredRange))
+        // 5) Active stance is based on max range (your previous behaviour)
+        combatActions?.SetActiveStance(distanceSqr <= maxRangeSqr);
+
+        // 6) Decide whether to rebuild path:
+        //    - If intent changed -> rebuild
+        //    - If we're not in range:
+        //        - If we have no path -> rebuild
+        //        - If our path endpoint would still not be in range -> rebuild
+        bool intentChanged = IntentChanged(intent, intent.TargetPosition, preferredRange);
+
+        bool hasPath = path != null && path.Length > 0;
+        bool hasEnd = hasPath && path.Length > 0;
+
+        // Convert last path node to world (assumes Vector2 is world XZ; adjust if it's grid)
+        Vector3 pathEndWorld = hasEnd
+            ? new Vector3(path[^1].x, currentPosition.y, path[^1].y)
+            : Vector3.zero;
+
+        bool endWithinDesiredRange = false;
+        if (hasEnd)
         {
-            RebuildPath(intent, targetPosition, preferredRange);
-            pathIndex = 0;
+            Vector3 endToTarget = intent.TargetPosition - pathEndWorld;
+            endToTarget.y = 0f;
+            float endDistSqr = endToTarget.sqrMagnitude;
+            endWithinDesiredRange = endDistSqr >= minRangeSqr && endDistSqr <= maxRangeSqr;
         }
 
+        bool shouldRepath =
+            intentChanged ||
+            (!withinDesiredRange && (!hasPath || !endWithinDesiredRange));
+
+        if (shouldRepath)
+        {
+            RebuildPath(intent, intent.TargetPosition, preferredRange);
+            pathIndex = 0;
+            hasPath = path != null && path.Length > 0;
+        }
+
+        // 7) If we're in band, hold and clear path (optional)
         if (withinDesiredRange)
         {
-            motorActions.MoveToPosition(currentPosition, targetPosition, true, false, Mathf.Max(minRange, waypointTolerance * 0.5f));
             ClearPath();
-            // Look at target
-            AimAtTarget(targetTransform, currentPosition, toTarget);
+            motorActions.MoveToPosition(
+                currentPosition,
+                intent.TargetPosition,
+                true,
+                false,
+                Mathf.Max(minRange, waypointTolerance * 0.5f)
+            );
             return;
         }
 
-        if (path == null || path.Length == 0)
-            RebuildPath(intent, targetPosition, preferredRange);
-
+        // 8) Otherwise follow path if we have one
         if (path == null || path.Length == 0)
             return;
 
-        // Too close: move to preferred distance
-        // Too far: move to preferred distance
-        pathIndex = motorActions.MoveToPathPosition(currentPosition, path, pathIndex, faceTargetWhileMoving, sprintToTarget, waypointTolerance);
-        // Look at target
-        AimAtTarget(targetTransform, currentPosition, toTarget);
+        pathIndex = motorActions.MoveToPathPosition(
+            currentPosition,
+            path,
+            pathIndex,
+            faceTargetWhileMoving,
+            sprintToTarget,
+            waypointTolerance
+        );
     }
 
     public override void OnEnd()
@@ -135,34 +174,34 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         lastPreferredRange = preferredRange;
     }
 
-    private bool TryResolveTargetPosition(EngageIntent intent, out Vector3 targetPosition, out Transform targetTransform)
-    {
-        targetPosition = intent.TargetPosition;
-        targetTransform = null;
-        bool hasPosition = targetPosition != Vector3.zero;
+    //private bool TryResolveTargetPosition(EngageIntent intent, out Vector3 targetPosition, out Transform targetTransform)
+    //{
+    //    targetPosition = intent.TargetPosition;
+    //    targetTransform = null;
+    //    bool hasPosition = targetPosition != Vector3.zero;
 
-        if (!string.IsNullOrWhiteSpace(intent.TargetId) && knowledge
-            && knowledge.Characters.TryGetValue(intent.TargetId, out var character))
-        {
-            if (character.CharacterObject)
-            {
-                targetTransform = character.CharacterObject.transform;
-                if (!hasPosition)
-                {
-                    targetPosition = targetTransform.position;
-                    hasPosition = true;
-                }
-            }
+    //    if (!string.IsNullOrWhiteSpace(intent.TargetId) && knowledge
+    //        && knowledge.Characters.TryGetValue(intent.TargetId, out var character))
+    //    {
+    //        if (character.CharacterObject)
+    //        {
+    //            targetTransform = character.CharacterObject.transform;
+    //            if (!hasPosition)
+    //            {
+    //                targetPosition = targetTransform.position;
+    //                hasPosition = true;
+    //            }
+    //        }
 
-            if (character.Position.HasValue)
-            {
-                targetPosition = character.Position.Value.Value;
-                hasPosition = true;
-            }
-        }
+    //        if (character.Position.HasValue)
+    //        {
+    //            targetPosition = character.Position.Value.Value;
+    //            hasPosition = true;
+    //        }
+    //    }
 
-        return hasPosition;
-    }
+    //    return hasPosition;
+    //}
 
     private bool IntentChanged(EngageIntent intent, Vector3 targetPosition, float preferredRange)
     {

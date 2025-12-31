@@ -122,6 +122,7 @@
     <Compile Include="Assets\Scripts\World\Navigation\INavFieldSolver.cs" />
     <Compile Include="Assets\Scripts\AgentIntelligence.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\MeleeInteraction.cs" />
+    <Compile Include="Assets\Scripts\AI\Behaviours\PursueEngageTactic.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\PlayerShootable.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\BoneRotator.cs" />
     <Compile Include="Assets\Scripts\InactiveDebugLogger.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\BlockShootable.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\PuppetMasterExtensions.cs" />
     <Compile Include="Assets\Scripts\AI\Behaviours\BehaviourModule.cs" />
+    <Compile Include="Assets\Scripts\AI\Behaviours\EngageTacticBehaviour.cs" />
     <Compile Include="Assets\Scripts\Items\ItemMountType.cs" />
     <Compile Include="Assets\Scripts\Player\ToolbeltVisualHelpers.cs" />
     <Compile Include="Assets\BloodEffectsPack\Common\Script\Scriptable\BloodPreset.cs" />

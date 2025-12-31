@@ -14,7 +14,7 @@ public class EngageBehaviour : BehaviourBase
         = new System.Collections.Generic.Dictionary<EngageTactic, EngageTacticBehaviour>();
     private EngageTacticBehaviour activeTactic;
 
-    protected override void Awake()
+    protected void Awake()
     {
         if (!knowledge)
             knowledge = GetComponentInParent<AgentKnowledge>();

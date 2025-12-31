@@ -312,6 +312,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7014607719752872893}
   - component: {fileID: 777993404140600464}
+  - component: {fileID: 6676068438194945719}
   m_Layer: 0
   m_Name: Engage
   m_TagString: Untagged
@@ -346,19 +347,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a403f0b2c5a4fc2a80c1d293b63f52c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EngageBehaviour
-  motorActions: {fileID: 0}
+  knowledge: {fileID: 3339654881966189159}
+  combatActions: {fileID: 665973014089841746}
+  tactics:
+  - {fileID: 6676068438194945719}
+--- !u!114 &6676068438194945719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4740412494985427282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd047e62cb4396547a83b2918a8fcb25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PursueEngageTactic
+  motorActions: {fileID: 1460001521077020250}
   pathingService: {fileID: 0}
   gridDirector: {fileID: 0}
-  characterController: {fileID: 0}
-  waypointTolerance: 0.15
+  characterController: {fileID: 4995718173078596395}
+  waypointTolerance: 1
   debugDrawPath: 0
   debugPathColor: {r: 0, g: 1, b: 0, a: 1}
   debugNodeRadius: 0.07
   debugDestinationColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  knowledge: {fileID: 0}
+  minDesiredRange: 5
+  preferredDistance: 12
+  maxDesiredRange: 15
   repathDistance: 0.75
-  stopBuffer: 0.35
-  cautiousRangeMultiplier: 1.1
   sprintToTarget: 1
   faceTargetWhileMoving: 1
 --- !u!1 &5827676351432732902
@@ -470,7 +487,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
   <IsNested>k__BackingField: 0
-  WasActiveDuringEdit: 0
+  WasActiveDuringEdit: 1
   WasActiveDuringEdit_Set1: 1
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
@@ -671,9 +688,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EngageConsideration
   baseUrgency: 0.35
-  maxEngageDistance: 12
-  minDesiredRange: 1.5
-  maxDesiredRange: 6
+  maxEngageDistance: 15
+  minDesiredRange: 8
+  maxDesiredRange: 18.2
   proximityWeight: 0.55
   facingThreatWeight: 0.35
   equippedThreatBonus: 0.15
@@ -1196,19 +1213,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7079361
+      value: 0.70793617
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013655818
+      value: 0.013655866
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.70536846
+      value: 0.7053684
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.03309585
+      value: 0.033095643
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
