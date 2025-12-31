@@ -106,8 +106,8 @@ public class TopDownMovementInteraction : NetworkBehaviour
 
         // Mouse-aim sets facing (and replicates yaw)
         if (mouse != null &&
-            TryGetAimTargets(mouse.position.ReadValue(), out var cursorTarget, out var playerTarget) &&
-            _motor.TickAim(cursorTarget, playerTarget))
+            TryGetAimTargets(mouse.position.ReadValue(), out var cursorTarget, out var playerTarget, out var floorTarget) &&
+            _motor.TickAim(cursorTarget, playerTarget, floorTarget))
         {
         }
         else
@@ -116,15 +116,18 @@ public class TopDownMovementInteraction : NetworkBehaviour
         }
     }
 
-    private bool TryGetAimTargets(Vector2 screenPosition, out Vector3 cursorTarget, out Vector3 playerTarget)
+    private bool TryGetAimTargets(Vector2 screenPosition, out Vector3 cursorTarget, out Vector3 playerTarget, out bool floorHit)
     {
         cursorTarget = default;
         playerTarget = default;
 
-        if (!_ownerCamera || !_motor) return false;
+        if (!_ownerCamera || !_motor)
+        {
+            floorHit = false;
+            return false;
+        }
 
-        bool floorHit = false;
-
+        floorHit = false;
         bool hasFloorMask = _floorMask.value != 0;
 
         Ray ray = _ownerCamera.ScreenPointToRay(screenPosition);

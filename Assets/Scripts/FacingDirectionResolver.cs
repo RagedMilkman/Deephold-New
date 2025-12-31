@@ -17,8 +17,13 @@ public static class FacingDirectionResolver
 
             if (motor.HasCursorTarget && origin.HasValue)
             {
-                var elevatedTarget = motor.PlayerTarget + Vector3.up * 1.5f;
-                var direction = elevatedTarget - origin.Value;
+                var target = motor.PlayerTarget;
+                if (motor.PlayerTargetIsFloor)
+                {
+                    target += Vector3.up * 1.5f;
+                }
+
+                var direction = target - origin.Value;
                 if (direction.sqrMagnitude > 0.0001f)
                     return direction;
             }

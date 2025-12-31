@@ -194,28 +194,31 @@ public class TopDownMotor : MonoBehaviour
 
     public Vector3 CursorTarget { get; private set; }
     public Vector3 PlayerTarget { get; private set; }
+    public bool PlayerTargetIsFloor { get; private set; }
     public bool HasCursorTarget { get; private set; }
     public Vector3? CurrentHeadLookTarget => rigAnimator ? rigAnimator.CurrentHeadLookTarget : null;
     public Vector3 FacingForward => rotateTarget ? rotateTarget.forward : transform.forward;
     public Vector3 FacingOrigin => rotateTarget ? rotateTarget.position : transform.position;
 
-    public void SetAimTargets(Vector3 cursorTarget, Vector3 playerTarget)
+    public void SetAimTargets(Vector3 cursorTarget, Vector3 playerTarget, bool playerTargetIsFloor)
     {
         CursorTarget = cursorTarget;
         PlayerTarget = playerTarget;
+        PlayerTargetIsFloor = playerTargetIsFloor;
         HasCursorTarget = true;
     }
 
     public void ClearAimTargets()
     {
         HasCursorTarget = false;
+        PlayerTargetIsFloor = false;
     }
 
-    public bool TickAim(Vector3 cursorTarget, Vector3 playerTarget, bool replicateYaw = true)
+    public bool TickAim(Vector3 cursorTarget, Vector3 playerTarget, bool playerTargetIsFloor, bool replicateYaw = true)
     {
         if (TryComputeYawFromPoint(cursorTarget, out var yaw))
         {
-            SetAimTargets(cursorTarget, playerTarget);
+            SetAimTargets(cursorTarget, playerTarget, playerTargetIsFloor);
             ApplyYaw(yaw, playerTarget, replicateYaw);
             return true;
         }
