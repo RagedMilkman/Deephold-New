@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -8,6 +9,7 @@ public class ExploreBehaviour : PathingBehaviour
 {
     [SerializeField] private bool sprintWhileExploring;
     [SerializeField] private bool faceMovementDirection = true;
+    [SerializeField, Min(0f)] private float lookHeight = 1.5f;
     [SerializeField, Min(0f)] private float minLookDuration = 0.5f;
     [SerializeField, Min(0f)] private float maxLookDuration = 1.25f;
     [SerializeField, Min(1)] private int lookStepsPerDecision = 3;
@@ -81,7 +83,7 @@ public class ExploreBehaviour : PathingBehaviour
         }
 
         currentLookIndex = Mathf.Clamp(currentLookIndex, 0, lookDirections.Length - 1);
-        motorActions.AimFromPosition(CurrentPosition, lookDirections[currentLookIndex]);
+        motorActions.RotateToTarget(lookDirections[currentLookIndex]);
 
         lookTimer += Time.deltaTime;
         if (lookTimer >= lookDuration)
@@ -148,7 +150,7 @@ public class ExploreBehaviour : PathingBehaviour
         lookTimer = 0f;
         lookDuration = GetNextLookDuration();
         currentLookIndex = 0;
-        PrepareLookDirections(intent);
+        PrepareLookDirections(intent, null);
         ClearDebugPath();
     }
 
@@ -182,7 +184,7 @@ public class ExploreBehaviour : PathingBehaviour
         if (direction.sqrMagnitude < 0.0001f)
             direction = UnityEngine.Random.insideUnitSphere;
 
-        direction.y = 0f;
+        direction.y = lookHeight;
 
         if (direction.sqrMagnitude > 0.0001f)
         {
@@ -196,7 +198,7 @@ public class ExploreBehaviour : PathingBehaviour
         for (int i = 0; i < 4; i++)
         {
             var randomDirection = UnityEngine.Random.insideUnitSphere;
-            randomDirection.y = 0f;
+            randomDirection.y = lookHeight;
 
             if (randomDirection.sqrMagnitude < 0.0001f)
                 continue;
@@ -213,11 +215,11 @@ public class ExploreBehaviour : PathingBehaviour
 
     private Vector3 FlattenDirection(Vector3 direction)
     {
-        direction.y = 0f;
+        direction.y = lookHeight;
         return direction;
     }
 
-    private void PrepareLookDirections(ExploreIntent intent)
+    private void PrepareLookDirections(ExploreIntent intent, Transform currenPosition)
     {
         int lookCount = Mathf.Max(1, lookStepsPerDecision);
         if (lookDirections == null || lookDirections.Length != lookCount)
@@ -235,13 +237,13 @@ public class ExploreBehaviour : PathingBehaviour
         for (int i = 1; i < lookCount; i++)
         {
             var randomDirection = UnityEngine.Random.insideUnitSphere;
-            randomDirection.y = 0f;
+            randomDirection.y = lookHeight;
 
             if (randomDirection.sqrMagnitude < 0.0001f)
                 randomDirection = UnityEngine.Random.onUnitSphere;
 
-            randomDirection.y = 0f;
-            lookDirections[i] = randomDirection;
+            randomDirection.y = lookHeight;
+            lookDirections[i] = currenPosition.position + randomDirection.normalized * 4;
         }
     }
 

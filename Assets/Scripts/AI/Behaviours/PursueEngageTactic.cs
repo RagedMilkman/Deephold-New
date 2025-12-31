@@ -58,7 +58,7 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         bool withinDesiredRange = !tooClose && !tooFar;
 
         // 4) Always aim (even while moving)
-        AimAtTarget(intent.TargetLocationTransform, currentPosition, toTarget);
+        AimAtTarget(intent.TargetLocationTransform);
 
         // 5) Active stance is based on max range (your previous behaviour)
         var isActiveStance = distanceSqr <= maxRangeSqr;
@@ -153,35 +153,6 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         lastPreferredRange = preferredRange;
     }
 
-    //private bool TryResolveTargetPosition(EngageIntent intent, out Vector3 targetPosition, out Transform targetTransform)
-    //{
-    //    targetPosition = intent.TargetPosition;
-    //    targetTransform = null;
-    //    bool hasPosition = targetPosition != Vector3.zero;
-
-    //    if (!string.IsNullOrWhiteSpace(intent.TargetId) && knowledge
-    //        && knowledge.Characters.TryGetValue(intent.TargetId, out var character))
-    //    {
-    //        if (character.CharacterObject)
-    //        {
-    //            targetTransform = character.CharacterObject.transform;
-    //            if (!hasPosition)
-    //            {
-    //                targetPosition = targetTransform.position;
-    //                hasPosition = true;
-    //            }
-    //        }
-
-    //        if (character.Position.HasValue)
-    //        {
-    //            targetPosition = character.Position.Value.Value;
-    //            hasPosition = true;
-    //        }
-    //    }
-
-    //    return hasPosition;
-    //}
-
     private bool IntentChanged(EngageIntent intent, Vector3 targetPosition, float preferredRange)
     {
         bool targetChanged = currentTargetId != intent.TargetId;
@@ -198,12 +169,10 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         ClearDebugPath();
     }
 
-    private void AimAtTarget(Transform targetTransform, Vector3 currentPosition, Vector3 toTarget)
+    private void AimAtTarget(Transform targetTransform)
     {
         if (targetTransform)
             motorActions.RotateToTarget(ResolveAimTransform(targetTransform));
-        else
-            motorActions.AimFromPosition(currentPosition, toTarget);
     }
 
     private static float ResolveValue(float? intentValue, float defaultValue)

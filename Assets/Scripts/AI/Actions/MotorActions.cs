@@ -43,7 +43,7 @@ public class MotorActions : MonoBehaviour
             if (!faceTarget)
                 motorActuator.ClearAim();
             else
-                motorActuator.AimAt(GetAimTarget(targetPosition, currentPosition));
+                motorActuator.AimAt(GetAimTarget(targetPosition, true));
 
             ClearDebugTarget();
 
@@ -54,7 +54,7 @@ public class MotorActions : MonoBehaviour
         motorActuator.Move(direction, wantsSprint);
 
         if (faceTarget)
-            motorActuator.AimAt(GetAimTarget(targetPosition, currentPosition));
+            motorActuator.AimAt(GetAimTarget(targetPosition, true));
 
         return false;
     }
@@ -78,72 +78,12 @@ public class MotorActions : MonoBehaviour
         return currentIndex;
     }
 
-    /// <summary>
-    /// Rotate toward the desired waypoint without translating.
-    /// </summary>
-    public void RotateToPathPosition(Vector3 currentPosition, Vector2[] path, int currentIndex)
+    private Vector3 GetAimTarget(Vector3 targetPosition, bool isFloor = false)
     {
-        if (!motorActuator || path == null || path.Length == 0)
-            return;
+        if(isFloor)
+            return new Vector3(targetPosition.x, targetPosition.y + 1.5f, targetPosition.z);
 
-        currentIndex = Mathf.Clamp(currentIndex, 0, path.Length - 1);
-        Vector2 waypoint = path[currentIndex];
-        Vector3 waypoint3D = new Vector3(waypoint.x, currentPosition.y, waypoint.y);
-        motorActuator.AimAt(GetAimTarget(waypoint3D, currentPosition));
-    }
-
-    /// <summary>
-    /// Aim toward a direction from the current position without applying translation.
-    /// </summary>
-    public void AimFromPosition(Vector3 originPosition, Vector3 lookDirection)
-    {
-        if (!motorActuator)
-            return;
-
-        lookDirection.y = 0f;
-        if (lookDirection.sqrMagnitude < 0.0001f)
-            return;
-
-        Vector3 target = originPosition + lookDirection.normalized;
-        motorActuator.AimAt(GetAimTarget(target, originPosition));
-    }
-
-    private Vector3 GetAimTarget(Vector3 targetPosition, Vector3? originOverride = null)
-    {
-        Vector3 origin = GetAimOrigin(originOverride);
-        targetPosition.y = origin.y;
-
-        Vector3 aimTarget = targetPosition;
-        Vector3 toTarget = aimTarget - origin;
-        if (toTarget.sqrMagnitude > 0.0001f)
-        {
-            float clampedDistance = Mathf.Max(minAimDistance, toTarget.magnitude);
-            aimTarget = origin + toTarget.normalized * clampedDistance;
-        }
-        else if (minAimDistance > 0f)
-        {
-            Vector3 forward = motorActuator ? motorActuator.transform.forward : transform.forward;
-            forward.y = 0f;
-
-            if (forward.sqrMagnitude > 0.0001f)
-                aimTarget = origin + forward.normalized * minAimDistance;
-        }
-
-        if (aimTargetElevation > 0f)
-            aimTarget += Vector3.up * aimTargetElevation;
-
-        return aimTarget;
-    }
-
-    private Vector3 GetAimOrigin(Vector3? originOverride)
-    {
-        if (originOverride.HasValue)
-            return originOverride.Value;
-
-        if (motorActuator)
-            return motorActuator.transform.position;
-
-        return transform.position;
+        return targetPosition;
     }
 
     /// <summary>
@@ -155,6 +95,14 @@ public class MotorActions : MonoBehaviour
             return;
 
         motorActuator.AimAt(GetAimTarget(target.position));
+    }
+
+    public void RotateToTarget(Vector3 target)
+    {
+        if (!motorActuator)
+            return;
+
+        motorActuator.AimAt(GetAimTarget(target));
     }
 
     private void UpdateDebugTarget(Vector3 targetPosition, float stopDistance)
