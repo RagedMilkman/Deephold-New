@@ -51,12 +51,19 @@ public class TopDownMotor : MonoBehaviour
 
     [Header("Crouch")]
     [SerializeField, Range(0f, 1f)] float crouchSpeedMultiplier = 0.5f;
+    [SerializeField] BipedGaitController gaitController;
+    [SerializeField] Transform bRoot;
+    [SerializeField] float crouchGroundPlaneOffset = 0.5f;
+    [SerializeField] float crouchBRootYOffset = -0.5f;
 
     Vector3 moveVel;
     float verticalVelocity;
     Stance currentStance;
     MovementType currentMovementType = MovementType.Standing;
     bool isCrouching;
+    float defaultGroundPlaneY;
+    Vector3 defaultBRootPosition;
+    bool baseCrouchStateCaptured;
 
     void Reset()
     {
@@ -66,7 +73,10 @@ public class TopDownMotor : MonoBehaviour
         if (!yawReplicator) yawReplicator = GetComponentInChildren<YawReplicator>();
         if (!positionReplicator) positionReplicator = GetComponentInChildren<PositionReplicator>();
         if (!characterState) characterState = GetComponentInParent<CharacterHealth>();
+        if (!gaitController) gaitController = GetComponentInChildren<BipedGaitController>();
+        if (!bRoot && gaitController) bRoot = gaitController.bodyRoot;
         UpdateRigYawTarget();
+        CaptureDefaultCrouchOffsets();
         currentMovementType = MovementType.Standing;
         UpdateRigAnimatorState();
     }
@@ -79,7 +89,10 @@ public class TopDownMotor : MonoBehaviour
         if (!yawReplicator) yawReplicator = GetComponentInChildren<YawReplicator>();
         if (!positionReplicator) positionReplicator = GetComponentInChildren<PositionReplicator>();
         if (!characterState) characterState = GetComponentInParent<CharacterHealth>();
+        if (!gaitController) gaitController = GetComponentInChildren<BipedGaitController>();
+        if (!bRoot && gaitController) bRoot = gaitController.bodyRoot;
         UpdateRigYawTarget();
+        CaptureDefaultCrouchOffsets();
         currentStance = defaultStance;
         currentMovementType = MovementType.Standing;
         UpdateRigAnimatorState();
@@ -98,6 +111,8 @@ public class TopDownMotor : MonoBehaviour
             if (!rigAnimator) rigAnimator = GetComponentInChildren<HumanoidRigAnimator>();
             if (!rotateTarget) rotateTarget = body ? body : transform;
             if (!characterState) characterState = GetComponentInParent<CharacterHealth>();
+            if (!gaitController) gaitController = GetComponentInChildren<BipedGaitController>();
+            if (!bRoot && gaitController) bRoot = gaitController.bodyRoot;
             UpdateRigYawTarget();
         }
     }
@@ -332,7 +347,54 @@ public class TopDownMotor : MonoBehaviour
         if (isCrouching == crouch) return;
 
         isCrouching = crouch;
+        ApplyCrouchOffsets(isCrouching);
         UpdateMovementType(DetermineMovementType(moveVel, false));
+    }
+
+    void CaptureDefaultCrouchOffsets()
+    {
+        if (baseCrouchStateCaptured)
+            return;
+
+        bool capturedAny = false;
+        if (gaitController)
+        {
+            defaultGroundPlaneY = gaitController.groundPlaneY;
+            capturedAny = true;
+        }
+
+        if (bRoot)
+        {
+            defaultBRootPosition = bRoot.position;
+            capturedAny = true;
+        }
+
+        baseCrouchStateCaptured = capturedAny;
+    }
+
+    void ApplyCrouchOffsets(bool crouch)
+    {
+        if (!baseCrouchStateCaptured)
+        {
+            CaptureDefaultCrouchOffsets();
+        }
+
+        if (gaitController)
+        {
+            gaitController.groundPlaneY = crouch
+                ? defaultGroundPlaneY + crouchGroundPlaneOffset
+                : defaultGroundPlaneY;
+        }
+
+        if (bRoot)
+        {
+            Vector3 targetPosition = defaultBRootPosition;
+            if (crouch)
+            {
+                targetPosition.y += crouchBRootYOffset;
+            }
+            bRoot.position = targetPosition;
+        }
     }
 
     MovementType DetermineMovementType(Vector3 input, bool wantsSprint)
