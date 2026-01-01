@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -43,7 +44,7 @@ public class MotorActions : MonoBehaviour
             if (!faceTarget)
                 motorActuator.ClearAim();
             else
-                motorActuator.AimAt(GetAimTarget(targetPosition, true));
+                motorActuator.AimAt(GetAimTarget(targetPosition, currentPosition, true));
 
             ClearDebugTarget();
 
@@ -54,7 +55,7 @@ public class MotorActions : MonoBehaviour
         motorActuator.Move(direction, wantsSprint);
 
         if (faceTarget)
-            motorActuator.AimAt(GetAimTarget(targetPosition, true));
+            motorActuator.AimAt(GetAimTarget(targetPosition, currentPosition, true));
 
         return false;
     }
@@ -78,10 +79,15 @@ public class MotorActions : MonoBehaviour
         return currentIndex;
     }
 
-    private Vector3 GetAimTarget(Vector3 targetPosition, bool isFloor = false)
+    private Vector3 GetAimTarget(Vector3 targetPosition, Vector3? currentPosition = null, bool isFloor = false)
     {
         if(isFloor)
-            return new Vector3(targetPosition.x, targetPosition.y + 1.5f, targetPosition.z);
+        {
+            Vector3 dir = targetPosition - currentPosition.Value;             
+            var lookPosition =  currentPosition.Value + (dir.normalized * 5);
+
+            return new Vector3(lookPosition.x, lookPosition.y + 1.5f, lookPosition.z);
+        }            
 
         return targetPosition;
     }
