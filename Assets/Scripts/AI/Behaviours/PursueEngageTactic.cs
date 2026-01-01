@@ -252,6 +252,9 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
             if (character == null)
                 continue;
 
+            if(character.IsBelievedDead)
+                continue;
+
             if (character.Id == knowledge.Self.Id)
                 continue;
 
