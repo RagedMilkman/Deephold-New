@@ -37,6 +37,7 @@ public class TopDownMotor : MonoBehaviour
         Standing,
         Moving,
         Sprinting,
+        Crouching,
     }
 
     [Header("Stance")]
@@ -48,10 +49,14 @@ public class TopDownMotor : MonoBehaviour
     [SerializeField] HumanoidRigAnimator rigAnimator;
     [SerializeField] float headLookFallbackDistance = 5f;
 
+    [Header("Crouch")]
+    [SerializeField, Range(0f, 1f)] float crouchSpeedMultiplier = 0.5f;
+
     Vector3 moveVel;
     float verticalVelocity;
     Stance currentStance;
     MovementType currentMovementType = MovementType.Standing;
+    bool isCrouching;
 
     void Reset()
     {
@@ -161,7 +166,8 @@ public class TopDownMotor : MonoBehaviour
 
 
             float stanceSpeedMultiplier = currentStance == Stance.Active ? activeStanceSpeedMultiplier : 1f;
-            float targetSpeed = moveSpeed * inputMagnitude * speedMultiplier * stanceSpeedMultiplier * externalSpeedMultiplier;
+            float crouchMultiplier = isCrouching ? crouchSpeedMultiplier : 1f;
+            float targetSpeed = moveSpeed * inputMagnitude * speedMultiplier * stanceSpeedMultiplier * crouchMultiplier * externalSpeedMultiplier;
             targetVel = desiredDir * targetSpeed;
         }
         else
@@ -299,6 +305,7 @@ public class TopDownMotor : MonoBehaviour
     public Stance CurrentStance => currentStance;
 
     public MovementType CurrentMovementType => currentMovementType;
+    public bool IsCrouching => isCrouching;
 
     public void SetExternalSpeedMultiplier(float multiplier)
     {
@@ -320,8 +327,19 @@ public class TopDownMotor : MonoBehaviour
     public void SetActiveStance(bool active)
         => SetStance(active ? Stance.Active : Stance.Passive);
 
+    public void SetCrouch(bool crouch)
+    {
+        if (isCrouching == crouch) return;
+
+        isCrouching = crouch;
+        UpdateMovementType(DetermineMovementType(moveVel, false));
+    }
+
     MovementType DetermineMovementType(Vector3 input, bool wantsSprint)
     {
+        if (isCrouching)
+            return MovementType.Crouching;
+
         if (input.sqrMagnitude <= 0.0001f)
             return MovementType.Standing;
 

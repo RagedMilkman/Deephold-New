@@ -71,18 +71,26 @@ public class TopDownMovementInteraction : NetworkBehaviour
         Keyboard kb = Keyboard.current;
         Vector2 input = Vector2.zero;
         bool wantsSprint = false;
+        bool wantsCrouch = false;
 
         if (kb != null)
         {
             input.x = (kb.aKey.isPressed ? -1f : 0f) + (kb.dKey.isPressed ? 1f : 0f);
             input.y = (kb.sKey.isPressed ? -1f : 0f) + (kb.wKey.isPressed ? 1f : 0f);
             wantsSprint = kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed;
+            wantsCrouch = kb.leftCtrlKey.isPressed || kb.rightCtrlKey.isPressed;
+        }
+
+        if (wantsCrouch)
+        {
+            wantsSprint = false;
         }
 
         // Update stance based on secondary mouse button
         Mouse mouse = Mouse.current;
         bool activeStance = mouse != null && mouse.rightButton.isPressed;
         _motor.SetActiveStance(activeStance);
+        _motor.SetCrouch(wantsCrouch);
 
         Vector3 moveInputWorld = new Vector3(input.x, 0f, input.y);
         if (_ownerCamera)

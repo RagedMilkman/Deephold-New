@@ -184,7 +184,8 @@ public class HumanoidRigAnimator : MonoBehaviour
     internal bool ShouldForceParentRotation =>
         currentStance == TopDownMotor.Stance.Active ||
         currentMovementType == TopDownMotor.MovementType.Moving ||
-        currentMovementType == TopDownMotor.MovementType.Sprinting;
+        currentMovementType == TopDownMotor.MovementType.Sprinting ||
+        currentMovementType == TopDownMotor.MovementType.Crouching;
 
     private bool ShouldAlignChestWithHead() =>
         currentStance == TopDownMotor.Stance.Active ||
