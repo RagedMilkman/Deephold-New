@@ -178,7 +178,9 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     // NEW: external tick from interaction (owner-side)
     public void InteractionTick(bool triggerPressed, bool reloadPressed)
     {
-        if (!IsLocalOwner()) return;
+        // Allow server-authority callers (e.g., NPCs) in addition to the owning client.
+        if (!IsOwner && !IsServer)
+            return;
 
         if (reloading && Time.time >= reloadFinishAt)
         {
