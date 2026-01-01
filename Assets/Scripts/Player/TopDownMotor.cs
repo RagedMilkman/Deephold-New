@@ -365,7 +365,7 @@ public class TopDownMotor : MonoBehaviour
 
         if (bRoot)
         {
-            defaultBRootPosition = bRoot.position;
+            defaultBRootPosition = bRoot.localPosition;
             capturedAny = true;
         }
 
@@ -422,7 +422,7 @@ public class TopDownMotor : MonoBehaviour
             {
                 targetPosition.y += crouchBRootYOffset;
             }
-            bRoot.position = targetPosition;
+            bRoot.localPosition = targetPosition;
         }
     }
 

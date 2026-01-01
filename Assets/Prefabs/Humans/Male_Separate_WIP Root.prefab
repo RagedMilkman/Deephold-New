@@ -6613,6 +6613,11 @@ MonoBehaviour:
   defaultStance: 0
   rigAnimator: {fileID: 7336559208925738163}
   headLookFallbackDistance: 5
+  crouchSpeedMultiplier: 0.5
+  gaitController: {fileID: 8570627375539335066}
+  bRoot: {fileID: 768711587064841454}
+  crouchGroundPlaneOffset: 0.5
+  crouchBRootYOffset: -0.5
 --- !u!114 &7482769739127380242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6820,14 +6825,13 @@ MonoBehaviour:
   equipPreviewDelayDuration: 0.01
   enableEquipDebugLogs: 0
   renderVisuals: 1
-  renderVisualsIfOwner: 1
-  humanoidRigAnimator: {fileID: 0}
-  defaultLeftWristTarget: {fileID: 2733287110205977188}
-  defaultRightWristTarget: {fileID: 4383181461148833860}
   primaryMountRoot: {fileID: 4254748825539365288}
   secondaryMountRoot: {fileID: 6949899922934012761}
   tertiaryMountRoot: {fileID: 5973385079983274211}
   consumableMountRoot: {fileID: 5839085565920024735}
+  humanoidRigAnimator: {fileID: 0}
+  defaultLeftWristTarget: {fileID: 2733287110205977188}
+  defaultRightWristTarget: {fileID: 4383181461148833860}
   slot0Net:
     NetworkManager: {fileID: 0}
     NetworkBehaviour: {fileID: 0}
