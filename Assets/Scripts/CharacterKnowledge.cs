@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class CharacterKnowledge
 {
+    private const float DeadHealthConfidenceThreshold = 0.9f;
+
     public string Id { get; }
     public GameObject CharacterObject { get; }
 
@@ -11,6 +13,8 @@ public class CharacterKnowledge
     public Belief<GameObject>? Equipped { get; private set; }
     public Belief<string>? FactionId { get; private set; }
     public Belief<TopDownMotor.Stance>? Stance { get; private set; }
+
+    public bool IsBelievedDead { get; private set; }
 
     public bool HasAnyBeliefs => Position.HasValue || FacingDirection.HasValue || Health.HasValue || Equipped.HasValue ||
                                  FactionId.HasValue || Stance.HasValue;
@@ -108,6 +112,8 @@ public class CharacterKnowledge
                 HalfLifeSeconds = 0f
             };
         }
+
+        UpdateBelievedDeath();
     }
 
     public void ApplyDecay(float currentTime, float retentionSeconds, float defaultHalfLifeSeconds)
@@ -118,6 +124,8 @@ public class CharacterKnowledge
         Equipped = ApplyDecayToBelief(Equipped, currentTime, retentionSeconds, defaultHalfLifeSeconds);
         FactionId = ApplyDecayToBelief(FactionId, currentTime, retentionSeconds, defaultHalfLifeSeconds);
         Stance = ApplyDecayToBelief(Stance, currentTime, retentionSeconds, defaultHalfLifeSeconds);
+
+        UpdateBelievedDeath();
     }
 
     private static Belief<T>? ApplyDecayToBelief<T>(Belief<T>? belief, float currentTime, float retentionSeconds,
@@ -138,5 +146,13 @@ public class CharacterKnowledge
 
         var shouldForget = (retentionSeconds > 0f && elapsed >= retentionSeconds) || data.Confidence <= 0.01f;
         return shouldForget ? null : data;
+    }
+
+    private void UpdateBelievedDeath()
+    {
+        IsBelievedDead =
+            Health.HasValue &&
+            Health.Value.Value <= 0f &&
+            Health.Value.Confidence >= DeadHealthConfidenceThreshold;
     }
 }

@@ -41,6 +41,12 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         if (motorActions == null)
             return;
 
+        if (IsTargetDead(intent))
+        {
+            StopPursuit();
+            return;
+        }
+
         // 2) Resolve range settings (intent overrides -> defaults)
         var pursueIntent = intent.Tactics?.Pursue;
         float minRange = Mathf.Max(ResolveValue(pursueIntent?.MinDesiredRange, minDesiredRange), waypointTolerance * 0.5f);
@@ -211,5 +217,11 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         }
 
         return target;
+    }
+
+    private static bool IsTargetDead(EngageIntent intent)
+    {
+        var targetKnowledge = intent?.Target;
+        return targetKnowledge?.IsBelievedDead == true;
     }
 }
