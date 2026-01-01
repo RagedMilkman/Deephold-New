@@ -38,7 +38,7 @@ public class CombatActions : MonoBehaviour
         motorActuator.AimAt(target.position);
 
         if (IsFacingTarget(target, facingThresholdDegrees))
-            toolbeltActuator.ActivateEquippedItem();
+            ActivateEquippedItem();
     }
 
     /// <summary>
@@ -62,12 +62,27 @@ public class CombatActions : MonoBehaviour
 
         if (interactable && motorActuator)
             motorActuator.AimAt(interactable.position);
+    }
+
+    /// <summary>
+    /// Trigger the equipped item if ready.
+    /// </summary>
+    public void ActivateEquippedItem()
+    {
+        if (!toolbeltActuator)
+            return;
 
         toolbeltActuator.ActivateEquippedItem();
     }
 
-    private bool IsFacingTarget(Transform target, float thresholdDegrees)
+    /// <summary>
+    /// Check if the motor is facing the target within a threshold.
+    /// </summary>
+    public bool IsFacingTarget(Transform target, float thresholdDegrees)
     {
+        if (!motorActuator || !target)
+            return false;
+
         Vector3 toTarget = target.position - motorActuator.transform.position;
         toTarget.y = 0f;
         if (toTarget.sqrMagnitude <= 0.0001f)

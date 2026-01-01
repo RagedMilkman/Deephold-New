@@ -13,6 +13,9 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
     [SerializeField] private bool sprintToTarget = true;
     [SerializeField] private bool faceTargetWhileMoving = true;
 
+    [Header("Combat")]
+    [SerializeField, Range(0f, 180f)] private float facingThresholdDegrees = 10f;
+
     private Vector2[] path = Array.Empty<Vector2>();
     private int pathIndex;
     private string currentTargetId;
@@ -63,6 +66,14 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         // 5) Active stance is based on max range (your previous behaviour)
         var isActiveStance = distanceSqr <= maxRangeSqr;
         combatActions?.SetActiveStance(isActiveStance);
+
+        bool aimedAtTarget = isActiveStance
+            && combatActions != null
+            && intent.TargetLocationTransform
+            && combatActions.IsFacingTarget(intent.TargetLocationTransform, facingThresholdDegrees);
+
+        if (aimedAtTarget)
+            combatActions.ActivateEquippedItem();
 
         // 6) Decide whether to rebuild path:
         //    - If intent changed -> rebuild
