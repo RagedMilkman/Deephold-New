@@ -74,7 +74,7 @@ public class TopDownMotor : MonoBehaviour
         if (!positionReplicator) positionReplicator = GetComponentInChildren<PositionReplicator>();
         if (!characterState) characterState = GetComponentInParent<CharacterHealth>();
         if (!gaitController) gaitController = GetComponentInChildren<BipedGaitController>();
-        if (!bRoot && gaitController) bRoot = gaitController.bodyRoot;
+        TryAssignBodyRoot();
         UpdateRigYawTarget();
         CaptureDefaultCrouchOffsets();
         currentMovementType = MovementType.Standing;
@@ -90,7 +90,7 @@ public class TopDownMotor : MonoBehaviour
         if (!positionReplicator) positionReplicator = GetComponentInChildren<PositionReplicator>();
         if (!characterState) characterState = GetComponentInParent<CharacterHealth>();
         if (!gaitController) gaitController = GetComponentInChildren<BipedGaitController>();
-        if (!bRoot && gaitController) bRoot = gaitController.bodyRoot;
+        TryAssignBodyRoot();
         UpdateRigYawTarget();
         CaptureDefaultCrouchOffsets();
         currentStance = defaultStance;
@@ -112,7 +112,7 @@ public class TopDownMotor : MonoBehaviour
             if (!rotateTarget) rotateTarget = body ? body : transform;
             if (!characterState) characterState = GetComponentInParent<CharacterHealth>();
             if (!gaitController) gaitController = GetComponentInChildren<BipedGaitController>();
-            if (!bRoot && gaitController) bRoot = gaitController.bodyRoot;
+            TryAssignBodyRoot();
             UpdateRigYawTarget();
         }
     }
@@ -370,6 +370,35 @@ public class TopDownMotor : MonoBehaviour
         }
 
         baseCrouchStateCaptured = capturedAny;
+    }
+
+    void TryAssignBodyRoot()
+    {
+        if (bRoot)
+            return;
+
+        Transform searchRoot = rigAnimator ? rigAnimator.transform : transform;
+        Transform namedRoot = FindFirstNamedTransform(searchRoot, "Rig", "B-root", "B-hips");
+
+        bRoot = namedRoot ? namedRoot : gaitController ? gaitController.bodyRoot : null;
+    }
+
+    static Transform FindFirstNamedTransform(Transform root, params string[] names)
+    {
+        if (!root || names == null || names.Length == 0)
+            return null;
+
+        Transform[] transforms = root.GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            for (int j = 0; j < names.Length; j++)
+            {
+                if (string.Equals(transforms[i].name, names[j], StringComparison.OrdinalIgnoreCase))
+                    return transforms[i];
+            }
+        }
+
+        return null;
     }
 
     void ApplyCrouchOffsets(bool crouch)
