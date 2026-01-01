@@ -78,7 +78,7 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
             && intent.TargetLocationTransform
             && combatActions.IsFacingTarget(intent.TargetLocationTransform, facingThresholdDegrees);
 
-        if (aimedAtTarget)
+        if (aimedAtTarget && !HasFriendlyInLineOfFire(intent))
             combatActions.ActivateEquippedItem();
 
         // 6) Decide whether to rebuild path:
@@ -223,5 +223,87 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
     {
         var targetKnowledge = intent?.Target;
         return targetKnowledge?.IsBelievedDead == true;
+    }
+
+    private bool HasFriendlyInLineOfFire(EngageIntent intent)
+    {
+        if (knowledge == null || knowledge.Self == null)
+            return false;
+
+        var selfFactionBelief = knowledge.Self.FactionId;
+        if (!selfFactionBelief.HasValue)
+            return false;
+
+        string selfFaction = selfFactionBelief.Value.Value;
+        if (string.IsNullOrWhiteSpace(selfFaction))
+            return false;
+
+        Transform targetTransform = intent?.TargetLocationTransform;
+        if (!targetTransform)
+            return false;
+
+        Transform aimTransform = ResolveAimTransform(targetTransform);
+        Vector3 start = CurrentPosition;
+        Vector3 end = aimTransform ? aimTransform.position : targetTransform.position;
+
+        foreach (var kvp in knowledge.Characters)
+        {
+            var character = kvp.Value;
+            if (character == null)
+                continue;
+
+            if (character.Id == knowledge.Self.Id)
+                continue;
+
+            if (!string.IsNullOrWhiteSpace(intent?.TargetId) && character.Id == intent.TargetId)
+                continue;
+
+            var factionBelief = character.FactionId;
+            if (!factionBelief.HasValue)
+                continue;
+
+            string factionId = factionBelief.Value.Value;
+            if (string.IsNullOrWhiteSpace(factionId) || factionId != selfFaction)
+                continue;
+
+            if (!character.Position.HasValue)
+                continue;
+
+            Vector3 friendlyPosition = character.Position.Value.Value.Vector;
+            float radius = ResolveCharacterRadius(character.CharacterObject);
+            if (DistanceToSegmentSquared(friendlyPosition, start, end) <= radius * radius)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static float DistanceToSegmentSquared(Vector3 point, Vector3 start, Vector3 end)
+    {
+        Vector3 segment = end - start;
+        float lengthSqr = segment.sqrMagnitude;
+
+        if (lengthSqr <= 0.0001f)
+            return Vector3.SqrMagnitude(point - start);
+
+        float t = Vector3.Dot(point - start, segment) / lengthSqr;
+        t = Mathf.Clamp01(t);
+
+        Vector3 projection = start + segment * t;
+        projection.y = point.y;
+
+        return Vector3.SqrMagnitude(point - projection);
+    }
+
+    private static float ResolveCharacterRadius(GameObject characterObject)
+    {
+        if (!characterObject)
+            return 0.5f;
+
+        var controller = characterObject.GetComponentInChildren<CharacterController>();
+        if (controller)
+            return Mathf.Max(0.5f, controller.radius);
+
+        return 0.5f;
     }
 }
