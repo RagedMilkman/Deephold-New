@@ -1340,8 +1340,6 @@ public class ToolbeltNetworked : NetworkBehaviour
 
     public void RequestFireProjectile(KineticProjectileWeapon weapon, Vector3 origin, Vector3 dir, float speed, float damage, float force)
     {
-        if (!IsOwner)
-            return;
         if (!weapon)
             return;
         if (!IsEquippedReady)
@@ -1352,7 +1350,16 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (registryIndex < 0)
             return;
 
-        RPC_FireEquippedProjectile(slot, registryIndex, origin, dir, speed, damage, force);
+        // Clients route their requests through a ServerRpc, while server-controlled
+        // actors (e.g. NPCs) execute the shot directly.
+        if (IsOwner)
+        {
+            RPC_FireEquippedProjectile(slot, registryIndex, origin, dir, speed, damage, force);
+        }
+        else if (IsServer)
+        {
+            FireEquippedProjectileServer(slot, registryIndex, origin, dir, speed, damage, force);
+        }
     }
 
     public void NotifyEquippedWeaponReloadState(KineticProjectileWeapon weapon, bool isReloading)
@@ -1433,6 +1440,14 @@ public class ToolbeltNetworked : NetworkBehaviour
     [ServerRpc]
     void RPC_FireEquippedProjectile(int slot, int registryIndex, Vector3 origin, Vector3 dir, float speed, float damage, float force)
     {
+        FireEquippedProjectileServer(slot, registryIndex, origin, dir, speed, damage, force);
+    }
+
+    void FireEquippedProjectileServer(int slot, int registryIndex, Vector3 origin, Vector3 dir, float speed, float damage, float force)
+    {
+        if (!IsServer)
+            return;
+
         var state = GetSlotState(slot);
         if (state == null)
             return;
