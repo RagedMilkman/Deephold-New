@@ -7,6 +7,8 @@ public class MotorActuator : MonoBehaviour
 {
     [SerializeField] private TopDownMotor motor;
 
+    public TopDownMotor Motor => motor;
+
     private void Awake()
     {
         if (!motor)
