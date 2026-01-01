@@ -139,6 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 295ff244a02786b4db44af47fb767a74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExploreBehaviour
+  agentKnowledge: {fileID: 0}
   motorActions: {fileID: 1460001521077020250}
   pathingService: {fileID: 0}
   gridDirector: {fileID: 0}
@@ -150,9 +151,11 @@ MonoBehaviour:
   debugDestinationColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   sprintWhileExploring: 0
   faceMovementDirection: 1
+  lookHeight: 1.5
   minLookDuration: 0.5
   maxLookDuration: 1.25
   lookStepsPerDecision: 3
+  lookRegionRadius: 3
 --- !u!1 &2946854088809555854
 GameObject:
   m_ObjectHideFlags: 0
@@ -347,7 +350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a403f0b2c5a4fc2a80c1d293b63f52c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EngageBehaviour
-  knowledge: {fileID: 3339654881966189159}
+  agentKnowledge: {fileID: 0}
   combatActions: {fileID: 665973014089841746}
   tactics:
   - {fileID: 6676068438194945719}
@@ -363,6 +366,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd047e62cb4396547a83b2918a8fcb25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PursueEngageTactic
+  agentKnowledge: {fileID: 0}
   motorActions: {fileID: 1460001521077020250}
   pathingService: {fileID: 0}
   gridDirector: {fileID: 0}
@@ -422,6 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 214be2cb4eb1dd340aa1a91a3c16b90f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FleeBehaviour
+  agentKnowledge: {fileID: 0}
   motorActions: {fileID: 1460001521077020250}
   pathingService: {fileID: 0}
   gridDirector: {fileID: 0}
@@ -487,7 +492,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
   <IsNested>k__BackingField: 0
-  WasActiveDuringEdit: 1
+  WasActiveDuringEdit: 0
   WasActiveDuringEdit_Set1: 1
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
@@ -609,8 +614,8 @@ MonoBehaviour:
   <Intelligence>k__BackingField: {fileID: 514329142708469805}
   <BehaviourModule>k__BackingField: {fileID: 8343087760759504278}
   personality:
-    aggression: 0.5
-    bravery: 0.5
+    aggression: 1
+    bravery: 1
 --- !u!114 &3942169823563837710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -689,8 +694,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EngageConsideration
   baseUrgency: 0.35
   maxEngageDistance: 15
-  minDesiredRange: 8
-  maxDesiredRange: 18.2
   proximityWeight: 0.55
   facingThreatWeight: 0.35
   equippedThreatBonus: 0.15
@@ -1213,11 +1216,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.70793617
+      value: 0.7079362
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013655866
+      value: 0.013655913
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
@@ -1225,7 +1228,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.033095643
+      value: 0.03309559
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
