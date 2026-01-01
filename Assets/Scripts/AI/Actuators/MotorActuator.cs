@@ -38,8 +38,14 @@ public class MotorActuator : MonoBehaviour
         if (!motor)
             return;
 
-        if (motor.TryComputeYawFromPoint(worldPosition, out float yawDeg))
+        // Use TickAim so downstream systems (e.g., weapons) can consume the
+        // aim target rather than only rotating the motor. This ensures server-
+        // driven actors like NPCs fire toward the point they're looking at.
+        if (!motor.TickAim(worldPosition, worldPosition, false) &&
+            motor.TryComputeYawFromPoint(worldPosition, out float yawDeg))
+        {
             motor.ApplyYaw(yawDeg, worldPosition);
+        }
     }
 
     /// <summary>
