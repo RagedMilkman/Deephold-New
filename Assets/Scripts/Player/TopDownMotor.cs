@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -55,6 +56,7 @@ public class TopDownMotor : MonoBehaviour
     [SerializeField] Transform bRoot;
     [SerializeField] float crouchGroundPlaneOffset = 0.5f;
     [SerializeField] float crouchBRootYOffset = -0.5f;
+    [SerializeField, Min(0f)] float crouchTransitionDuration = 0.2f;
 
     Vector3 moveVel;
     float verticalVelocity;
@@ -64,6 +66,7 @@ public class TopDownMotor : MonoBehaviour
     float defaultGroundPlaneY;
     Vector3 defaultBRootPosition;
     bool baseCrouchStateCaptured;
+    Coroutine crouchRoutine;
 
     void Reset()
     {
@@ -347,7 +350,7 @@ public class TopDownMotor : MonoBehaviour
         if (isCrouching == crouch) return;
 
         isCrouching = crouch;
-        ApplyCrouchOffsets(isCrouching);
+        StartCrouchRoutine(isCrouching);
         UpdateMovementType(DetermineMovementType(moveVel, false));
     }
 
@@ -401,28 +404,68 @@ public class TopDownMotor : MonoBehaviour
         return null;
     }
 
-    void ApplyCrouchOffsets(bool crouch)
+    void StartCrouchRoutine(bool crouch)
     {
         if (!baseCrouchStateCaptured)
         {
             CaptureDefaultCrouchOffsets();
         }
 
+        if (crouchRoutine != null)
+        {
+            StopCoroutine(crouchRoutine);
+        }
+
+        crouchRoutine = StartCoroutine(AnimateCrouchOffsets(crouch));
+    }
+
+    IEnumerator AnimateCrouchOffsets(bool crouch)
+    {
+        float duration = crouchTransitionDuration;
+        float elapsed = 0f;
+
+        float startGroundPlaneY = gaitController ? gaitController.groundPlaneY : 0f;
+        float targetGroundPlaneY = crouch && gaitController
+            ? defaultGroundPlaneY + crouchGroundPlaneOffset
+            : defaultGroundPlaneY;
+
+        Vector3 startBRootPosition = bRoot ? bRoot.localPosition : Vector3.zero;
+        Vector3 targetBRootPosition = bRoot ? defaultBRootPosition : Vector3.zero;
+        if (crouch)
+        {
+            targetBRootPosition.y += crouchBRootYOffset;
+        }
+
+        if (duration <= 0f)
+        {
+            ApplyCrouchTargets(targetGroundPlaneY, targetBRootPosition);
+            yield break;
+        }
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            float blendedGroundPlaneY = Mathf.Lerp(startGroundPlaneY, targetGroundPlaneY, t);
+            Vector3 blendedBRootPosition = Vector3.Lerp(startBRootPosition, targetBRootPosition, t);
+
+            ApplyCrouchTargets(blendedGroundPlaneY, blendedBRootPosition);
+            yield return null;
+        }
+
+        ApplyCrouchTargets(targetGroundPlaneY, targetBRootPosition);
+    }
+
+    void ApplyCrouchTargets(float groundPlaneY, Vector3 bRootPosition)
+    {
         if (gaitController)
         {
-            gaitController.groundPlaneY = crouch
-                ? defaultGroundPlaneY + crouchGroundPlaneOffset
-                : defaultGroundPlaneY;
+            gaitController.groundPlaneY = groundPlaneY;
         }
 
         if (bRoot)
         {
-            Vector3 targetPosition = defaultBRootPosition;
-            if (crouch)
-            {
-                targetPosition.y += crouchBRootYOffset;
-            }
-            bRoot.localPosition = targetPosition;
+            bRoot.localPosition = bRootPosition;
         }
     }
 
