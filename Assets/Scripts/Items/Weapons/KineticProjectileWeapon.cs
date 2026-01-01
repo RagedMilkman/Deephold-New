@@ -179,7 +179,7 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     public void InteractionTick(bool triggerPressed, bool reloadPressed)
     {
         // Allow server-authority callers (e.g., NPCs) in addition to the owning client.
-        if (!IsOwner && !IsServer)
+        if (!IsOwner && OwnerId != -1)
             return;
 
         if (reloading && Time.time >= reloadFinishAt)
@@ -343,7 +343,6 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     {
         var root = transform.root;
         if (root) cam = root.GetComponentInChildren<Camera>(true);
-        if (!cam) cam = Camera.main;
     }
 
     protected virtual bool ComputeShot(out Vector3 origin, out Vector3 dir)

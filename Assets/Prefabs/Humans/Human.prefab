@@ -382,6 +382,7 @@ MonoBehaviour:
   repathDistance: 0.75
   sprintToTarget: 1
   faceTargetWhileMoving: 1
+  facingThresholdDegrees: 10
 --- !u!1 &5827676351432732902
 GameObject:
   m_ObjectHideFlags: 0
@@ -1220,15 +1221,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013655913
+      value: 0.013655904
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7053684
+      value: 0.70536834
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.03309559
+      value: 0.033095613
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1285,7 +1286,7 @@ MonoBehaviour:
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 1024
-  debugDraw: 1
+  debugDraw: 0
   debugColor: {r: 0, g: 1, b: 1, a: 1}
   debugHitColor: {r: 0, g: 1, b: 0, a: 1}
   debugBlockedColor: {r: 1, g: 0, b: 0, a: 1}
