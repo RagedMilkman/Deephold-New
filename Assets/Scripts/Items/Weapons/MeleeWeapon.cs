@@ -15,6 +15,9 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
     [SerializeField, Min(0f)] private float radius = 0.35f;
     [SerializeField] private LayerMask hitMask;
 
+    [Header("Animation")]
+    [SerializeField] private ProceduralMeleeSwing swingAnimation;
+
     [Header("Damage")]
     [SerializeField, Min(0f)] private float damage = 1f;
     [SerializeField] private WeaponRange weaponRange = new WeaponRange(0f, 0.5f, 1f, 1.5f, 2f);
@@ -47,11 +50,13 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
     {
         ownerIdentity = transform.root.GetComponent<NetworkObject>();
         if (!swingOrigin) swingOrigin = transform;
+        if (!swingAnimation) swingAnimation = GetComponentInChildren<ProceduralMeleeSwing>(true);
     }
 
     protected virtual void OnEnable()
     {
         if (!swingOrigin) swingOrigin = transform;
+        if (!swingAnimation) swingAnimation = GetComponentInChildren<ProceduralMeleeSwing>(true);
     }
 
     protected virtual void Update()
@@ -86,6 +91,9 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
             return;
 
         nextSwingTime = Time.time + Mathf.Max(0f, stanceTransitionDuration);
+
+        if (swingAnimation)
+            swingAnimation.Play();
 
         Transform castOrigin = swingOrigin ? swingOrigin : transform;
         Vector3 forward = ownerCam ? ownerCam.transform.forward : castOrigin.forward;
