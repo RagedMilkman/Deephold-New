@@ -150,6 +150,7 @@
     <Compile Include="Assets\Scripts\Items\ItemDefinition.cs" />
     <Compile Include="Assets\BloodEffectsPack\Common\Script\KillEffect.cs" />
     <Compile Include="Assets\Scripts\AI\Actuators\MotorActuator.cs" />
+    <Compile Include="Assets\Scripts\CommunicationSense.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Shootable\BlockShootable.cs" />
     <Compile Include="Assets\Scripts\Player\Animation\PuppetMasterExtensions.cs" />
     <Compile Include="Assets\Scripts\AI\Behaviours\BehaviourModule.cs" />

@@ -1241,6 +1241,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8373728688931725837, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7525243711413978767}
+    - targetCorrespondingSourceObject: {fileID: 8373728688931725837, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8572072379138911436}
   m_SourcePrefab: {fileID: 100100000, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
 --- !u!114 &1459772520429387606 stripped
 MonoBehaviour:
@@ -1293,6 +1296,22 @@ MonoBehaviour:
   debugColor: {r: 0, g: 1, b: 1, a: 1}
   debugHitColor: {r: 0, g: 1, b: 0, a: 1}
   debugBlockedColor: {r: 1, g: 0, b: 0, a: 1}
+  selfCharacter: {fileID: 0}
+--- !u!114 &8572072379138911436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2786171560016629739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26a8a219e330374caaf8dedf6cfac32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CommunicationSense
+  communicationRange: 6
+  deliveryDelaySeconds: 1
+  broadcastIntervalSeconds: 1
   selfCharacter: {fileID: 0}
 --- !u!114 &4164658408687173836 stripped
 MonoBehaviour:
