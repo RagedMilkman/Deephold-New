@@ -21,6 +21,7 @@ public sealed class FactionController : MonoBehaviour
     [SerializeField, Min(1), Tooltip("Maximum active characters this faction can maintain.")] private int _maxActiveCharacters = 5;
     [SerializeField, Tooltip("Automatically purchase and spawn characters when affordable.")] private bool _autoPurchase = true;
     [SerializeField, Tooltip("Force spawned prefabs and their nested children to become active.")] private bool _forceEnableSpawnHierarchy = true;
+    [SerializeField, Tooltip("Marks this faction as the player faction so spawned players join it.")] private bool _playerFaction = false;
 
     [Header("Networking")]
     [SerializeField, Tooltip("Network manager used to spawn characters on the server.")] private NetworkManager _networkManager;
@@ -35,6 +36,7 @@ public sealed class FactionController : MonoBehaviour
     public float PassiveIncomePerSecond => _passiveIncomePerSecond;
     public int MaxActiveCharacters => _maxActiveCharacters;
     public float CharacterPrice => _characterPrice;
+    public bool IsPlayerFaction => _playerFaction;
 
     private void Awake()
     {
@@ -262,5 +264,13 @@ public sealed class FactionController : MonoBehaviour
     private void OnDestroy()
     {
         UnsubscribeFromNetworkEvents();
+    }
+
+    public void AssignPlayerCharacter(CharacterData playerCharacter)
+    {
+        if (!_playerFaction || playerCharacter == null)
+            return;
+
+        playerCharacter.AssignToFaction(this);
     }
 }
