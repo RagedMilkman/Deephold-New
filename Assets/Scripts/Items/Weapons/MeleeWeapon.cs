@@ -1,3 +1,4 @@
+using Assets.Scripts.Items.Weapons;
 using FishNet.Object;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -97,7 +98,15 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
 
     protected virtual void OnMeleeHit(RaycastHit hit)
     {
-        // Hook for derived classes. Base implementation applies simple impact logic.
+        var shootable = hit.collider.GetComponentInParent<IShootable>();
+        if (shootable != null && shootable.OwnerRoot != transform.root)
+        {
+            var shooter = ownerIdentity;
+            if (shootable.CanBeShot(shooter, hit.point, hit.normal))
+                shootable.ServerOnShot(shooter, damage, damage, hit.point, hit.normal);
+            return;
+        }
+
         var rigidbody = hit.rigidbody;
         if (rigidbody)
         {
