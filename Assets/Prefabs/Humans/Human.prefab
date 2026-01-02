@@ -376,9 +376,12 @@ MonoBehaviour:
   debugPathColor: {r: 0, g: 1, b: 0, a: 1}
   debugNodeRadius: 0.07
   debugDestinationColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  minDesiredRange: 5
-  preferredDistance: 12
-  maxDesiredRange: 15
+  fallbackWeaponRange:
+    minCapableDistance: 0
+    minPreferredDistance: 1.5
+    preferredDistance: 3.5
+    maxPreferredDistance: 6
+    maxCapableDistance: 6
   repathDistance: 0.75
   sprintToTarget: 1
   faceTargetWhileMoving: 1
@@ -694,7 +697,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EngageConsideration
   baseUrgency: 0.35
-  maxEngageDistance: 15
+  maxEngageDistance: 20
   proximityWeight: 0.55
   facingThreatWeight: 0.35
   equippedThreatBonus: 0.15
@@ -1221,7 +1224,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013655904
+      value: 0.013655915
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
@@ -1229,7 +1232,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.033095613
+      value: 0.033095606
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1278,7 +1281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2acd6c4b3aae437aa2786b59b616a494, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SightSense
-  visionRange: 20
+  visionRange: 30
   fieldOfView: 90
   observableLayers:
     serializedVersion: 2
