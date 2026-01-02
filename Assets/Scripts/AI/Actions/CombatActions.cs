@@ -8,6 +8,8 @@ public class CombatActions : MonoBehaviour
     [SerializeField] private MotorActuator motorActuator;
     [SerializeField] private ToolbeltActuator toolbeltActuator;
 
+    public IWeapon EquippedWeapon => toolbeltActuator ? toolbeltActuator.EquippedWeapon : null;
+
     private void Awake()
     {
         if (!motorActuator)

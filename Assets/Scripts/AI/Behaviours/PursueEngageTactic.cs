@@ -3,10 +3,8 @@ using UnityEngine;
 
 public sealed class PursueEngageTactic : EngageTacticBehaviour
 {
-    [Header("Desired Range")]
-    [SerializeField, Min(0f)] private float minDesiredRange = 1.5f;
-    [SerializeField, Min(0f)] private float preferredDistance = 3.5f;
-    [SerializeField, Min(0f)] private float maxDesiredRange = 6f;
+    [Header("Fallback Weapon Range")]
+    [SerializeField] private WeaponRange fallbackWeaponRange = new WeaponRange(0f, 1.5f, 3.5f, 6f, 6f);
 
     [Header("Movement")]
     [SerializeField, Min(0f)] private float repathDistance = 0.75f;
@@ -47,11 +45,11 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
             return;
         }
 
-        // 2) Resolve range settings (intent overrides -> defaults)
-        var pursueIntent = intent.Tactics?.Pursue;
-        float minRange = Mathf.Max(ResolveValue(pursueIntent?.MinDesiredRange, minDesiredRange), waypointTolerance * 0.5f);
-        float maxRange = Mathf.Max(minRange, ResolveValue(pursueIntent?.MaxDesiredRange, maxDesiredRange));
-        float preferredRange = Mathf.Clamp(ResolveValue(pursueIntent?.PreferredDistance, preferredDistance), minRange, maxRange);
+        // 2) Resolve range settings from the equipped weapon (fallback if none)
+        WeaponRange weaponRange = ResolveWeaponRange();
+        float minRange = Mathf.Max(weaponRange.minPreferredDistance, waypointTolerance * 0.5f);
+        float maxRange = Mathf.Max(minRange, weaponRange.maxPreferredDistance);
+        float preferredRange = Mathf.Clamp(weaponRange.preferredDistance, minRange, maxRange);
 
         float minRangeSqr = minRange * minRange;
         float maxRangeSqr = maxRange * maxRange;
@@ -192,12 +190,12 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
             motorActions.RotateToTarget(ResolveAimTransform(targetTransform));
     }
 
-    private static float ResolveValue(float? intentValue, float defaultValue)
+    private WeaponRange ResolveWeaponRange()
     {
-        if (intentValue.HasValue && intentValue.Value > 0f)
-            return intentValue.Value;
+        if (combatActions?.EquippedWeapon is IWeapon weapon)
+            return weapon.WeaponRange;
 
-        return defaultValue;
+        return fallbackWeaponRange;
     }
 
     private static Transform ResolveAimTransform(Transform target)

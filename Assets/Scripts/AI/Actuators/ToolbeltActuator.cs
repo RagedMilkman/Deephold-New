@@ -9,6 +9,27 @@ public class ToolbeltActuator : MonoBehaviour
     [SerializeField] private ToolbeltNetworked toolbelt;
     [SerializeField] private TopDownMotor motor;
 
+    public IWeapon EquippedWeapon
+    {
+        get
+        {
+            if (!toolbelt)
+                return null;
+
+            if (toolbelt.ActiveWeapon)
+                return toolbelt.ActiveWeapon;
+
+            if (toolbelt.EquippedWeapon)
+                return toolbelt.EquippedWeapon;
+
+            var equippedObject = toolbelt.CurrentEquippedObject;
+            if (equippedObject)
+                return equippedObject.GetComponentInChildren<IWeapon>(true);
+
+            return null;
+        }
+    }
+
     private void Awake()
     {
         if (!toolbelt)
