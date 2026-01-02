@@ -6527,6 +6527,7 @@ GameObject:
   - component: {fileID: 5106284807051170480}
   - component: {fileID: 2375063280235814730}
   - component: {fileID: 8125184488041465076}
+  - component: {fileID: 993722725313760153}
   m_Layer: 0
   m_Name: Male_Separate_WIP Root
   m_TagString: Untagged
@@ -6608,6 +6609,7 @@ MonoBehaviour:
   backwardSpeedMultiplier: 0.6
   activeStanceSpeedMultiplier: 0.65
   externalSpeedMultiplier: 1
+  sprintSpeedMultiplier: 1.5
   minAimDistance: 0.05
   DebugForceStop: 0
   defaultStance: 0
@@ -6618,6 +6620,7 @@ MonoBehaviour:
   bRoot: {fileID: 768711587064841454}
   crouchGroundPlaneOffset: 0.5
   crouchBRootYOffset: -0.5
+  crouchTransitionDuration: 0.2
 --- !u!114 &7482769739127380242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6856,6 +6859,20 @@ MonoBehaviour:
     NetworkManager: {fileID: 0}
     NetworkBehaviour: {fileID: 0}
     _value: 1
+--- !u!114 &993722725313760153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7478472528683366501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff7473bd5e5c2c4ca327c503679fdf0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
+  shootingLevel: 5
+  meleeLevel: 5
 --- !u!1 &7494343199174048900
 GameObject:
   m_ObjectHideFlags: 0

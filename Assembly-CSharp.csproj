@@ -93,6 +93,7 @@
     <Compile Include="Assets\Scripts\Player\ToolBeltSlot.cs" />
     <Compile Include="Assets\FishNet\Upgrading\UpgradeFromMirrorMenu.cs" />
     <Compile Include="Assets\Scripts\Player\Network\PositionReplicator.cs" />
+    <Compile Include="Assets\Scripts\CharacterStats.cs" />
     <Compile Include="Assets\BloodEffectsPack\0_BuiltIn\Script\BloodModifier.cs" />
     <Compile Include="Assets\Scripts\Player\Network\BoneSnapshot.cs" />
     <Compile Include="Assets\BloodEffectsPack\Common\GutEffect\Script\EffectController.cs" />
