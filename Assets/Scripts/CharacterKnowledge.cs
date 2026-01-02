@@ -49,68 +49,86 @@ public class CharacterKnowledge
         {
             var direction = observation.CharacterData.FacingDirection.Value;
             var normalized = direction.sqrMagnitude > 0.0001f ? direction.normalized : direction;
-            FacingDirection = new Belief<Vector3>
+            if (ShouldUpdate(FacingDirection, confidence))
             {
-                Value = normalized,
-                Confidence = confidence,
-                TimeStamp = timestamp,
-                HalfLifeSeconds = 0f
-            };
+                FacingDirection = new Belief<Vector3>
+                {
+                    Value = normalized,
+                    Confidence = confidence,
+                    TimeStamp = timestamp,
+                    HalfLifeSeconds = 0f
+                };
+            }
         }
 
         if (observation.Location)
         {
-            Position = new Belief<Location>
+            if (ShouldUpdate(Position, confidence))
             {
-                Value = new Location(observation.Location),
-                Confidence = confidence,
-                TimeStamp = timestamp,
-                HalfLifeSeconds = 0f
-            };
+                Position = new Belief<Location>
+                {
+                    Value = new Location(observation.Location),
+                    Confidence = confidence,
+                    TimeStamp = timestamp,
+                    HalfLifeSeconds = 0f
+                };
+            }
         }
 
         if (observation.CharacterData.Stance.HasValue)
         {
-            Stance = new Belief<TopDownMotor.Stance>
+            if (ShouldUpdate(Stance, confidence))
             {
-                Value = observation.CharacterData.Stance.Value,
-                Confidence = confidence,
-                TimeStamp = timestamp,
-                HalfLifeSeconds = 0f
-            };
+                Stance = new Belief<TopDownMotor.Stance>
+                {
+                    Value = observation.CharacterData.Stance.Value,
+                    Confidence = confidence,
+                    TimeStamp = timestamp,
+                    HalfLifeSeconds = 0f
+                };
+            }
         }
 
         if (observation.CharacterData.Health.HasValue)
         {
-            Health = new Belief<float>
+            if (ShouldUpdate(Health, confidence))
             {
-                Value = observation.CharacterData.Health.Value,
-                Confidence = confidence,
-                TimeStamp = timestamp,
-                HalfLifeSeconds = 0f
-            };
+                Health = new Belief<float>
+                {
+                    Value = observation.CharacterData.Health.Value,
+                    Confidence = confidence,
+                    TimeStamp = timestamp,
+                    HalfLifeSeconds = 0f
+                };
+            }
         }
 
         if (observation.CharacterData.Equipped)
         {
-            Equipped = new Belief<GameObject>
+            if (ShouldUpdate(Equipped, confidence))
             {
-                Value = observation.CharacterData.Equipped,
-                Confidence = confidence,
-                TimeStamp = timestamp,
-                HalfLifeSeconds = 0f
-            };
+                Equipped = new Belief<GameObject>
+                {
+                    Value = observation.CharacterData.Equipped,
+                    Confidence = confidence,
+                    TimeStamp = timestamp,
+                    HalfLifeSeconds = 0f
+                };
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(observation.CharacterData.FactionId))
         {
-            FactionId = new Belief<string>
+            if (ShouldUpdate(FactionId, confidence))
             {
-                Value = observation.CharacterData.FactionId,
-                Confidence = confidence,
-                TimeStamp = timestamp,
-                HalfLifeSeconds = 0f
-            };
+                FactionId = new Belief<string>
+                {
+                    Value = observation.CharacterData.FactionId,
+                    Confidence = confidence,
+                    TimeStamp = timestamp,
+                    HalfLifeSeconds = 0f
+                };
+            }
         }
 
         UpdateBelievedDeath();
@@ -154,5 +172,13 @@ public class CharacterKnowledge
             Health.HasValue &&
             Health.Value.Value <= 0f &&
             Health.Value.Confidence >= DeadHealthConfidenceThreshold;
+    }
+
+    private static bool ShouldUpdate<T>(Belief<T>? belief, float newConfidence)
+    {
+        if (!belief.HasValue)
+            return true;
+
+        return newConfidence >= belief.Value.Confidence;
     }
 }
