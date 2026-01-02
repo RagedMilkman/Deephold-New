@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
-public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemCategoryProvider
+public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemCategoryProvider, IWeapon
 {
     [Header("Refs")]
     [SerializeField] protected Transform muzzle;
@@ -26,6 +26,9 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     [SerializeField, Min(0f)] protected float bulletRadius = 0.06f;
     [SerializeField, Min(0f)] protected float bulletRange = 75f;
     [SerializeField] protected LayerMask bulletHitMask;
+
+    [Header("Range")]
+    [SerializeField] protected WeaponRange weaponRange = new WeaponRange(0f, 25f, 100f);
 
     [Header("Tracer Visuals")]
     [SerializeField] protected Color tracerColor = new Color(1f, 1f, 1f, 0.4f);
@@ -91,6 +94,7 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     public float ProjectileRange => bulletRange > 0f ? bulletRange : bulletSpeed * DefaultProjectileTravelTime;
     public LayerMask ProjectileHitMask => bulletHitMask;
     public float ProjectileForce => Mathf.Max(0f, force);
+    public WeaponRange WeaponRange => weaponRange;
 
     public void SetMountPoint(Transform mount)
     {
