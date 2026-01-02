@@ -8,7 +8,7 @@ public class CommunicationSense : MonoBehaviour, ISense
     [SerializeField, Min(0.01f)] private float broadcastIntervalSeconds = 1f;
     [SerializeField] private CharacterData selfCharacter;
 
-    private readonly List<PendingTransmission> pendingTransmissions = new();
+    private readonly List<PendingTransmission> pendingTransmissions = new List<PendingTransmission>();
     private float lastBroadcastTime = -Mathf.Infinity;
 
     private void Awake()
@@ -71,11 +71,7 @@ public class CommunicationSense : MonoBehaviour, ISense
             if (observations.Count == 0)
                 continue;
 
-            pendingTransmissions.Add(new PendingTransmission
-            {
-                DeliveryTime = currentTime + deliveryDelaySeconds,
-                Observations = observations
-            });
+            pendingTransmissions.Add(new PendingTransmission(currentTime + deliveryDelaySeconds, observations));
         }
     }
 
@@ -206,9 +202,15 @@ public class CommunicationSense : MonoBehaviour, ISense
         return observations;
     }
 
-    private readonly struct PendingTransmission
+    private struct PendingTransmission
     {
-        public float DeliveryTime { get; init; }
-        public List<Observation> Observations { get; init; }
+        public float DeliveryTime { get; private set; }
+        public List<Observation> Observations { get; private set; }
+
+        public PendingTransmission(float deliveryTime, List<Observation> observations)
+        {
+            DeliveryTime = deliveryTime;
+            Observations = observations;
+        }
     }
 }
