@@ -139,6 +139,7 @@
     <Compile Include="Assets\Scripts\Player\Animation\BipedGaitController.cs" />
     <Compile Include="Assets\BloodEffectsPack\1_URP\Script\Projector\ProjectorPrioritySetter_URP.cs" />
     <Compile Include="Assets\Scripts\Player\Toolbelt.cs" />
+    <Compile Include="Assets\Scripts\Items\Weapons\WeaponRange.cs" />
     <Compile Include="Assets\Scripts\VFX\BloodHitFxVisualizer.cs" />
     <Compile Include="Assets\Scripts\Player\AI\TopDownChaseAI.cs" />
     <Compile Include="Assets\Scripts\Player\Network\GhostFollower.cs" />
@@ -188,6 +189,7 @@
     <Compile Include="Assets\Scripts\Items\HandMount.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\ToolbeltInteraction.cs" />
     <Compile Include="Assets\Scripts\World\Navigation\BespokePathService.cs" />
+    <Compile Include="Assets\Scripts\Items\Weapons\IWeapon.cs" />
     <Compile Include="Assets\Scripts\AI\Actions\MotorActions.cs" />
     <Compile Include="Assets\Scripts\FleeConsideration.cs" />
     <Compile Include="Assets\Scripts\Player\Interaction\RangedInteraction.cs" />

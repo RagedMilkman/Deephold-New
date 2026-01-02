@@ -715,6 +715,12 @@ MonoBehaviour:
   bulletHitMask:
     serializedVersion: 2
     m_Bits: 256
+  weaponRange:
+    minCapableDistance: 1
+    minPreferredDistance: 2
+    preferredDistance: 10
+    maxPreferredDistance: 13
+    maxCapableDistance: 20
   tracerColor: {r: 1, g: 1, b: 1, a: 0.4}
   tracerDuration: 0.05
   tracerWidth: 0.01
