@@ -5,8 +5,8 @@ using UnityEngine;
 /// </summary>
 public class CharacterStats : MonoBehaviour
 {
-    private const int MinLevel = 1;
-    private const int MaxLevel = 10;
+    public const int MinLevel = 0;
+    public const int MaxLevel = 10;
 
     [SerializeField, Range(MinLevel, MaxLevel)]
     private int shootingLevel = MinLevel;

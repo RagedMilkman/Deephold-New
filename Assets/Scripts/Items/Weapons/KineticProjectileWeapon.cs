@@ -22,6 +22,10 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     [Tooltip("Seconds between shots (e.g. 0.2 = 5 rps)")]
     [SerializeField] protected float fireCooldown = 0.2f;
 
+    [Header("Accuracy")]
+    [Tooltip("Maximum inaccuracy cone angle (degrees) when shooting skill is at minimum.")]
+    [SerializeField, Min(0f)] protected float maxInaccuracyAngle = 6f;
+
     [Header("Hit Detection")]
     [SerializeField, Min(0f)] protected float bulletRadius = 0.06f;
     [SerializeField, Min(0f)] protected float bulletRange = 75f;
@@ -65,6 +69,7 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     float nextFireTime;
     NetworkObject ownerIdentity;
     TopDownMotor ownerMotor;
+    CharacterStats ownerStats;
 
     protected int currentInMag;
     bool reloading;
@@ -112,6 +117,8 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
             ownerToolbelt = transform.root.GetComponentInChildren<ToolbeltNetworked>(true);
         if (!ownerMotor)
             ownerMotor = transform.root.GetComponentInChildren<TopDownMotor>(true);
+        if (!ownerStats)
+            ownerStats = transform.root.GetComponentInChildren<CharacterStats>(true);
         currentInMag = Mathf.Clamp(magSize, 0, int.MaxValue);
         reloading = false;
 
@@ -351,7 +358,11 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
 
     protected virtual bool ComputeShot(out Vector3 origin, out Vector3 dir)
     {
-        return TryComputeAim(out origin, out dir, out _);
+        if (!TryComputeAim(out origin, out dir, out _))
+            return false;
+
+        dir = ApplyAccuracy(dir);
+        return true;
     }
 
     bool TryComputeAim(out Vector3 origin, out Vector3 dir, out Vector3 target)
@@ -460,6 +471,40 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
 
         target = ray.origin + ray.direction * Mathf.Max(0.1f, fallbackAimDistance);
         return true;
+    }
+
+    void EnsureOwnerStats()
+    {
+        if (ownerStats && ownerStats.transform && ownerStats.transform.root == transform.root)
+            return;
+
+        ownerStats = transform.root.GetComponentInChildren<CharacterStats>(true);
+    }
+
+    float GetInaccuracyAngle()
+    {
+        EnsureOwnerStats();
+
+        int shootingLevel = ownerStats ? ownerStats.ShootingLevel : CharacterStats.MaxLevel;
+        float normalizedSkill = Mathf.InverseLerp(CharacterStats.MinLevel, CharacterStats.MaxLevel, shootingLevel);
+        float inaccuracyFactor = 1f - normalizedSkill;
+        return Mathf.Max(0f, maxInaccuracyAngle) * inaccuracyFactor;
+    }
+
+    Vector3 ApplyAccuracy(Vector3 direction)
+    {
+        float angle = GetInaccuracyAngle();
+        if (angle <= 0f || direction.sqrMagnitude < 0.0001f)
+            return direction.normalized;
+
+        Vector3 randomAxis = Vector3.Cross(direction, Random.onUnitSphere);
+        if (randomAxis.sqrMagnitude < 0.0001f)
+            randomAxis = Vector3.Cross(direction, Vector3.up);
+
+        randomAxis = randomAxis.normalized;
+        float appliedAngle = Random.Range(0f, angle);
+        Quaternion rotation = Quaternion.AngleAxis(appliedAngle, randomAxis);
+        return (rotation * direction).normalized;
     }
 
     void UpdateAimBeam()
