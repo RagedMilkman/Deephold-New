@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItemCategoryProvider, IWeapon
 {
     [Header("Melee Cast")]
-    [SerializeField] private Transform toolMount;
+    [SerializeField] private Transform swingOrigin;
     [SerializeField, Min(0f)] private float backProbe = 0.3f;
     [SerializeField, Min(0f)] private float range = 1f;
     [SerializeField, Min(0f)] private float radius = 0.35f;
@@ -44,12 +44,12 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
     protected virtual void Awake()
     {
         ownerIdentity = transform.root.GetComponent<NetworkObject>();
-        if (!toolMount) toolMount = FindToolMount(transform.root);
+        if (!swingOrigin) swingOrigin = transform;
     }
 
     protected virtual void OnEnable()
     {
-        if (!toolMount) toolMount = FindToolMount(transform.root);
+        if (!swingOrigin) swingOrigin = transform;
     }
 
     protected virtual void Update()
@@ -78,11 +78,6 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
             TrySwing();
     }
 
-    public void SetMountPoint(Transform mount)
-    {
-        toolMount = mount ? mount : toolMount;
-    }
-
     protected virtual void TrySwing()
     {
         if (Time.time < nextSwingTime)
@@ -90,14 +85,9 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
 
         nextSwingTime = Time.time + Mathf.Max(0f, stanceTransitionDuration);
 
-        if (!toolMount)
-            toolMount = FindToolMount(transform.root);
-
-        if (!toolMount)
-            return;
-
-        Vector3 forward = toolMount.forward;
-        Vector3 origin = toolMount.position - forward * backProbe;
+        Transform castOrigin = swingOrigin ? swingOrigin : transform;
+        Vector3 forward = ownerCam ? ownerCam.transform.forward : castOrigin.forward;
+        Vector3 origin = castOrigin.position - forward * backProbe;
         float distance = backProbe + range;
 
         if (CastForward(origin, forward, distance, out RaycastHit hit))
@@ -109,7 +99,10 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
         // Hook for derived classes. Base implementation applies simple impact logic.
         var rigidbody = hit.rigidbody;
         if (rigidbody)
-            rigidbody.AddForceAtPosition(toolMount.forward * damage, hit.point, ForceMode.Impulse);
+        {
+            var forward = ownerCam ? ownerCam.transform.forward : (swingOrigin ? swingOrigin.forward : transform.forward);
+            rigidbody.AddForceAtPosition(forward * damage, hit.point, ForceMode.Impulse);
+        }
     }
 
     protected bool CastForward(Vector3 origin, Vector3 dir, float distance, out RaycastHit hit)
@@ -128,22 +121,6 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
         }
 
         return false;
-    }
-
-    protected Transform FindToolMount(Transform root)
-    {
-        if (!root)
-            return null;
-
-        var t = root.Find("Character/ToolMount");
-        if (t)
-            return t;
-
-        foreach (var tr in root.GetComponentsInChildren<Transform>(true))
-            if (tr.name == "ToolMount")
-                return tr;
-
-        return null;
     }
 
     private bool IsLocalOwner()
