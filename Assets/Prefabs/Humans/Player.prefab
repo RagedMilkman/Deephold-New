@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2944773839300257384}
   - component: {fileID: 3389533353045045600}
   - component: {fileID: 8973901245730913947}
+  - component: {fileID: 3317430022290751703}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -192,6 +193,28 @@ MonoBehaviour:
   _faction: {fileID: 0}
   _forceEnableHierarchy: 1
   _health: {fileID: 3837176434791855224}
+--- !u!114 &3317430022290751703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414821280921427797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e3196659e0d2704b9b9ebb4ddf65820, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeInteraction
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6390988891232470549}
+  _networkObjectCache: {fileID: 0}
+  requireOwner: 1
+  requireAlive: 1
+  allowOnServer: 0
+  toolMount: {fileID: 0}
+  mountPath: Character/ToolMount
+  toolbelt: {fileID: 0}
+  requireActiveTool: 1
 --- !u!1 &1765952574535967925
 GameObject:
   m_ObjectHideFlags: 0
@@ -769,19 +792,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7079329
+      value: 0.70793295
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013797652
+      value: 0.013797684
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.7053622
+      value: -0.70536214
       objectReference: {fileID: 0}
     - target: {fileID: 6602382449375955848, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.033239353
+      value: -0.03323929
       objectReference: {fileID: 0}
     - target: {fileID: 6797074947291448208, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_Layer
@@ -993,15 +1016,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013654976
+      value: 0.013654964
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.7053685
+      value: 0.70536846
       objectReference: {fileID: 0}
     - target: {fileID: 8966156916849160722, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.03309779
+      value: 0.03309776
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
