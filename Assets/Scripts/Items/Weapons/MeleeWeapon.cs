@@ -33,6 +33,7 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
     private NetworkObject ownerIdentity;
     private Camera ownerCam;
     private float nextSwingTime;
+    private static readonly RaycastHit[] castHits = new RaycastHit[8];
 
     public virtual ToolbeltSlotType ToolbeltCategory => ToolbeltSlotType.Secondary;
     public virtual ToolMountPoint.MountType ToolbeltMountType => toolbeltMountType;
@@ -108,18 +109,18 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
     protected bool CastForward(Vector3 origin, Vector3 dir, float distance, out RaycastHit hit)
     {
         int mask = (hitMask.value == 0) ? ~0 : hitMask.value;
-
-        if (Physics.SphereCast(origin, radius, dir, out hit, distance, mask, QueryTriggerInteraction.Ignore))
+        int hitCount = Physics.SphereCastNonAlloc(origin, radius, dir, castHits, distance, mask, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < hitCount; i++)
         {
-            if (hit.collider && hit.collider.transform.root == transform.root)
-            {
-                Vector3 newOrigin = hit.point + dir * 0.01f;
-                return Physics.SphereCast(newOrigin, radius, dir, out hit, distance, mask, QueryTriggerInteraction.Ignore);
-            }
+            var candidate = castHits[i];
+            if (!candidate.collider || candidate.collider.transform.root == transform.root)
+                continue;
 
+            hit = candidate;
             return true;
         }
 
+        hit = default;
         return false;
     }
 
