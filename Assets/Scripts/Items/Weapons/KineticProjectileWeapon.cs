@@ -28,7 +28,7 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     [SerializeField] protected LayerMask bulletHitMask;
 
     [Header("Range")]
-    [SerializeField] protected WeaponRange weaponRange = new WeaponRange(0f, 25f, 100f);
+    [SerializeField] protected WeaponRange weaponRange = new WeaponRange(0f, 10f, 25f, 50f, 100f);
 
     [Header("Tracer Visuals")]
     [SerializeField] protected Color tracerColor = new Color(1f, 1f, 1f, 0.4f);

@@ -6,14 +6,23 @@ using System;
 [Serializable]
 public struct WeaponRange
 {
-    public float minDistance;
+    public float minCapableDistance;
+    public float minPreferredDistance;
     public float preferredDistance;
-    public float maxDistance;
+    public float maxPreferredDistance;
+    public float maxCapableDistance;
 
-    public WeaponRange(float minDistance, float preferredDistance, float maxDistance)
+    public WeaponRange(
+        float minCapableDistance,
+        float minPreferredDistance,
+        float preferredDistance,
+        float maxPreferredDistance,
+        float maxCapableDistance)
     {
-        this.minDistance = minDistance;
+        this.minCapableDistance = minCapableDistance;
+        this.minPreferredDistance = minPreferredDistance;
         this.preferredDistance = preferredDistance;
-        this.maxDistance = maxDistance;
+        this.maxPreferredDistance = maxPreferredDistance;
+        this.maxCapableDistance = maxCapableDistance;
     }
 }
