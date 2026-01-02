@@ -1,23 +1,20 @@
-﻿// MeleeInteractionFromMount.cs
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class MeleeInteraction : PlayerInteraction
 {
-    [Header("Where to look for the tool")]
-    [SerializeField] Transform toolMount;
-    [SerializeField] string mountPath = "Character/ToolMount";
-
-    [Header("Optional references")]
+    [Header("Toolbelt source")]
     [SerializeField] ToolbeltNetworked toolbelt;
+    [Tooltip("If true, only drive the tool when the toolbelt stance is Active.")]
+    [SerializeField] bool requireActiveStance = true;
+    [Tooltip("If true, wait for the equipped item to finish swapping before driving it.")]
+    [SerializeField] bool requireEquippedReady = true;
 
-    [Header("Find strategy")]
+    [Header("Tool selection")]
     [SerializeField] bool requireActiveTool = true;   // ignore disabled tools
 
     Camera ownerCam;
     IPlayerTool currentTool;
-    int lastChildCount = -1;
-    float nextRescanAt = 0f;
 
     protected override void Awake()
     {
@@ -29,19 +26,7 @@ public class MeleeInteraction : PlayerInteraction
 
     protected override void OnInteractionSpawned(bool asServer)
     {
-        if (!toolMount || toolMount.root != transform.root)
-        {
-            toolMount = transform.root.Find(mountPath);
-            if (!toolMount)
-                Debug.LogWarning($"MeleeInteraction: can't find mount at {transform.root.name}/{mountPath}", this);
-        }
-
-        if (!toolbelt)
-        {
-            toolbelt = GetComponent<ToolbeltNetworked>();
-            if (!toolbelt && transform.root)
-                toolbelt = transform.root.GetComponentInChildren<ToolbeltNetworked>(true);
-        }
+        EnsureToolbeltAssigned();
 
         if (IsOwner)
         {
@@ -49,22 +34,21 @@ public class MeleeInteraction : PlayerInteraction
             if (!ownerCam) ownerCam = Camera.main;
         }
 
-        ForceRescan();
+        RefreshCurrentTool();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        EnsureToolbeltAssigned();
+        RefreshCurrentTool();
     }
 
     protected override void OnActiveUpdate()
     {
-        // detect equips/unequips
-        if (toolMount)
-        {
-            if (toolMount.childCount != lastChildCount || Time.time >= nextRescanAt || currentTool == null)
-                RescanForTool();
-        }
+        RefreshCurrentTool();
 
         if (currentTool == null) return;
-
-        if (toolbelt && !toolbelt.IsCategoryEquipped(ToolbeltSlotType.Tertiary))
-            return;
 
         var mouse = Mouse.current;
         if (mouse == null) return;
@@ -83,70 +67,41 @@ public class MeleeInteraction : PlayerInteraction
     }
 
     // Optional hook for your Toolbelt to call after equip
-    public void NotifyEquippedChanged() => ForceRescan();
+    public void NotifyEquippedChanged() => RefreshCurrentTool();
 
     // ---------- internals ----------
-    void ForceRescan()
+    void EnsureToolbeltAssigned()
     {
-        lastChildCount = -1;
-        nextRescanAt = 0f;
-        RescanForTool();
+        if (toolbelt && toolbelt.transform.root == transform.root)
+            return;
+
+        toolbelt = transform.root.GetComponentInChildren<ToolbeltNetworked>(true);
+        if (!toolbelt)
+            Debug.LogWarning($"MeleeInteraction: couldn't find Toolbelt on {transform.root.name}", this);
     }
 
-    void RescanForTool()
+    void RefreshCurrentTool()
     {
-        lastChildCount = toolMount ? toolMount.childCount : -1;
-        nextRescanAt = Time.time + 0.25f;
+        IPlayerTool nextTool = null;
 
-        IPlayerTool found = FindToolUnder(toolMount);
-
-        if (!ReferenceEquals(found, currentTool))
+        if (toolbelt && (!requireActiveStance || toolbelt.EquippedStance == ToolMountPoint.MountStance.Active))
         {
-            currentTool = found;
-            if (currentTool != null)
-                currentTool.InteractionSetCamera(ownerCam);
-        }
-    }
-
-    IPlayerTool FindToolUnder(Transform mount)
-    {
-        if (!mount) return null;
-
-        // Prefer direct children
-        for (int i = 0; i < mount.childCount; i++)
-        {
-            var child = mount.GetChild(i);
-            if (!child) continue;
-
-            var tool = GetUsableTool(child);
-            if (tool != null) return tool;
+            if (!requireEquippedReady || toolbelt.IsEquippedReady)
+            {
+                var equipped = toolbelt.CurrentEquippedObject;
+                if (equipped)
+                    nextTool = equipped.GetComponentInChildren<IPlayerTool>(true);
+            }
         }
 
-        // Fallback: any descendant
-        foreach (var t in mount.GetComponentsInChildren<Transform>(true))
-        {
-            var tool = GetUsableTool(t);
-            if (tool != null) return tool;
-        }
+        if (requireActiveTool && nextTool is MonoBehaviour mb && !mb.isActiveAndEnabled)
+            nextTool = null;
 
-        return null;
-    }
+        if (ReferenceEquals(nextTool, currentTool))
+            return;
 
-    IPlayerTool GetUsableTool(Transform t)
-    {
-        if (!t) return null;
-        var tool = t.GetComponent<IPlayerTool>();
-        if (tool == null) return null;
-
-        if (requireActiveTool)
-        {
-            var mb = tool as MonoBehaviour;
-            if (mb != null && !mb.isActiveAndEnabled) return null;
-        }
-
-        // same player root?
-        if (t.root != transform.root) return null;
-
-        return tool;
+        currentTool = nextTool;
+        if (currentTool != null)
+            currentTool.InteractionSetCamera(ownerCam);
     }
 }
