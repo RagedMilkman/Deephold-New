@@ -1041,6 +1041,7 @@ MonoBehaviour:
   _maxActiveCharacters: 3
   _autoPurchase: 1
   _forceEnableSpawnHierarchy: 1
+  _playerFaction: 0
   _networkManager: {fileID: 1637219449}
 --- !u!114 &1247085266
 MonoBehaviour:
@@ -1075,6 +1076,7 @@ MonoBehaviour:
   _maxActiveCharacters: 3
   _autoPurchase: 1
   _forceEnableSpawnHierarchy: 1
+  _playerFaction: 1
   _networkManager: {fileID: 1637219449}
 --- !u!1 &1564268097
 GameObject:
