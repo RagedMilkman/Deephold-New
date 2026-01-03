@@ -22,6 +22,9 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     [Tooltip("Seconds between shots (e.g. 0.2 = 5 rps)")]
     [SerializeField] protected float fireCooldown = 0.2f;
 
+    [Header("Ammunition")]
+    [SerializeField] protected AmmoType ammoType = AmmoType.NineMillimeter;
+
     [Header("Accuracy")]
     [Tooltip("Maximum inaccuracy cone angle (degrees) when shooting skill is at minimum.")]
     [SerializeField, Min(0f)] protected float maxInaccuracyAngle = 6f;
@@ -100,6 +103,7 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
     public LayerMask ProjectileHitMask => bulletHitMask;
     public float ProjectileForce => Mathf.Max(0f, force);
     public WeaponRange WeaponRange => weaponRange;
+    public AmmoType AmmoType => ammoType;
 
     public void SetMountPoint(Transform mount)
     {
