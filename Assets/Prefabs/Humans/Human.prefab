@@ -350,8 +350,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a403f0b2c5a4fc2a80c1d293b63f52c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EngageBehaviour
-  agentKnowledge: {fileID: 0}
+  agentKnowledge: {fileID: 3339654881966189159}
   combatActions: {fileID: 665973014089841746}
+  toolbeltActuator: {fileID: 2786265808986057988}
   tactics:
   - {fileID: 6676068438194945719}
 --- !u!114 &6676068438194945719
@@ -366,7 +367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd047e62cb4396547a83b2918a8fcb25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PursueEngageTactic
-  agentKnowledge: {fileID: 0}
+  agentKnowledge: {fileID: 3339654881966189159}
   motorActions: {fileID: 1460001521077020250}
   pathingService: {fileID: 0}
   gridDirector: {fileID: 0}
@@ -1076,7 +1077,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8125184488041465076, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: itemRegistry.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8125184488041465076, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: 'itemRegistry.Array.data[0]'
@@ -1086,6 +1087,10 @@ PrefabInstance:
       propertyPath: 'itemRegistry.Array.data[1]'
       value: 
       objectReference: {fileID: 11400000, guid: 8e0a32cba193be746ad40a132d7f33a2, type: 2}
+    - target: {fileID: 8125184488041465076, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
+      propertyPath: 'itemRegistry.Array.data[2]'
+      value: 
+      objectReference: {fileID: 11400000, guid: dab2c8f127e89d940ae8d527a2f387df, type: 2}
     - target: {fileID: 8219493970271211756, guid: 8837113b1317bf747b6760dd1c57a249, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.20013106

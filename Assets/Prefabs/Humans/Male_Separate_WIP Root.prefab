@@ -7013,9 +7013,9 @@ MonoBehaviour:
   defaultConsumable: {fileID: 0}
   currentAmmo:
   - ammoType: 1
-    amount: 20
+    amount: 1
   - ammoType: 3
-    amount: 100
+    amount: 5
   stanceSource: {fileID: 247711045251181906}
   defaultStanceTransitionDuration: 0.1
   equipPreviewDelayDuration: 0.01
