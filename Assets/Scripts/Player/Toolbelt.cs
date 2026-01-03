@@ -768,6 +768,9 @@ public class ToolbeltNetworked : NetworkBehaviour
         var resolvedMount = mount ? mount : mountRoot;
         foreach (var weapon in instance.GetComponentsInChildren<KineticProjectileWeapon>(true))
             weapon.SetMountPoint(resolvedMount);
+
+        foreach (var meleeWeapon in instance.GetComponentsInChildren<MeleeWeapon>(true))
+            meleeWeapon.SetSwingRoot(resolvedMount);
     }
 
     void ApplyDefinitionTransform(Transform instanceTransform, ItemDefinition def)

@@ -46,6 +46,16 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
     public float ToolbeltStanceTransitionDuration => Mathf.Max(0f, stanceTransitionDuration);
     public WeaponRange WeaponRange => weaponRange;
 
+    public void SetSwingRoot(Transform root)
+    {
+        if (!root)
+            return;
+
+        swingOrigin = root;
+        if (swingAnimation)
+            swingAnimation.SetSwingRoot(root);
+    }
+
     protected virtual void Awake()
     {
         ownerIdentity = transform.root.GetComponent<NetworkObject>();

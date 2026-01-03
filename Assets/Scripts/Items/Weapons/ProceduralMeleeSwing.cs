@@ -60,6 +60,14 @@ public class ProceduralMeleeSwing : MonoBehaviour
         swingRoutine = StartCoroutine(SwingRoutine());
     }
 
+    public void SetSwingRoot(Transform root)
+    {
+        swingRoot = root;
+        cachedDefaults = false;
+        CacheDefaults();
+        ResetSwing();
+    }
+
     private void CacheDefaults()
     {
         var root = SwingRoot;
