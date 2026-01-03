@@ -150,6 +150,32 @@ public class ToolbeltNetworked : NetworkBehaviour
         return ammo.TryGetValue(ammoType, out amount);
     }
 
+    public bool HasAmmo(AmmoType ammoType, int requiredAmount = 1)
+    {
+        if (ammoType == AmmoType.None)
+            return true;
+
+        if (requiredAmount <= 0)
+            return true;
+
+        return ammo.TryGetValue(ammoType, out int amount) && amount >= requiredAmount;
+    }
+
+    public bool TryConsumeAmmo(AmmoType ammoType, int amount = 1)
+    {
+        if (ammoType == AmmoType.None)
+            return true;
+
+        if (amount <= 0)
+            return true;
+
+        if (!ammo.TryGetValue(ammoType, out int current) || current < amount)
+            return false;
+
+        ammo[ammoType] = current - amount;
+        return true;
+    }
+
     private void InitializeAmmoCounts()
     {
         ammo.Clear();
@@ -1519,6 +1545,9 @@ public class ToolbeltNetworked : NetworkBehaviour
 
         var weapon = def.prefab.GetComponent<KineticProjectileWeapon>();
         if (!weapon)
+            return;
+
+        if (!TryConsumeAmmo(weapon.AmmoType))
             return;
 
         Vector3 muzzleOrigin = origin;

@@ -218,6 +218,9 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
         if (Time.time < nextFireTime) return;
         if (!muzzle) return;
 
+        if (ownerToolbelt != null && !ownerToolbelt.HasAmmo(ammoType))
+            return;
+
         if (currentInMag <= 0)
         {
             BeginReload();
@@ -229,6 +232,12 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
 
         if (IsMuzzleMisaligned(dir))
             return;
+
+        if (ownerToolbelt != null && !IsServer)
+        {
+            if (!ownerToolbelt.TryConsumeAmmo(ammoType))
+                return;
+        }
 
         currentInMag = Mathf.Max(0, currentInMag - 1);
         nextFireTime = Time.time + fireCooldown;
