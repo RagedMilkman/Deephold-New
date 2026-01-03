@@ -1,3 +1,4 @@
+using Assets.Scripts.Items.Weapons;
 using UnityEngine;
 
 /// <summary>
@@ -91,5 +92,37 @@ public class ToolbeltActuator : MonoBehaviour
             return;
 
         toolbelt.RequestEquip(slotIndex);
+    }
+
+    /// <summary>
+    /// Ensure the equipped weapon has ammo, swapping to the first available slot with ammo (primary -> secondary -> tertiary).
+    /// </summary>
+    public bool EnsureEquippedWeaponHasAmmo()
+    {
+        if (!toolbelt)
+            return false;
+
+        var equippedWeapon = EquippedWeapon;
+        if (equippedWeapon != null)
+        {
+            var ammoType = equippedWeapon.AmmoType;
+            if (ammoType == AmmoType.None || toolbelt.HasAmmo(ammoType))
+                return false;
+        }
+
+        int[] slotOrder = { 1, 2, 3 };
+
+        foreach (int slot in slotOrder)
+        {
+            if (!toolbelt.SlotHasUsableAmmo(slot))
+                continue;
+
+            if (toolbelt.CurrentSlot != slot)
+                toolbelt.RequestEquip(slot);
+
+            return true;
+        }
+
+        return false;
     }
 }

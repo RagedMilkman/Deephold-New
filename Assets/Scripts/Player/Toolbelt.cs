@@ -1437,6 +1437,26 @@ public class ToolbeltNetworked : NetworkBehaviour
         }
     }
 
+    public bool TryGetSlotWeapon(int oneBasedSlot, out IWeapon weapon)
+    {
+        weapon = null;
+
+        var def = GetSlot(oneBasedSlot);
+        if (def?.prefab == null)
+            return false;
+
+        weapon = def.prefab.GetComponentInChildren<IWeapon>(true);
+        return weapon != null;
+    }
+
+    public bool SlotHasUsableAmmo(int oneBasedSlot)
+    {
+        if (!TryGetSlotWeapon(oneBasedSlot, out var weapon))
+            return false;
+
+        return weapon.AmmoType == AmmoType.None || HasAmmo(weapon.AmmoType);
+    }
+
     public ToolMountPoint.MountStance GetSlotStance(int oneBasedSlot)
     {
         var slot = GetSlotState(oneBasedSlot);
