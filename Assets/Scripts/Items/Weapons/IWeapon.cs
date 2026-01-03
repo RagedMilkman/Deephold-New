@@ -4,4 +4,5 @@
 public interface IWeapon
 {
     WeaponRange WeaponRange { get; }
+    AmmoType AmmoType { get; }
 }

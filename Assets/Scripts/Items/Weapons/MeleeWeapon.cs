@@ -46,6 +46,7 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
     public float ToolbeltUnequipDuration => Mathf.Max(0f, unequipDuration);
     public float ToolbeltStanceTransitionDuration => Mathf.Max(0f, stanceTransitionDuration);
     public WeaponRange WeaponRange => weaponRange;
+    public AmmoType AmmoType => AmmoType.None;
 
     public void SetSwingRoot(Transform root)
     {
