@@ -25,6 +25,7 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
     [Header("Control")]
     [Tooltip("When true, this weapon expects a MeleeInteraction to call InteractionTick().")]
     [SerializeField] private bool driveByInteraction = true;
+    [SerializeField, Min(0f)] private float swingCooldown = 0.5f;
 
     [Header("Toolbelt")]
     [SerializeField] private ToolMountPoint.MountType toolbeltMountType = ToolMountPoint.MountType.SmallMeleeWeapon;
@@ -100,7 +101,7 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
         if (Time.time < nextSwingTime)
             return;
 
-        nextSwingTime = Time.time + Mathf.Max(0f, stanceTransitionDuration);
+        nextSwingTime = Time.time + Mathf.Max(0f, swingCooldown);
 
         if (swingAnimation)
             swingAnimation.Play();
