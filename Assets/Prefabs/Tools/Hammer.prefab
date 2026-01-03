@@ -25,13 +25,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 354241350594264403}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.70315903, z: -0, w: 0.7110327}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.18182, y: 1.1818199, z: 1.18182}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1428496547845919867}
-  m_LocalEulerAnglesHint: {x: 180, y: 269.362, z: 180}
+  m_LocalEulerAnglesHint: {x: 180, y: 180, z: 180}
 --- !u!114 &1989423007504837098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,7 +163,7 @@ Transform:
   m_GameObject: {fileID: 1317533191482428672}
   serializedVersion: 2
   m_LocalRotation: {x: -0.08204358, y: 0.70649374, z: -0.03604312, w: 0.70202315}
-  m_LocalPosition: {x: 0.161, y: -0.01, z: 0}
+  m_LocalPosition: {x: -0.225, y: 0.055, z: -0.00399971}
   m_LocalScale: {x: 1.1818198, y: 1.1818199, z: 1.1818198}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -209,13 +209,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2249374760454021418}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.004012368, y: -0.7048299, z: -0.006201213, w: 0.70933795}
+  m_LocalRotation: {x: 0.0012545459, y: -0.9990215, z: -0.00727833, w: 0.043606892}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.1818198, y: 1.1818199, z: 1.1818199}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1428496547845919867}
-  m_LocalEulerAnglesHint: {x: 180.827, y: 90.367, z: 179.82}
+  m_LocalEulerAnglesHint: {x: 180.827, y: 5, z: 179.82}
 --- !u!114 &3365157882891721614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,7 +257,7 @@ Transform:
   m_GameObject: {fileID: 2501780861663084630}
   serializedVersion: 2
   m_LocalRotation: {x: -0.060079124, y: -0.70454985, z: 0.014672865, w: 0.70695454}
-  m_LocalPosition: {x: 0.16100025, y: -0.01, z: 0}
+  m_LocalPosition: {x: -0.22500023, y: 0.055, z: -0.004}
   m_LocalScale: {x: 1.1818199, y: 1.1818199, z: 1.1818198}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -350,6 +350,7 @@ MonoBehaviour:
     maxPreferredDistance: 1.5
     maxCapableDistance: 2
   driveByInteraction: 1
+  swingCooldown: 0.5
   toolbeltMountType: 4
   equipDuration: 0.2
   unequipDuration: 0.2
