@@ -7011,6 +7011,11 @@ MonoBehaviour:
   defaultSecondary: {fileID: 11400000, guid: 8e0a32cba193be746ad40a132d7f33a2, type: 2}
   defaultTertiary: {fileID: 11400000, guid: dab2c8f127e89d940ae8d527a2f387df, type: 2}
   defaultConsumable: {fileID: 0}
+  currentAmmo:
+  - ammoType: 1
+    amount: 20
+  - ammoType: 3
+    amount: 100
   stanceSource: {fileID: 247711045251181906}
   defaultStanceTransitionDuration: 0.1
   equipPreviewDelayDuration: 0.01
