@@ -23,14 +23,14 @@ public class ToolbeltNetworked : NetworkBehaviour
     [SerializeField] private ItemDefinition defaultConsumable; // slot 4
 
     [Serializable]
-    private struct InitialAmmoEntry
+    private struct AmmoEntry
     {
         public AmmoType ammoType;
         [Min(0)] public int amount;
     }
 
     [Header("Ammo")]
-    [SerializeField] private List<InitialAmmoEntry> initialAmmo = new();
+    [SerializeField] private List<AmmoEntry> currentAmmo = new();
 
     private ToolBeltSlot primarySlot;
     private ToolBeltSlot secondarySlot;
@@ -136,7 +136,9 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (ammoType == AmmoType.None)
             return;
 
-        ammo[ammoType] = Mathf.Max(0, amount);
+        int clampedAmount = Mathf.Max(0, amount);
+        ammo[ammoType] = clampedAmount;
+        SetSerializedAmmoAmount(ammoType, clampedAmount);
     }
 
     public bool TryGetAmmo(AmmoType ammoType, out int amount)
@@ -172,7 +174,9 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (!ammo.TryGetValue(ammoType, out int current) || current < amount)
             return false;
 
-        ammo[ammoType] = current - amount;
+        int remaining = current - amount;
+        ammo[ammoType] = remaining;
+        SetSerializedAmmoAmount(ammoType, remaining);
         return true;
     }
 
@@ -180,20 +184,45 @@ public class ToolbeltNetworked : NetworkBehaviour
     {
         ammo.Clear();
 
-        foreach (AmmoType ammoType in Enum.GetValues(typeof(AmmoType)))
-        {
-            if (ammoType == AmmoType.None)
-                continue;
-
-            ammo.TryAdd(ammoType, 0);
-        }
-
-        foreach (var entry in initialAmmo)
+        foreach (var entry in currentAmmo)
         {
             if (entry.ammoType == AmmoType.None)
                 continue;
 
             ammo[entry.ammoType] = Mathf.Max(0, entry.amount);
+        }
+
+        foreach (AmmoType ammoType in Enum.GetValues(typeof(AmmoType)))
+        {
+            if (ammoType == AmmoType.None)
+                continue;
+
+            if (!ammo.ContainsKey(ammoType))
+            {
+                ammo.Add(ammoType, 0);
+                SetSerializedAmmoAmount(ammoType, 0);
+            }
+        }
+    }
+
+    private void SetSerializedAmmoAmount(AmmoType ammoType, int amount)
+    {
+        int index = currentAmmo.FindIndex(entry => entry.ammoType == ammoType);
+        var clampedAmount = Mathf.Max(0, amount);
+
+        if (index >= 0)
+        {
+            AmmoEntry entry = currentAmmo[index];
+            entry.amount = clampedAmount;
+            currentAmmo[index] = entry;
+        }
+        else
+        {
+            currentAmmo.Add(new AmmoEntry
+            {
+                ammoType = ammoType,
+                amount = clampedAmount
+            });
         }
     }
 
