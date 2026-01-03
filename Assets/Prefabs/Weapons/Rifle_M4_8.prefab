@@ -783,6 +783,8 @@ MonoBehaviour:
   damage: 20
   force: 70
   fireCooldown: 0.1
+  ammoType: 3
+  maxInaccuracyAngle: 6
   bulletRadius: 0.06
   bulletRange: 75
   bulletHitMask:
