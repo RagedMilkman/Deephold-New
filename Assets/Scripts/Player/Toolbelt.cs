@@ -27,6 +27,10 @@ public class ToolbeltNetworked : NetworkBehaviour
     private ToolBeltSlot tertiarySlot;
     private ToolBeltSlot consumableSlot;
 
+    private readonly Dictionary<AmmoType, int> ammo = new();
+
+    public IReadOnlyDictionary<AmmoType, int> Ammo => ammo;
+
     [Header("Stance")]
     [SerializeField] private TopDownMotor stanceSource;
 
@@ -107,12 +111,46 @@ public class ToolbeltNetworked : NetworkBehaviour
         tertiarySlot = new ToolBeltSlot(ToolbeltSlotName.Tertiary, defaultTertiary);
         consumableSlot = new ToolBeltSlot(ToolbeltSlotName.Consumable, defaultConsumable);
 
+        InitializeAmmoCounts();
+
         if (!stanceSource && transform.root)
             stanceSource = transform.root.GetComponentInChildren<TopDownMotor>(true);
 
         if (!humanoidRigAnimator && transform.root)
             humanoidRigAnimator = transform.root.GetComponentInChildren<HumanoidRigAnimator>(true);
 
+    }
+
+    public void SetAmmo(AmmoType ammoType, int amount)
+    {
+        if (ammoType == AmmoType.None)
+            return;
+
+        ammo[ammoType] = Mathf.Max(0, amount);
+    }
+
+    public bool TryGetAmmo(AmmoType ammoType, out int amount)
+    {
+        if (ammoType == AmmoType.None)
+        {
+            amount = 0;
+            return false;
+        }
+
+        return ammo.TryGetValue(ammoType, out amount);
+    }
+
+    private void InitializeAmmoCounts()
+    {
+        ammo.Clear();
+
+        foreach (AmmoType ammoType in Enum.GetValues(typeof(AmmoType)))
+        {
+            if (ammoType == AmmoType.None)
+                continue;
+
+            ammo.TryAdd(ammoType, 0);
+        }
     }
 
     public override void OnStartNetwork()
