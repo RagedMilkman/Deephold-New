@@ -345,10 +345,10 @@ MonoBehaviour:
   damage: 100
   weaponRange:
     minCapableDistance: 0
-    minPreferredDistance: 0.5
-    preferredDistance: 1
-    maxPreferredDistance: 1.5
-    maxCapableDistance: 2
+    minPreferredDistance: 0.1
+    preferredDistance: 0.5
+    maxPreferredDistance: 0.8
+    maxCapableDistance: 1
   driveByInteraction: 1
   swingCooldown: 0.5
   toolbeltMountType: 4

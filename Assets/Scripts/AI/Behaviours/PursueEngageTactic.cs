@@ -152,7 +152,7 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         if (toTarget.sqrMagnitude <= 0.0001f)
             return;
 
-        var approachDistance = Mathf.Max(preferredRange, waypointTolerance * 2f);
+        var approachDistance = Mathf.Max(preferredRange, waypointTolerance * 0.1f);
         var desiredDestination = targetPosition - toTarget.normalized * approachDistance;
         desiredDestination.y = currentPosition.y;
 
