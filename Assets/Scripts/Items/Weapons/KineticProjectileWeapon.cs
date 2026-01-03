@@ -218,8 +218,20 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
         if (Time.time < nextFireTime) return;
         if (!muzzle) return;
 
-        if (ownerToolbelt != null && !ownerToolbelt.HasAmmo(ammoType))
-            return;
+        bool ammoConsumedLocally = false;
+        if (ownerToolbelt != null)
+        {
+            if (!ownerToolbelt.HasAmmo(ammoType))
+                return;
+
+            if (!IsServer)
+            {
+                if (!ownerToolbelt.TryConsumeAmmo(ammoType))
+                    return;
+
+                ammoConsumedLocally = true;
+            }
+        }
 
         if (currentInMag <= 0)
         {
@@ -233,17 +245,11 @@ public abstract class KineticProjectileWeapon : NetworkBehaviour, IToolbeltItemC
         if (IsMuzzleMisaligned(dir))
             return;
 
-        if (ownerToolbelt != null && !IsServer)
-        {
-            if (!ownerToolbelt.TryConsumeAmmo(ammoType))
-                return;
-        }
-
         currentInMag = Mathf.Max(0, currentInMag - 1);
         nextFireTime = Time.time + fireCooldown;
 
         OnLocalFired(origin, dir);
-        ownerToolbelt?.RequestFireProjectile(this, origin, dir, bulletSpeed, damage, ProjectileForce);
+        ownerToolbelt?.RequestFireProjectile(this, origin, dir, bulletSpeed, damage, ProjectileForce, ammoConsumedLocally);
 
         if (currentInMag == 0)
             BeginReload();

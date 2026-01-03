@@ -1452,7 +1452,7 @@ public class ToolbeltNetworked : NetworkBehaviour
         return slot?.RegistryIndex ?? -1;
     }
 
-    public void RequestFireProjectile(KineticProjectileWeapon weapon, Vector3 origin, Vector3 dir, float speed, float damage, float force)
+    public void RequestFireProjectile(KineticProjectileWeapon weapon, Vector3 origin, Vector3 dir, float speed, float damage, float force, bool ammoConsumedLocally)
     {
         if (!weapon)
             return;
@@ -1468,11 +1468,11 @@ public class ToolbeltNetworked : NetworkBehaviour
         // actors (e.g. NPCs) execute the shot directly.
         if (IsOwner)
         {
-            RPC_FireEquippedProjectile(slot, registryIndex, origin, dir, speed, damage, force);
+            RPC_FireEquippedProjectile(slot, registryIndex, origin, dir, speed, damage, force, ammoConsumedLocally);
         }
         else if (IsServer)
         {
-            FireEquippedProjectileServer(slot, registryIndex, origin, dir, speed, damage, force);
+            FireEquippedProjectileServer(slot, registryIndex, origin, dir, speed, damage, force, ammoConsumedLocally);
         }
     }
 
@@ -1552,12 +1552,12 @@ public class ToolbeltNetworked : NetworkBehaviour
     }
 
     [ServerRpc]
-    void RPC_FireEquippedProjectile(int slot, int registryIndex, Vector3 origin, Vector3 dir, float speed, float damage, float force)
+    void RPC_FireEquippedProjectile(int slot, int registryIndex, Vector3 origin, Vector3 dir, float speed, float damage, float force, bool ammoConsumedLocally)
     {
-        FireEquippedProjectileServer(slot, registryIndex, origin, dir, speed, damage, force);
+        FireEquippedProjectileServer(slot, registryIndex, origin, dir, speed, damage, force, ammoConsumedLocally);
     }
 
-    void FireEquippedProjectileServer(int slot, int registryIndex, Vector3 origin, Vector3 dir, float speed, float damage, float force)
+    void FireEquippedProjectileServer(int slot, int registryIndex, Vector3 origin, Vector3 dir, float speed, float damage, float force, bool ammoConsumedLocally)
     {
         if (!IsServer)
             return;
@@ -1576,7 +1576,9 @@ public class ToolbeltNetworked : NetworkBehaviour
         if (!weapon)
             return;
 
-        if (!TryConsumeAmmo(weapon.AmmoType))
+        bool isHost = IsServer && IsClient;
+
+        if ((!ammoConsumedLocally || !isHost) && !TryConsumeAmmo(weapon.AmmoType))
             return;
 
         Vector3 muzzleOrigin = origin;
