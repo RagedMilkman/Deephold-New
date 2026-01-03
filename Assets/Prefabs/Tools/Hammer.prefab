@@ -291,6 +291,7 @@ GameObject:
   - component: {fileID: 6678025862737794177}
   - component: {fileID: 4397710700827595473}
   - component: {fileID: 2013443917604568192}
+  - component: {fileID: 2764726355955454750}
   m_Layer: 0
   m_Name: Hammer
   m_TagString: Untagged
@@ -333,13 +334,14 @@ MonoBehaviour:
   _componentIndexCache: 255
   _addedNetworkObject: {fileID: 6678025862737794177}
   _networkObjectCache: {fileID: 0}
-  toolMount: {fileID: 0}
+  swingOrigin: {fileID: 0}
   backProbe: 0.3
   range: 1
   radius: 0.35
   hitMask:
     serializedVersion: 2
     m_Bits: 256
+  swingAnimation: {fileID: 0}
   damage: 100
   weaponRange:
     minCapableDistance: 0
@@ -477,3 +479,68 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &2764726355955454750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7055636061795761975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b4c470ba999a184f8e7807761e32bc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProceduralMeleeSwing
+  swingRoot: {fileID: 0}
+  swingLocalPositionOffset: {x: 0.2, y: -0.08, z: -0.38}
+  swingLocalEulerOffset: {x: -70, y: 0, z: 6}
+  swingDuration: 0.1
+  returnDuration: 0.2
+  swingCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  returnCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

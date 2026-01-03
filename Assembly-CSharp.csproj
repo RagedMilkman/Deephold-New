@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\Factions\CharacterHealth.cs" />
     <Compile Include="Assets\Scripts\World\Generation\NoiseGenerationService.cs" />
     <Compile Include="Assets\Scripts\AIBrain.cs" />
+    <Compile Include="Assets\Scripts\Items\Weapons\ProceduralMeleeSwing.cs" />
     <Compile Include="Assets\Scripts\Items\ToolbeltItemCategory.cs" />
     <Compile Include="Assets\Scripts\Factions\FactionController.cs" />
     <Compile Include="Assets\BloodEffectsPack\1_URP\Script\BloodModifier_URP.cs" />
