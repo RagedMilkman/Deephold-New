@@ -36,8 +36,6 @@ public class CombatActions : MonoBehaviour
         if (!motorActuator || !toolbeltActuator || !target)
             return;
 
-        toolbeltActuator.EnsureEquippedWeaponHasAmmo();
-
         toolbeltActuator.SetActiveStance(true);
         motorActuator.AimAt(target.position);
 

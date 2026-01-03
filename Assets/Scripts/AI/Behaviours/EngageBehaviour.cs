@@ -1,3 +1,4 @@
+using Assets.Scripts.Items.Weapons;
 using UnityEngine;
 
 /// <summary>
@@ -7,6 +8,7 @@ public class EngageBehaviour : BehaviourBase
 {
     [Header("Dependencies")]
     [SerializeField] private CombatActions combatActions;
+    [SerializeField] private ToolbeltActuator toolbeltActuator;
     [SerializeField] private EngageTacticBehaviour[] tactics;
 
     private readonly System.Collections.Generic.Dictionary<EngageTactic, EngageTacticBehaviour> tacticLookup
@@ -19,6 +21,9 @@ public class EngageBehaviour : BehaviourBase
 
         if (!combatActions)
             combatActions = GetComponentInParent<CombatActions>();
+
+        if (!toolbeltActuator)
+            toolbeltActuator = GetComponentInParent<ToolbeltActuator>();
 
         if (tactics == null || tactics.Length == 0)
             tactics = GetComponents<EngageTacticBehaviour>();
@@ -52,6 +57,7 @@ public class EngageBehaviour : BehaviourBase
         if (engageIntent == null)
             return;
 
+        EnsureEngagementWeapon();
         SwitchTactic(engageIntent);
         activeTactic?.Tick(engageIntent);
     }
@@ -87,5 +93,36 @@ public class EngageBehaviour : BehaviourBase
             return pursueTactic;
 
         return tactics != null && tactics.Length > 0 ? tactics[0] : null;
+    }
+
+    private void EnsureEngagementWeapon()
+    {
+        if (!toolbeltActuator)
+            return;
+
+        var toolbelt = toolbeltActuator.Toolbelt;
+        if (!toolbelt)
+            return;
+
+        var equippedWeapon = toolbeltActuator.EquippedWeapon;
+        if (equippedWeapon != null)
+        {
+            var ammoType = equippedWeapon.AmmoType;
+            if (ammoType == AmmoType.None || toolbelt.HasAmmo(ammoType))
+                return;
+        }
+
+        int[] slotOrder = { 1, 2, 3 };
+
+        foreach (int slot in slotOrder)
+        {
+            if (!toolbelt.SlotHasUsableAmmo(slot))
+                continue;
+
+            if (toolbelt.CurrentSlot != slot)
+                toolbeltActuator.ChangeEquippedItem(slot);
+
+            return;
+        }
     }
 }
