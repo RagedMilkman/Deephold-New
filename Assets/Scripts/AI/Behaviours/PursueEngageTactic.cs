@@ -12,7 +12,8 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
     [SerializeField] private bool faceTargetWhileMoving = true;
 
     [Header("Combat")]
-    [SerializeField, Range(0f, 180f)] private float facingThresholdDegrees = 10f;
+    [SerializeField, Range(0f, 180f)] private float rangedFacingThresholdDegrees = 10f;
+    [SerializeField, Range(0f, 180f)] private float meleeFacingThresholdDegrees = 10f;
 
     private Vector2[] path = Array.Empty<Vector2>();
     private int pathIndex;
@@ -71,10 +72,12 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         var isActiveStance = distanceSqr <= maxRangeSqr;
         combatActions?.SetActiveStance(isActiveStance);
 
+        float facingThreshold = ResolveFacingThresholdDegrees();
+
         bool aimedAtTarget = isActiveStance
             && combatActions != null
             && intent.TargetLocationTransform
-            && combatActions.IsFacingTarget(intent.TargetLocationTransform, facingThresholdDegrees);
+            && combatActions.IsFacingTarget(intent.TargetLocationTransform, facingThreshold);
 
         if (aimedAtTarget && !HasFriendlyInLineOfFire(intent))
             combatActions.ActivateEquippedItem();
@@ -196,6 +199,18 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
             return weapon.WeaponRange;
 
         return fallbackWeaponRange;
+    }
+
+    private float ResolveFacingThresholdDegrees()
+    {
+        var equippedWeapon = combatActions?.EquippedWeapon;
+
+        if (equippedWeapon == null)
+            return meleeFacingThresholdDegrees;
+
+        bool isMelee = equippedWeapon is MeleeWeapon || equippedWeapon.AmmoType == AmmoType.None;
+
+        return isMelee ? meleeFacingThresholdDegrees : rangedFacingThresholdDegrees;
     }
 
     private static Transform ResolveAimTransform(Transform target)
