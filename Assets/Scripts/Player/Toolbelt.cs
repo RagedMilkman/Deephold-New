@@ -22,6 +22,16 @@ public class ToolbeltNetworked : NetworkBehaviour
     [SerializeField] private ItemDefinition defaultTertiary;  // slot 3
     [SerializeField] private ItemDefinition defaultConsumable; // slot 4
 
+    [Serializable]
+    private struct InitialAmmoEntry
+    {
+        public AmmoType ammoType;
+        [Min(0)] public int amount;
+    }
+
+    [Header("Ammo")]
+    [SerializeField] private List<InitialAmmoEntry> initialAmmo = new();
+
     private ToolBeltSlot primarySlot;
     private ToolBeltSlot secondarySlot;
     private ToolBeltSlot tertiarySlot;
@@ -150,6 +160,14 @@ public class ToolbeltNetworked : NetworkBehaviour
                 continue;
 
             ammo.TryAdd(ammoType, 0);
+        }
+
+        foreach (var entry in initialAmmo)
+        {
+            if (entry.ammoType == AmmoType.None)
+                continue;
+
+            ammo[entry.ammoType] = Mathf.Max(0, entry.amount);
         }
     }
 
