@@ -362,7 +362,7 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
 
         var controller = characterObject.GetComponentInChildren<CharacterController>();
         if (controller)
-            return Mathf.Max(0.5f, controller.radius);
+            return controller.radius;
 
         return 0.5f;
     }
