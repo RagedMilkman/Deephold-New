@@ -120,14 +120,26 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         if (path == null || path.Length == 0)
             return;
 
-        pathIndex = motorActions.MoveToPathPosition(
-            currentPosition,
-            path,
-            pathIndex,
-            !isActiveStance,
-            sprintToTarget,
-            waypointTolerance
-        );
+        bool atFinalNode = pathIndex >= path.Length - 1;
+        bool endWithinTolerance = hasEnd && Vector3.SqrMagnitude(pathEndWorld - currentPosition) <= waypointTolerance * waypointTolerance;
+        bool pathTravelComplete = pathIndex >= path.Length || (atFinalNode && endWithinTolerance);
+
+        if (endWithinTolerance)
+            pathIndex = path.Length;
+
+        if (!pathTravelComplete)
+        {
+            pathIndex = motorActions.MoveToPathPosition(
+                currentPosition,
+                path,
+                pathIndex,
+                !isActiveStance,
+                sprintToTarget,
+                waypointTolerance
+            );
+        }
+
+        TryCloseGapToTarget(intent, weaponRange, preferredRange, pathEndWorld, pathTravelComplete);
     }
 
     public override void OnEnd()
@@ -169,6 +181,38 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         currentTargetId = intent.TargetId;
         lastKnownTargetPosition = targetPosition;
         lastPreferredRange = preferredRange;
+    }
+
+    private void TryCloseGapToTarget(EngageIntent intent, WeaponRange weaponRange, float preferredRange, Vector3 pathEndWorld, bool pathTravelComplete)
+    {
+        if (intent == null || motorActions == null)
+            return;
+
+        if (weaponRange.preferredDistance >= 2f)
+            return;
+
+        if (path == null || path.Length == 0 || !pathTravelComplete)
+            return;
+
+        Vector3 currentPosition = CurrentPosition;
+
+        Vector3 toPathEnd = pathEndWorld - currentPosition;
+        toPathEnd.y = 0f;
+        if (toPathEnd.sqrMagnitude > waypointTolerance * waypointTolerance)
+            return;
+
+        Vector3 toTarget = intent.TargetLocationVector - currentPosition;
+        toTarget.y = 0f;
+        if (toTarget.sqrMagnitude <= preferredRange * preferredRange)
+            return;
+
+        motorActions.MoveToPosition(
+            currentPosition,
+            intent.TargetLocationVector,
+            faceTargetWhileMoving,
+            sprintToTarget,
+            preferredRange
+        );
     }
 
     private bool IntentChanged(EngageIntent intent, Vector3 targetPosition, float preferredRange)
