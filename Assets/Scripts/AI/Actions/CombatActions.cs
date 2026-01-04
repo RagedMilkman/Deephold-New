@@ -85,12 +85,12 @@ public class CombatActions : MonoBehaviour
         if (!motorActuator || !target)
             return false;
 
-        Vector3? facingDirection = FacingDirectionResolver.ResolveFacingDirection(motorActuator.Motor, motorActuator.transform);
+        Vector3? facingDirection = FacingDirectionResolver.ResolveFacingDirection(motorActuator.Motor, null);
 
         if (!facingDirection.HasValue)
             return false;
 
-        Vector3 toTarget = target.position - motorActuator.transform.position;
+        Vector3 toTarget = target.position - motorActuator.Motor.FacingCentre;
         toTarget.y = 0f;
         if (toTarget.sqrMagnitude <= 0.0001f)
             return true;

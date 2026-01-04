@@ -41,6 +41,9 @@ public sealed class EngageConsideration : Consideration
             if (character == null || character.Id == self.Id)
                 continue;
 
+            if (character.IsBelievedDead)
+                continue;
+
             if (character.Position == null || !character.Position.HasValue)
                 continue;
 
