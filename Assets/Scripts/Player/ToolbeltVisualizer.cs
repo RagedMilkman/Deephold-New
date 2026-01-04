@@ -265,6 +265,13 @@ public class ToolbeltVisualizer : MonoBehaviour
             AssignWeaponMountPoints(instance, slot.CurrentMount ?? ResolveSlotMountRoot(slot) ?? mountRoot);
         }
 
+        if (!equippedInstance)
+        {
+            var equippedSlotState = GetSlotState(clampedSlot);
+            if (equippedSlotState?.Instance)
+                equippedInstance = equippedSlotState.Instance;
+        }
+
         ApplyItemVisibility();
     }
 

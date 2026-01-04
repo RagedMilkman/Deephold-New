@@ -744,6 +744,13 @@ public class ToolbeltNetworked : NetworkBehaviour
             AssignWeaponMountPoints(instance, slot.CurrentMount ?? mountRoot);
         }
 
+        if (!equippedInstance)
+        {
+            var equippedSlotState = GetSlotState(clampedSlot);
+            if (equippedSlotState?.Instance)
+                equippedInstance = equippedSlotState.Instance;
+        }
+
         UpdateHandTargetsFromEquippedInstance();
 
         UpdateEquippedWeaponReference();
