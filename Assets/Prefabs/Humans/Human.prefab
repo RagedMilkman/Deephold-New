@@ -387,7 +387,7 @@ MonoBehaviour:
   sprintToTarget: 1
   faceTargetWhileMoving: 1
   rangedFacingThresholdDegrees: 10
-  meleeFacingThresholdDegrees: 10
+  meleeFacingThresholdDegrees: 47
 --- !u!1 &5827676351432732902
 GameObject:
   m_ObjectHideFlags: 0

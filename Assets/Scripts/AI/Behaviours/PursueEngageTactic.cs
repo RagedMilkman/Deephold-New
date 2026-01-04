@@ -13,7 +13,7 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
 
     [Header("Combat")]
     [SerializeField, Range(0f, 180f)] private float rangedFacingThresholdDegrees = 10f;
-    [SerializeField, Range(0f, 180f)] private float meleeFacingThresholdDegrees = 10f;
+    [SerializeField, Range(0f, 180f)] private float meleeFacingThresholdDegrees = 80f;
 
     private Vector2[] path = Array.Empty<Vector2>();
     private int pathIndex;
@@ -48,7 +48,7 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
 
         // 2) Resolve range settings from the equipped weapon (fallback if none)
         WeaponRange weaponRange = ResolveWeaponRange();
-        float minRange = Mathf.Max(weaponRange.minPreferredDistance, waypointTolerance * 0.5f);
+        float minRange = Mathf.Max(weaponRange.minPreferredDistance, waypointTolerance);
         float maxRange = Mathf.Max(minRange, weaponRange.maxPreferredDistance);
         float preferredRange = Mathf.Clamp(weaponRange.preferredDistance, minRange, maxRange);
 
@@ -61,8 +61,8 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         toTarget.y = 0f;
 
         float distanceSqr = toTarget.sqrMagnitude;
-        bool tooClose = distanceSqr < minRangeSqr;
-        bool tooFar = distanceSqr > maxRangeSqr;
+        bool tooClose = distanceSqr < minRangeSqr + waypointTolerance;
+        bool tooFar = distanceSqr > maxRangeSqr - waypointTolerance;
         bool withinDesiredRange = !tooClose && !tooFar;
 
         // 4) Always aim (even while moving)
@@ -155,7 +155,7 @@ public sealed class PursueEngageTactic : EngageTacticBehaviour
         if (toTarget.sqrMagnitude <= 0.0001f)
             return;
 
-        var approachDistance = Mathf.Max(preferredRange, waypointTolerance * 0.1f);
+        var approachDistance = Mathf.Max(preferredRange, waypointTolerance);
         var desiredDestination = targetPosition - toTarget.normalized * approachDistance;
         desiredDestination.y = currentPosition.y;
 

@@ -331,12 +331,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc1ca42be54c6544ca39060ee0688326, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SmallBluntMelee
-  _componentIndexCache: 255
+  _componentIndexCache: 0
   _addedNetworkObject: {fileID: 6678025862737794177}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 6678025862737794177}
   swingOrigin: {fileID: 0}
   backProbe: 0.3
-  range: 1
+  range: 2
   radius: 0.35
   hitMask:
     serializedVersion: 2
@@ -345,10 +345,10 @@ MonoBehaviour:
   damage: 100
   weaponRange:
     minCapableDistance: 0
-    minPreferredDistance: 0.1
-    preferredDistance: 0.5
-    maxPreferredDistance: 0.8
-    maxCapableDistance: 1
+    minPreferredDistance: 0
+    preferredDistance: 1.5
+    maxPreferredDistance: 2
+    maxCapableDistance: 2
   driveByInteraction: 1
   swingCooldown: 0.5
   toolbeltMountType: 4
@@ -373,7 +373,9 @@ MonoBehaviour:
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
-  NetworkBehaviours: []
+  NetworkBehaviours:
+  - {fileID: 8214031544747471234}
+  - {fileID: 4397710700827595473}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -398,15 +400,15 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 65535
+  <PrefabId>k__BackingField: 14
   <SpawnableCollectionId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 15557194396813712402
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
-    Position: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0, w: 0}
-    Scale: {x: 0, y: 0, z: 0}
-    IsValid: 0
+    Position: {x: 13.80668, y: -0.02, z: 15.36031}
+    Rotation: {x: 0, y: 0, z: 0, w: 1}
+    Scale: {x: 1, y: 1, z: 1}
+    IsValid: 1
 --- !u!114 &4397710700827595473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -419,9 +421,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2836e36774ca1c4bbbee976e17b649c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: FishNet.Runtime::FishNet.Component.Transforming.NetworkTransform
-  _componentIndexCache: 255
+  _componentIndexCache: 1
   _addedNetworkObject: {fileID: 6678025862737794177}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 6678025862737794177}
   _componentConfiguration: 0
   _synchronizeParent: 0
   _packing:

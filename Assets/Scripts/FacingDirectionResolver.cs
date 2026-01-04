@@ -6,7 +6,7 @@ public static class FacingDirectionResolver
     {
         if (motor)
         {
-            var origin = (Vector3?)motor.FacingOrigin;
+            var origin = (Vector3?)motor.FacingCentre;
             var headLookTarget = motor.CurrentHeadLookTarget;
             if (headLookTarget.HasValue && origin.HasValue)
             {

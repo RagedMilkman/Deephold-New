@@ -226,6 +226,8 @@ public class TopDownMotor : MonoBehaviour
     public Vector3? CurrentHeadLookTarget => rigAnimator ? rigAnimator.CurrentHeadLookTarget : null;
     public Vector3 FacingForward => rotateTarget ? rotateTarget.forward : transform.forward;
     public Vector3 FacingOrigin => rotateTarget ? rotateTarget.position : transform.position;
+    // 1.5 is the height. Some calculations are off when we measure from the feet rather than the body.
+    public Vector3 FacingCentre => FacingOrigin + (Vector3.up * 1.5f);
 
     public void SetAimTargets(Vector3 cursorTarget, Vector3 playerTarget, bool playerTargetIsFloor)
     {

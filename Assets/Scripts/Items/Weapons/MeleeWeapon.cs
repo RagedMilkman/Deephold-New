@@ -90,7 +90,8 @@ public abstract class MeleeWeapon : NetworkBehaviour, IPlayerTool, IToolbeltItem
 
     public void InteractionTick(bool primaryHeld, bool primaryPressed, bool secondaryHeld, bool secondaryPressed)
     {
-        if (!IsLocalOwner())
+        // Allow server-authority callers (e.g., NPCs) in addition to the owning client.
+        if (!IsOwner && OwnerId != -1)
             return;
 
         if (primaryPressed)
